@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  # AI Dependency Manager - Unified Full-Stack Application
+  ai-dep-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    image: ai-dep-manager:latest
+    container_name: ai-dep-manager-app
+    restart: unless-stopped
+    ports:
+      # Unified web server port (frontend + API)
+      - "8080:8080"
+      # Optional: Separate API port if needed
+      - "8081:8081"
+    environment:
+      # Application configuration
+      - AI_DEP_MANAGER_DATA_DIR=/data
+      - AI_DEP_MANAGER_CONFIG_FILE=/data/config.yaml
+      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager.db
+      
+      # Logging configuration
+      - AI_DEP_MANAGER_LOG_LEVEL=info
+      - AI_DEP_MANAGER_LOG_FORMAT=json
+      
+      # Web server configuration
+      - AI_DEP_MANAGER_WEB_PORT=8080
+      - AI_DEP_MANAGER_API_PORT=8081
+      - GIN_MODE=release
+      
+      # Production optimizations
+      - GOMAXPROCS=2
+      - GOGC=100
+      
+      # Timezone
+      - TZ=UTC
+    volumes:
+      # Persistent data storage
+      - ai-dep-manager-data:/data
+      - ai-dep-manager-logs:/app/logs
+      - ai-dep-manager-db:/app/db
+      
+      # Project scanning directories (adjust paths as needed)
+      - ./projects:/projects:ro
+      - ./scan-targets:/scan-targets:ro
+      
+      # Docker socket for container-based project scanning (optional)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      
+      # Configuration override (optional)
+      - ./config/production.yaml:/data/config.yaml:ro
+    networks:
+      - ai-dep-manager-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+        labels: "service=ai-dep-manager"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-dep-manager.rule=Host(`localhost`)"
+      - "traefik.http.services.ai-dep-manager.loadbalancer.server.port=8080"
+
+  # Log aggregation and monitoring (optional)
+  log-aggregator:
+    image: fluent/fluent-bit:latest
+    container_name: ai-dep-manager-logs
+    restart: unless-stopped
+    volumes:
+      - ai-dep-manager-logs:/var/log/ai-dep-manager:ro
+      - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+    networks:
+      - ai-dep-manager-network
+    depends_on:
+      - ai-dep-manager
+    profiles:
+      - monitoring
+
+  # Metrics and monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ai-dep-manager-metrics
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - ai-dep-manager-network
+    profiles:
+      - monitoring
+
+  # Grafana dashboard (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ai-dep-manager-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - ai-dep-manager-network
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+# Persistent volumes for data storage
+volumes:
+  # Application data (database, configuration, cache)
+  ai-dep-manager-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data
+  
+  # Application logs
+  ai-dep-manager-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs
+  
+  # Database files
+  ai-dep-manager-db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./db
+  
+  # Monitoring data
+  prometheus-data:
+    driver: local
+  
+  grafana-data:
+    driver: local
+
+# Network configuration
+networks:
+  ai-dep-manager-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

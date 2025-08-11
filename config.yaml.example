@@ -1,0 +1,37 @@
+# AI Dependency Manager Configuration
+# Copy this file to ~/.ai-dep-manager/config.yaml or specify with --config flag
+
+# Application settings
+log_level: "info"      # debug, info, warn, error, fatal
+log_format: "text"     # text, json
+data_dir: ""           # Default: ~/.ai-dep-manager
+
+# Database configuration
+database:
+  type: "sqlite"       # Currently only sqlite is supported
+  path: ""             # Default: ~/.ai-dep-manager/ai-dep-manager.db
+
+# Background agent settings
+agent:
+  enabled: false       # Enable background monitoring
+  scan_interval: "24h" # How often to scan for updates (1h, 6h, 24h, etc.)
+  max_concurrency: 5   # Maximum concurrent operations
+  auto_update_level: "none"  # none, security, minor, major
+  notification_mode: "console"  # console, email, slack (future)
+
+# Security settings
+security:
+  verify_checksums: true     # Verify package integrity
+  trusted_sources: []        # List of trusted registry URLs
+  blocked_packages: []       # List of packages to never update
+  require_confirmation: true # Always ask before applying updates
+
+# Example project configurations can be added here or managed via CLI
+# projects:
+#   - name: "my-web-app"
+#     path: "/path/to/my-web-app"
+#     type: "npm"
+#     config_file: "package.json"
+#     settings:
+#       auto_update_level: "security"
+#       ignore_patterns: ["@types/*", "eslint*"]

@@ -1,0 +1,41 @@
+# Docker Compose override for development environment
+# This file is automatically loaded by docker-compose and overrides settings in docker-compose.yml
+version: '3.8'
+
+services:
+  ai-dep-manager:
+    # Development-specific configuration
+    environment:
+      # Enable debug logging in development
+      - AI_DEP_MANAGER_LOG_LEVEL=debug
+      - AI_DEP_MANAGER_LOG_FORMAT=text
+      - GIN_MODE=debug
+      
+      # Development database path
+      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager-dev.db
+    
+    # Mount source code for hot reload (development only)
+    volumes:
+      # Add source code mounting for development
+      - .:/app/src:ro
+      
+      # Development configuration
+      - ./config/development.yaml:/data/config.yaml:ro
+    
+    # Development port mapping
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      # Add debug port for Go debugging
+      - "2345:2345"
+    
+    # Override command for development with hot reload
+    command: ["/app/start.sh"]
+    
+    # Development health check (more frequent)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

@@ -1,0 +1,85 @@
+# Docker Compose configuration for production deployment
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+version: '3.8'
+
+services:
+  ai-dep-manager:
+    # Production-specific configuration
+    image: ai-dep-manager:latest
+    restart: always
+    
+    # Production environment variables
+    environment:
+      # Production logging
+      - AI_DEP_MANAGER_LOG_LEVEL=info
+      - AI_DEP_MANAGER_LOG_FORMAT=json
+      - GIN_MODE=release
+      
+      # Production database
+      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager-prod.db
+      
+      # Performance tuning
+      - GOMAXPROCS=4
+      - GOGC=80
+      
+      # Security
+      - AI_DEP_MANAGER_SECURE_MODE=true
+      - AI_DEP_MANAGER_API_RATE_LIMIT=100
+    
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Production health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    
+    # Production logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+        labels: "service=ai-dep-manager,environment=production"
+    
+    # Production labels for monitoring
+    labels:
+      - "com.ai-dep-manager.environment=production"
+      - "com.ai-dep-manager.service=main"
+      - "traefik.enable=true"
+      - "traefik.http.routers.ai-dep-manager-prod.rule=Host(`ai-dep-manager.yourdomain.com`)"
+      - "traefik.http.routers.ai-dep-manager-prod.tls=true"
+      - "traefik.http.routers.ai-dep-manager-prod.tls.certresolver=letsencrypt"
+
+  # Enable monitoring in production
+  log-aggregator:
+    profiles: []  # Remove profile to enable by default
+    
+  prometheus:
+    profiles: []  # Remove profile to enable by default
+    
+  grafana:
+    profiles: []  # Remove profile to enable by default
+    environment:
+      # Production Grafana settings
+      - GF_SECURITY_ADMIN_PASSWORD_FILE=/run/secrets/grafana_admin_password
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+    secrets:
+      - grafana_admin_password
+
+# Production secrets
+secrets:
+  grafana_admin_password:
+    external: true

@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "Large Frontend Application",
+    "type": "npm",
+    "path": "/app/frontend",
+    "configFile": "package.json",
+    "enabled": true,
+    "dependencyCount": 150,
+    "outdatedCount": 25,
+    "securityIssueCount": 5,
+    "healthScore": 75,
+    "riskLevel": "medium"
+  },
+  {
+    "id": 2,
+    "name": "Microservice API Gateway",
+    "type": "npm",
+    "path": "/app/gateway",
+    "configFile": "package.json",
+    "enabled": true,
+    "dependencyCount": 89,
+    "outdatedCount": 12,
+    "securityIssueCount": 2,
+    "healthScore": 82,
+    "riskLevel": "low"
+  },
+  {
+    "id": 3,
+    "name": "Data Processing Service",
+    "type": "pip",
+    "path": "/app/data-processor",
+    "configFile": "requirements.txt",
+    "enabled": true,
+    "dependencyCount": 67,
+    "outdatedCount": 8,
+    "securityIssueCount": 1,
+    "healthScore": 88,
+    "riskLevel": "low"
+  },
+  {
+    "id": 4,
+    "name": "Authentication Service",
+    "type": "maven",
+    "path": "/app/auth",
+    "configFile": "pom.xml",
+    "enabled": true,
+    "dependencyCount": 45,
+    "outdatedCount": 5,
+    "securityIssueCount": 0,
+    "healthScore": 92,
+    "riskLevel": "low"
+  },
+  {
+    "id": 5,
+    "name": "Mobile Backend",
+    "type": "gradle",
+    "path": "/app/mobile-backend",
+    "configFile": "build.gradle",
+    "enabled": true,
+    "dependencyCount": 78,
+    "outdatedCount": 15,
+    "securityIssueCount": 3,
+    "healthScore": 79,
+    "riskLevel": "medium"
+  }
+]

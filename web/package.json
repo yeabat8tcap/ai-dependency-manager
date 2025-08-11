@@ -1,0 +1,76 @@
+{
+  "name": "ai-dep-manager-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port 4200",
+    "start:staging": "node scripts/switch-env.js staging && ng serve --port 4200",
+    "start:production": "node scripts/switch-env.js production && ng serve --port 4200",
+    "build": "ng build",
+    "build:staging": "node scripts/switch-env.js staging && ng build",
+    "build:production": "node scripts/switch-env.js production && ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "env:staging": "node scripts/switch-env.js staging",
+    "env:production": "node scripts/switch-env.js production",
+    "test": "ng test",
+    "test:unit": "ng test --exclude='**/integration/**/*.spec.ts' --watch=false --browsers=ChromeHeadless",
+    "test:integration": "ng test --include='**/integration/**/*.spec.ts' --watch=false --browsers=ChromeHeadless",
+    "test:coverage": "ng test --code-coverage --watch=false --browsers=ChromeHeadless",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "test:watch": "ng test --watch=true",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
+    "e2e:headless": "cypress run --headless",
+    "test:all": "npm run test:unit && npm run test:integration && npm run e2e:headless",
+    "coverage": "npm run test:coverage && open coverage/ai-dep-manager-frontend/index.html",
+    "lint": "ng lint",
+    "test:debug": "ng test --source-map=true"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.1.6",
+    "@angular/cdk": "^20.1.5",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.1.0",
+    "@angular/core": "^20.1.0",
+    "@angular/forms": "^20.1.0",
+    "@angular/material": "^20.1.5",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@ngrx/effects": "^20.0.0",
+    "@ngrx/store": "^20.0.0",
+    "@ngrx/store-devtools": "^20.0.0",
+    "@types/d3": "^7.4.3",
+    "chart.js": "^4.5.0",
+    "d3": "^7.9.0",
+    "ng2-charts": "^8.0.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.1.5",
+    "@angular/cli": "^20.1.5",
+    "@angular/compiler-cli": "^20.1.0",
+    "@cypress/schematic": "^4.0.0",
+    "@types/jasmine": "~5.1.0",
+    "cypress": "^14.5.4",
+    "jasmine-core": "~5.8.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.8.2"
+  }
+}
