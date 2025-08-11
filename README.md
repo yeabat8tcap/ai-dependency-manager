@@ -1,9 +1,11 @@
 # AI Dependency Manager (AutoUpdateAgent)
 
-[![CI](https://github.com/8tcapital/ai-dep-manager/workflows/CI/badge.svg)](https://github.com/8tcapital/ai-dep-manager/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/8tcapital/ai-dep-manager)](https://goreportcard.com/report/github.com/8tcapital/ai-dep-manager)
+[![CI](https://github.com/yeabat8tcap/ai-dependency-manager/workflows/CI/badge.svg)](https://github.com/yeabat8tcap/ai-dependency-manager/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yeabat8tcap/ai-dependency-manager)](https://goreportcard.com/report/github.com/yeabat8tcap/ai-dependency-manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Coverage](https://codecov.io/gh/8tcapital/ai-dep-manager/branch/main/graph/badge.svg)](https://codecov.io/gh/8tcapital/ai-dep-manager)
+[![Coverage](https://codecov.io/gh/yeabat8tcap/ai-dependency-manager/branch/main/graph/badge.svg)](https://codecov.io/gh/yeabat8tcap/ai-dependency-manager)
+[![GitHub Release](https://img.shields.io/github/release/yeabat8tcap/ai-dependency-manager.svg)](https://github.com/yeabat8tcap/ai-dependency-manager/releases)
+[![Docker](https://img.shields.io/badge/docker-available-blue.svg)](https://github.com/yeabat8tcap/ai-dependency-manager)
 
 An autonomous AI-powered CLI agent that intelligently manages software dependencies across multiple package managers with advanced security, risk assessment, and automated update capabilities.
 
