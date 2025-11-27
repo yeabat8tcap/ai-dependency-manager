@@ -79,7 +79,7 @@ func (mcd *MergeConflictDetector) detectSpecificConflicts(ctx context.Context, p
 
 	// Simulate conflict detection
 	// In real implementation, would perform actual Git merge analysis
-	
+
 	// Example conflicts for demonstration
 	if strings.Contains(strings.ToLower(pr.Title), "conflict") {
 		conflicts = append(conflicts, &ConflictDetail{
@@ -148,13 +148,13 @@ func (mcd *MergeConflictDetector) generateConflictRecommendations(analysis *Conf
 // ResolveConflicts provides automated conflict resolution suggestions
 func (mcd *MergeConflictDetector) ResolveConflicts(ctx context.Context, pr *PullRequest, strategy ConflictResolutionStrategy) (*ConflictResolutionResult, error) {
 	result := &ConflictResolutionResult{
-		Strategy:         strategy,
-		Success:          false,
-		ResolvedConflicts: []*ResolvedConflict{},
+		Strategy:           strategy,
+		Success:            false,
+		ResolvedConflicts:  []*ResolvedConflict{},
 		RemainingConflicts: []*ConflictDetail{},
-		Instructions:     []string{},
-		EstimatedTime:    15 * time.Minute,
-		GeneratedAt:      time.Now(),
+		Instructions:       []string{},
+		EstimatedTime:      15 * time.Minute,
+		GeneratedAt:        time.Now(),
 	}
 
 	// Analyze current conflicts
@@ -188,10 +188,10 @@ func (mcd *MergeConflictDetector) ResolveConflicts(ctx context.Context, pr *Pull
 type ConflictResolutionStrategy string
 
 const (
-	StrategyAutoResolve   ConflictResolutionStrategy = "auto_resolve"
-	StrategyManualGuided  ConflictResolutionStrategy = "manual_guided"
-	StrategyRebase        ConflictResolutionStrategy = "rebase"
-	StrategyMergeCommit   ConflictResolutionStrategy = "merge_commit"
+	StrategyAutoResolve  ConflictResolutionStrategy = "auto_resolve"
+	StrategyManualGuided ConflictResolutionStrategy = "manual_guided"
+	StrategyRebase       ConflictResolutionStrategy = "rebase"
+	StrategyMergeCommit  ConflictResolutionStrategy = "merge_commit"
 )
 
 // ConflictResolutionResult represents the result of conflict resolution
@@ -207,12 +207,12 @@ type ConflictResolutionResult struct {
 
 // ResolvedConflict represents a successfully resolved conflict
 type ResolvedConflict struct {
-	File        string    `json:"file"`
-	Line        int       `json:"line"`
-	Resolution  string    `json:"resolution"`
-	Method      string    `json:"method"`
-	Confidence  float64   `json:"confidence"`
-	ResolvedAt  time.Time `json:"resolved_at"`
+	File       string    `json:"file"`
+	Line       int       `json:"line"`
+	Resolution string    `json:"resolution"`
+	Method     string    `json:"method"`
+	Confidence float64   `json:"confidence"`
+	ResolvedAt time.Time `json:"resolved_at"`
 }
 
 // applyAutoResolution applies automatic conflict resolution
@@ -234,7 +234,7 @@ func (mcd *MergeConflictDetector) applyAutoResolution(ctx context.Context, pr *P
 	}
 
 	result.Success = len(result.RemainingConflicts) == 0
-	
+
 	if result.Success {
 		result.Instructions = []string{
 			"All conflicts automatically resolved",
@@ -263,7 +263,7 @@ func (mcd *MergeConflictDetector) applyManualGuidedResolution(ctx context.Contex
 	for i, conflict := range analysis.ConflictDetails {
 		instruction := fmt.Sprintf("%d. Resolve conflict in %s at line %d", i+1, conflict.File, conflict.Line)
 		result.Instructions = append(result.Instructions, instruction)
-		
+
 		// Add specific guidance based on conflict type
 		switch conflict.Type {
 		case "content":
@@ -287,7 +287,7 @@ func (mcd *MergeConflictDetector) applyRebaseResolution(ctx context.Context, pr 
 		"Rebase strategy selected",
 		"Execute the following commands:",
 		"git fetch origin",
-		fmt.Sprintf("git rebase origin/%s", pr.BaseBranch),
+		fmt.Sprintf("git rebase origin/%s", pr.Base.Ref),
 		"Resolve any conflicts that arise during rebase",
 		"git add <resolved-files>",
 		"git rebase --continue",
@@ -304,7 +304,7 @@ func (mcd *MergeConflictDetector) applyMergeCommitResolution(ctx context.Context
 		"Merge commit strategy selected",
 		"Execute the following commands:",
 		"git fetch origin",
-		fmt.Sprintf("git merge origin/%s", pr.BaseBranch),
+		fmt.Sprintf("git merge origin/%s", pr.Base.Ref),
 		"Resolve conflicts in the merge commit",
 		"git add <resolved-files>",
 		"git commit -m 'Resolve merge conflicts'",
@@ -366,12 +366,12 @@ func (mcd *MergeConflictDetector) PreventConflicts(ctx context.Context, pr *Pull
 
 // ConflictPreventionReport provides recommendations for preventing conflicts
 type ConflictPreventionReport struct {
-	PullRequestNumber int                     `json:"pull_request_number"`
-	RiskLevel         string                  `json:"risk_level"`
-	RiskFactors       []*ConflictRiskFactor   `json:"risk_factors"`
-	Recommendations   []string                `json:"recommendations"`
-	BestPractices     []string                `json:"best_practices"`
-	GeneratedAt       time.Time               `json:"generated_at"`
+	PullRequestNumber int                   `json:"pull_request_number"`
+	RiskLevel         string                `json:"risk_level"`
+	RiskFactors       []*ConflictRiskFactor `json:"risk_factors"`
+	Recommendations   []string              `json:"recommendations"`
+	BestPractices     []string              `json:"best_practices"`
+	GeneratedAt       time.Time             `json:"generated_at"`
 }
 
 // ConflictRiskFactor represents a factor that increases conflict risk

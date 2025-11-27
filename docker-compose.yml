@@ -39,9 +39,9 @@ services:
       - TZ=UTC
     volumes:
       # Persistent data storage
-      - ai-dep-manager-data:/data
-      - ai-dep-manager-logs:/app/logs
-      - ai-dep-manager-db:/app/db
+      - ./data:/data
+      - ./logs:/app/logs
+      - ./db:/app/db
       
       # Project scanning directories (adjust paths as needed)
       - ./projects:/projects:ro
@@ -77,7 +77,7 @@ services:
     container_name: ai-dep-manager-logs
     restart: unless-stopped
     volumes:
-      - ai-dep-manager-logs:/var/log/ai-dep-manager:ro
+      - ./logs:/var/log/ai-dep-manager:ro
       - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
     networks:
       - ai-dep-manager-network
@@ -131,30 +131,6 @@ services:
 
 # Persistent volumes for data storage
 volumes:
-  # Application data (database, configuration, cache)
-  ai-dep-manager-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./data
-  
-  # Application logs
-  ai-dep-manager-logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./logs
-  
-  # Database files
-  ai-dep-manager-db:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./db
-  
   # Monitoring data
   prometheus-data:
     driver: local

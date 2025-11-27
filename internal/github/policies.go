@@ -27,20 +27,20 @@ func NewPolicyManager(client *Client, config *PolicyConfig) *PolicyManager {
 
 	// Load default policies
 	pm.loadDefaultPolicies()
-	
+
 	return pm
 }
 
 // PolicyConfig defines policy management configuration
 type PolicyConfig struct {
-	EnablePolicyEnforcement bool          `json:"enable_policy_enforcement"`
-	DefaultRiskTolerance    string        `json:"default_risk_tolerance"` // "low", "medium", "high"
-	RequireApprovalFor      []string      `json:"require_approval_for"`   // risk levels requiring approval
-	BlockedDependencies     []string      `json:"blocked_dependencies"`   // dependencies that are blocked
-	AllowedLicenses         []string      `json:"allowed_licenses"`       // allowed license types
-	SecurityScanRequired    bool          `json:"security_scan_required"`
-	ComplianceMode          string        `json:"compliance_mode"`        // "strict", "moderate", "permissive"
-	PolicyViolationAction   string        `json:"policy_violation_action"` // "block", "warn", "log"
+	EnablePolicyEnforcement bool     `json:"enable_policy_enforcement"`
+	DefaultRiskTolerance    string   `json:"default_risk_tolerance"` // "low", "medium", "high"
+	RequireApprovalFor      []string `json:"require_approval_for"`   // risk levels requiring approval
+	BlockedDependencies     []string `json:"blocked_dependencies"`   // dependencies that are blocked
+	AllowedLicenses         []string `json:"allowed_licenses"`       // allowed license types
+	SecurityScanRequired    bool     `json:"security_scan_required"`
+	ComplianceMode          string   `json:"compliance_mode"`         // "strict", "moderate", "permissive"
+	PolicyViolationAction   string   `json:"policy_violation_action"` // "block", "warn", "log"
 }
 
 // Policy represents an organization policy
@@ -48,9 +48,9 @@ type Policy struct {
 	ID          string                 `json:"id"`
 	Name        string                 `json:"name"`
 	Description string                 `json:"description"`
-	Type        string                 `json:"type"`        // "security", "compliance", "quality", "performance"
-	Scope       string                 `json:"scope"`       // "organization", "repository", "dependency"
-	Priority    int                    `json:"priority"`    // 1-10, higher is more important
+	Type        string                 `json:"type"`     // "security", "compliance", "quality", "performance"
+	Scope       string                 `json:"scope"`    // "organization", "repository", "dependency"
+	Priority    int                    `json:"priority"` // 1-10, higher is more important
 	Enabled     bool                   `json:"enabled"`
 	Rules       []*PolicyRule          `json:"rules"`
 	Actions     []*PolicyAction        `json:"actions"`
@@ -63,48 +63,48 @@ type Policy struct {
 
 // PolicyRule defines a rule within a policy
 type PolicyRule struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	Condition   *RuleCondition         `json:"condition"`
-	Severity    string                 `json:"severity"`    // "critical", "high", "medium", "low"
-	Message     string                 `json:"message"`
-	Metadata    map[string]interface{} `json:"metadata"`
+	ID        string                 `json:"id"`
+	Name      string                 `json:"name"`
+	Condition *RuleCondition         `json:"condition"`
+	Severity  string                 `json:"severity"` // "critical", "high", "medium", "low"
+	Message   string                 `json:"message"`
+	Metadata  map[string]interface{} `json:"metadata"`
 }
 
 // PolicyAction defines an action to take when a policy is violated
 type PolicyAction struct {
-	Type       string                 `json:"type"`       // "block", "warn", "require_approval", "notify"
-	Target     string                 `json:"target"`     // who/what to target
+	Type       string                 `json:"type"`   // "block", "warn", "require_approval", "notify"
+	Target     string                 `json:"target"` // who/what to target
 	Parameters map[string]interface{} `json:"parameters"`
 }
 
 // PolicyException defines an exception to a policy
 type PolicyException struct {
-	ID          string                 `json:"id"`
-	Repository  string                 `json:"repository"`
-	Dependency  string                 `json:"dependency"`
-	Reason      string                 `json:"reason"`
-	ExpiresAt   *time.Time             `json:"expires_at"`
-	CreatedBy   string                 `json:"created_by"`
-	ApprovedBy  string                 `json:"approved_by"`
-	Metadata    map[string]interface{} `json:"metadata"`
+	ID         string                 `json:"id"`
+	Repository string                 `json:"repository"`
+	Dependency string                 `json:"dependency"`
+	Reason     string                 `json:"reason"`
+	ExpiresAt  *time.Time             `json:"expires_at"`
+	CreatedBy  string                 `json:"created_by"`
+	ApprovedBy string                 `json:"approved_by"`
+	Metadata   map[string]interface{} `json:"metadata"`
 }
 
 // PatchRule represents a custom rule for patch generation
 type PatchRule struct {
-	ID               string                 `json:"id"`
-	Name             string                 `json:"name"`
-	Description      string                 `json:"description"`
-	DependencyPattern string                `json:"dependency_pattern"` // regex pattern for dependency names
-	VersionPattern   string                 `json:"version_pattern"`    // regex pattern for versions
-	FilePatterns     []string               `json:"file_patterns"`      // file patterns to apply rule to
-	Conditions       []*RuleCondition       `json:"conditions"`
-	Transformations  []*PatchTransformation `json:"transformations"`
-	Priority         int                    `json:"priority"`
-	Enabled          bool                   `json:"enabled"`
-	Metadata         map[string]interface{} `json:"metadata"`
-	CreatedAt        time.Time              `json:"created_at"`
-	UpdatedAt        time.Time              `json:"updated_at"`
+	ID                string                 `json:"id"`
+	Name              string                 `json:"name"`
+	Description       string                 `json:"description"`
+	DependencyPattern string                 `json:"dependency_pattern"` // regex pattern for dependency names
+	VersionPattern    string                 `json:"version_pattern"`    // regex pattern for versions
+	FilePatterns      []string               `json:"file_patterns"`      // file patterns to apply rule to
+	Conditions        []*RuleCondition       `json:"conditions"`
+	Transformations   []*PatchTransformation `json:"transformations"`
+	Priority          int                    `json:"priority"`
+	Enabled           bool                   `json:"enabled"`
+	Metadata          map[string]interface{} `json:"metadata"`
+	CreatedAt         time.Time              `json:"created_at"`
+	UpdatedAt         time.Time              `json:"updated_at"`
 }
 
 // PatchTransformation defines how to transform code during patching
@@ -118,32 +118,32 @@ type PatchTransformation struct {
 
 // PolicyViolation represents a policy violation
 type PolicyViolation struct {
-	ID           string                 `json:"id"`
-	PolicyID     string                 `json:"policy_id"`
-	RuleID       string                 `json:"rule_id"`
-	Repository   string                 `json:"repository"`
-	Dependency   string                 `json:"dependency"`
-	Version      string                 `json:"version"`
-	Severity     string                 `json:"severity"`
-	Message      string                 `json:"message"`
-	Details      string                 `json:"details"`
-	Status       string                 `json:"status"`       // "open", "resolved", "ignored"
-	Resolution   string                 `json:"resolution"`
-	Metadata     map[string]interface{} `json:"metadata"`
-	DetectedAt   time.Time              `json:"detected_at"`
-	ResolvedAt   *time.Time             `json:"resolved_at"`
+	ID         string                 `json:"id"`
+	PolicyID   string                 `json:"policy_id"`
+	RuleID     string                 `json:"rule_id"`
+	Repository string                 `json:"repository"`
+	Dependency string                 `json:"dependency"`
+	Version    string                 `json:"version"`
+	Severity   string                 `json:"severity"`
+	Message    string                 `json:"message"`
+	Details    string                 `json:"details"`
+	Status     string                 `json:"status"` // "open", "resolved", "ignored"
+	Resolution string                 `json:"resolution"`
+	Metadata   map[string]interface{} `json:"metadata"`
+	DetectedAt time.Time              `json:"detected_at"`
+	ResolvedAt *time.Time             `json:"resolved_at"`
 }
 
 // PolicyEvaluationResult represents the result of policy evaluation
 type PolicyEvaluationResult struct {
-	Allowed         bool                `json:"allowed"`
-	Violations      []*PolicyViolation  `json:"violations"`
-	Warnings        []string            `json:"warnings"`
-	RequiredActions []*PolicyAction     `json:"required_actions"`
-	ApprovalNeeded  bool                `json:"approval_needed"`
-	BlockingIssues  []string            `json:"blocking_issues"`
-	Recommendations []string            `json:"recommendations"`
-	EvaluatedAt     time.Time           `json:"evaluated_at"`
+	Allowed         bool               `json:"allowed"`
+	Violations      []*PolicyViolation `json:"violations"`
+	Warnings        []string           `json:"warnings"`
+	RequiredActions []*PolicyAction    `json:"required_actions"`
+	ApprovalNeeded  bool               `json:"approval_needed"`
+	BlockingIssues  []string           `json:"blocking_issues"`
+	Recommendations []string           `json:"recommendations"`
+	EvaluatedAt     time.Time          `json:"evaluated_at"`
 }
 
 // EvaluatePolicies evaluates policies for a dependency update
@@ -333,7 +333,7 @@ func (pm *PolicyManager) ApplyPatchRules(ctx context.Context, patches []*Patch, 
 
 	// Apply each rule in priority order
 	applicableRules := pm.getApplicableRules(dependency)
-	
+
 	for _, rule := range applicableRules {
 		var err error
 		modifiedPatches, err = pm.applyPatchRule(rule, modifiedPatches, dependency)
@@ -348,54 +348,58 @@ func (pm *PolicyManager) ApplyPatchRules(ctx context.Context, patches []*Patch, 
 // applyPatchRule applies a single patch rule
 func (pm *PolicyManager) applyPatchRule(rule *PatchRule, patches []*Patch, dependency *DependencyInfo) ([]*Patch, error) {
 	for i, patch := range patches {
-		// Check if rule applies to this patch
-		if !pm.ruleAppliesTo(rule, patch, dependency) {
-			continue
-		}
-
-		// Apply transformations
-		for _, transform := range rule.Transformations {
-			modifiedPatch, err := pm.applyTransformation(transform, patch)
-			if err != nil {
-				return patches, fmt.Errorf("failed to apply transformation: %w", err)
+		// Apply transformations to each file patch
+		for j, filePatch := range patch.FilePatches {
+			// Check if rule applies to this file patch
+			if !pm.ruleAppliesTo(rule, &filePatch, dependency) {
+				continue
 			}
-			patches[i] = modifiedPatch
+
+			// Apply transformations
+			for _, transform := range rule.Transformations {
+				modifiedFilePatch, err := pm.applyTransformation(transform, &filePatch)
+				if err != nil {
+					return patches, fmt.Errorf("failed to apply transformation: %w", err)
+				}
+				patch.FilePatches[j] = *modifiedFilePatch
+			}
 		}
+		patches[i] = patch
 	}
 
 	return patches, nil
 }
 
-// applyTransformation applies a single transformation to a patch
-func (pm *PolicyManager) applyTransformation(transform *PatchTransformation, patch *Patch) (*Patch, error) {
-	modifiedPatch := *patch // Copy the patch
+// applyTransformation applies a single transformation to a file patch
+func (pm *PolicyManager) applyTransformation(transform *PatchTransformation, filePatch *FilePatch) (*FilePatch, error) {
+	modifiedPatch := *filePatch // Copy the file patch
 
 	switch transform.Type {
 	case "replace":
 		regex, err := regexp.Compile(transform.Pattern)
 		if err != nil {
-			return patch, fmt.Errorf("invalid regex pattern: %w", err)
+			return filePatch, fmt.Errorf("invalid regex pattern: %w", err)
 		}
-		modifiedPatch.Content = regex.ReplaceAllString(patch.Content, transform.Replacement)
+		modifiedPatch.NewContent = regex.ReplaceAllString(filePatch.NewContent, transform.Replacement)
 
 	case "insert":
 		// Insert content at specified location
-		modifiedPatch.Content = patch.Content + "\n" + transform.Replacement
+		modifiedPatch.NewContent = filePatch.NewContent + "\n" + transform.Replacement
 
 	case "delete":
 		// Remove content matching pattern
 		regex, err := regexp.Compile(transform.Pattern)
 		if err != nil {
-			return patch, fmt.Errorf("invalid regex pattern: %w", err)
+			return filePatch, fmt.Errorf("invalid regex pattern: %w", err)
 		}
-		modifiedPatch.Content = regex.ReplaceAllString(patch.Content, "")
+		modifiedPatch.NewContent = regex.ReplaceAllString(filePatch.NewContent, "")
 
 	case "modify":
 		// Custom modification logic
-		modifiedPatch.Content = pm.applyCustomModification(patch.Content, transform)
+		modifiedPatch.NewContent = pm.applyCustomModification(filePatch.NewContent, transform)
 
 	default:
-		return patch, fmt.Errorf("unsupported transformation type: %s", transform.Type)
+		return filePatch, fmt.Errorf("unsupported transformation type: %s", transform.Type)
 	}
 
 	return &modifiedPatch, nil
@@ -565,12 +569,12 @@ func (pm *PolicyManager) hasBreakingChanges(patches []*Patch) bool {
 
 func (pm *PolicyManager) getApplicableRules(dependency *DependencyInfo) []*PatchRule {
 	var applicable []*PatchRule
-	
+
 	for _, rule := range pm.rules {
 		if !rule.Enabled {
 			continue
 		}
-		
+
 		// Check if rule applies to this dependency
 		if rule.DependencyPattern != "" {
 			matched, err := regexp.MatchString(rule.DependencyPattern, dependency.Name)
@@ -578,22 +582,22 @@ func (pm *PolicyManager) getApplicableRules(dependency *DependencyInfo) []*Patch
 				continue
 			}
 		}
-		
+
 		applicable = append(applicable, rule)
 	}
-	
+
 	return applicable
 }
 
-func (pm *PolicyManager) ruleAppliesTo(rule *PatchRule, patch *Patch, dependency *DependencyInfo) bool {
+func (pm *PolicyManager) ruleAppliesTo(rule *PatchRule, filePatch *FilePatch, dependency *DependencyInfo) bool {
 	// Check file patterns
 	for _, pattern := range rule.FilePatterns {
-		matched, err := regexp.MatchString(pattern, patch.File)
+		matched, err := regexp.MatchString(pattern, filePatch.Path)
 		if err == nil && matched {
 			return true
 		}
 	}
-	
+
 	// If no file patterns specified, rule applies to all files
 	return len(rule.FilePatterns) == 0
 }

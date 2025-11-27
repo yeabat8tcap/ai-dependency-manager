@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 
@@ -43,12 +44,12 @@ func SetupTestEnvironment(t *testing.T) *TestContext {
 			Path: filepath.Join(tempDir, "test.db"),
 		},
 		Security: config.SecurityConfig{
-			VerifyChecksums:        true,
-			WhitelistEnabled:       false,
-			VulnerabilityScanning:  true,
-			MasterKey:              "dGVzdC1tYXN0ZXIta2V5LWZvci10ZXN0aW5nLW9ubHk=", // base64 encoded test key
-			UpdateVulnDB:           false,
-			VulnDBUpdateInterval:   "24h",
+			VerifyChecksums:       true,
+			WhitelistEnabled:      false,
+			VulnerabilityScanning: true,
+			MasterKey:             "dGVzdC1tYXN0ZXIta2V5LWZvci10ZXN0aW5nLW9ubHk=", // base64 encoded test key
+			UpdateVulnDB:          false,
+			VulnDBUpdateInterval:  "24h",
 		},
 		Agent: config.AgentConfig{
 			Enabled:          true,
@@ -146,7 +147,7 @@ func (ctx *TestContext) createTestData(t *testing.T) {
 		if err := ctx.DB.Create(&projects[i]).Error; err != nil {
 			t.Fatalf("Failed to create test project: %v", err)
 		}
-		
+
 		// Create project directory
 		if err := os.MkdirAll(projects[i].Path, 0755); err != nil {
 			t.Fatalf("Failed to create project directory: %v", err)
@@ -308,13 +309,13 @@ func (ctx *TestContext) CreateTestDependency(t *testing.T, projectID uint, name,
 // CreateTestUpdate creates a test update
 func (ctx *TestContext) CreateTestUpdate(t *testing.T, projectID uint, packageName, fromVer, toVer, updateType string) models.Update {
 	update := models.Update{
-		DependencyID:  1,
-		FromVersion:   fromVer,
-		ToVersion:     toVer,
-		UpdateType:    updateType,
-		Status:        "pending",
-		Severity:      "medium",
-		CreatedAt:     time.Now(),
+		DependencyID: 1,
+		FromVersion:  fromVer,
+		ToVersion:    toVer,
+		UpdateType:   updateType,
+		Status:       "pending",
+		Severity:     "medium",
+		CreatedAt:    time.Now(),
 	}
 
 	if err := ctx.DB.Create(&update).Error; err != nil {
@@ -400,21 +401,12 @@ func AssertContains(t *testing.T, slice []string, element string, msg string) {
 
 // AssertLen is a helper to assert slice length
 func AssertLen(t *testing.T, slice interface{}, expectedLen int, msg string) {
-	var actualLen int
-	
-	switch s := slice.(type) {
-	case []string:
-		actualLen = len(s)
-	case []models.Project:
-		actualLen = len(s)
-	case []models.Dependency:
-		actualLen = len(s)
-	case []models.Update:
-		actualLen = len(s)
-	default:
-		t.Fatalf("%s: unsupported slice type for length assertion", msg)
+	v := reflect.ValueOf(slice)
+	if v.Kind() != reflect.Slice {
+		t.Fatalf("%s: expected slice, got %T", msg, slice)
 	}
-	
+	actualLen := v.Len()
+
 	if actualLen != expectedLen {
 		t.Fatalf("%s: expected length %d, got %d", msg, expectedLen, actualLen)
 	}
@@ -422,7 +414,7 @@ func AssertLen(t *testing.T, slice interface{}, expectedLen int, msg string) {
 
 // MockHTTPServer provides a mock HTTP server for testing external API calls
 type MockHTTPServer struct {
-	Responses map[string]string
+	Responses   map[string]string
 	StatusCodes map[string]int
 }
 

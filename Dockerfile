@@ -112,7 +112,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "📝 Logs: /app/logs/"' >> /app/start.sh && \
     echo 'echo "💾 Database: /data/ai-dep-manager.db"' >> /app/start.sh && \
     echo 'echo "✨ Unified Full-Stack Application with Comprehensive Logging"' >> /app/start.sh && \
-    echo 'exec ./ai-dep-manager serve-simple' >> /app/start.sh && \
+    echo 'exec ./ai-dep-manager serve-simple --host 0.0.0.0' >> /app/start.sh && \
     chmod +x /app/start.sh
 
 # Default command - start unified web server

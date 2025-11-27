@@ -52,28 +52,28 @@ func TestClaudeProviderInitialization(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			provider, err := NewClaudeProvider(tt.config)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Error("Expected error but got none")
 				}
 				return
 			}
-			
+
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 				return
 			}
-			
+
 			if provider == nil {
 				t.Error("Provider should not be nil")
 				return
 			}
-			
+
 			if provider.GetName() != "claude" {
 				t.Errorf("Expected provider name 'claude', got %s", provider.GetName())
 			}
-			
+
 			if provider.GetVersion() == "" {
 				t.Error("Provider version should not be empty")
 			}
@@ -87,20 +87,20 @@ func TestClaudeChangelogAnalysis(t *testing.T) {
 		if r.URL.Path != "/v1/messages" {
 			t.Errorf("Expected path /v1/messages, got %s", r.URL.Path)
 		}
-		
+
 		if r.Method != "POST" {
 			t.Errorf("Expected POST method, got %s", r.Method)
 		}
-		
+
 		// Check headers
 		if r.Header.Get("x-api-key") == "" {
 			t.Error("Expected x-api-key header")
 		}
-		
+
 		if r.Header.Get("anthropic-version") == "" {
 			t.Error("Expected anthropic-version header")
 		}
-		
+
 		// Mock successful response
 		response := MessageResponse{
 			ID:   "test-id",
@@ -169,7 +169,7 @@ func TestClaudeChangelogAnalysis(t *testing.T) {
 				OutputTokens: 300,
 			},
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	}))
@@ -303,7 +303,7 @@ func TestClaudeCompatibilityPrediction(t *testing.T) {
 				OutputTokens: 250,
 			},
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	}))
@@ -331,7 +331,7 @@ func TestClaudeCompatibilityPrediction(t *testing.T) {
 			LanguageVersion: "18.0.0",
 			BuildSystem:     "webpack",
 		},
-		DependencyGraph: []types.DependencyInfo{
+		DependencyGraph: []types.Dependency{
 			{
 				Name:    "react",
 				Version: "18.0.0",
@@ -432,8 +432,8 @@ func TestClaudeJSONExtraction(t *testing.T) {
 			expected: `{"key": "value"}`,
 		},
 		{
-			name: "JSON in markdown",
-			content: "Here's the analysis:\n```json\n{\"key\": \"value\"}\n```\nThat's it.",
+			name:     "JSON in markdown",
+			content:  "Here's the analysis:\n```json\n{\"key\": \"value\"}\n```\nThat's it.",
 			expected: `{"key": "value"}`,
 		},
 		{
@@ -442,8 +442,8 @@ func TestClaudeJSONExtraction(t *testing.T) {
 			expected: `{"key": "value"}`,
 		},
 		{
-			name: "Complex JSON with nested objects",
-			content: `Analysis: {"outer": {"inner": "value"}, "array": [1, 2, 3]} Done.`,
+			name:     "Complex JSON with nested objects",
+			content:  `Analysis: {"outer": {"inner": "value"}, "array": [1, 2, 3]} Done.`,
 			expected: `{"outer": {"inner": "value"}, "array": [1, 2, 3]}`,
 		},
 	}

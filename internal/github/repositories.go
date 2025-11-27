@@ -3,7 +3,6 @@ package github
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -14,42 +13,42 @@ type RepositoriesService struct {
 
 // Repository represents a GitHub repository
 type Repository struct {
-	ID               int64     `json:"id"`
-	NodeID           string    `json:"node_id"`
-	Name             string    `json:"name"`
-	FullName         string    `json:"full_name"`
-	Owner            *User     `json:"owner"`
-	Private          bool      `json:"private"`
-	HTMLURL          string    `json:"html_url"`
-	Description      *string   `json:"description"`
-	Fork             bool      `json:"fork"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	PushedAt         *time.Time `json:"pushed_at"`
-	GitURL           string    `json:"git_url"`
-	SSHURL           string    `json:"ssh_url"`
-	CloneURL         string    `json:"clone_url"`
-	SVNURL           string    `json:"svn_url"`
-	Homepage         *string   `json:"homepage"`
-	Size             int       `json:"size"`
-	StargazersCount  int       `json:"stargazers_count"`
-	WatchersCount    int       `json:"watchers_count"`
-	Language         *string   `json:"language"`
-	HasIssues        bool      `json:"has_issues"`
-	HasProjects      bool      `json:"has_projects"`
-	HasWiki          bool      `json:"has_wiki"`
-	HasPages         bool      `json:"has_pages"`
-	ForksCount       int       `json:"forks_count"`
-	Archived         bool      `json:"archived"`
-	Disabled         bool      `json:"disabled"`
-	OpenIssuesCount  int       `json:"open_issues_count"`
-	License          *License  `json:"license"`
-	AllowForking     bool      `json:"allow_forking"`
-	IsTemplate       bool      `json:"is_template"`
-	Topics           []string  `json:"topics"`
-	Visibility       string    `json:"visibility"`
-	DefaultBranch    string    `json:"default_branch"`
-	Permissions      *RepoPermissions `json:"permissions,omitempty"`
+	ID              int64            `json:"id"`
+	NodeID          string           `json:"node_id"`
+	Name            string           `json:"name"`
+	FullName        string           `json:"full_name"`
+	Owner           *User            `json:"owner"`
+	Private         bool             `json:"private"`
+	HTMLURL         string           `json:"html_url"`
+	Description     *string          `json:"description"`
+	Fork            bool             `json:"fork"`
+	CreatedAt       time.Time        `json:"created_at"`
+	UpdatedAt       time.Time        `json:"updated_at"`
+	PushedAt        *time.Time       `json:"pushed_at"`
+	GitURL          string           `json:"git_url"`
+	SSHURL          string           `json:"ssh_url"`
+	CloneURL        string           `json:"clone_url"`
+	SVNURL          string           `json:"svn_url"`
+	Homepage        *string          `json:"homepage"`
+	Size            int              `json:"size"`
+	StargazersCount int              `json:"stargazers_count"`
+	WatchersCount   int              `json:"watchers_count"`
+	Language        *string          `json:"language"`
+	HasIssues       bool             `json:"has_issues"`
+	HasProjects     bool             `json:"has_projects"`
+	HasWiki         bool             `json:"has_wiki"`
+	HasPages        bool             `json:"has_pages"`
+	ForksCount      int              `json:"forks_count"`
+	Archived        bool             `json:"archived"`
+	Disabled        bool             `json:"disabled"`
+	OpenIssuesCount int              `json:"open_issues_count"`
+	License         *License         `json:"license"`
+	AllowForking    bool             `json:"allow_forking"`
+	IsTemplate      bool             `json:"is_template"`
+	Topics          []string         `json:"topics"`
+	Visibility      string           `json:"visibility"`
+	DefaultBranch   string           `json:"default_branch"`
+	Permissions     *RepoPermissions `json:"permissions,omitempty"`
 }
 
 // User represents a GitHub user
@@ -76,11 +75,11 @@ type User struct {
 
 // License represents a repository license
 type License struct {
-	Key    string `json:"key"`
-	Name   string `json:"name"`
-	SPDXID string `json:"spdx_id"`
+	Key    string  `json:"key"`
+	Name   string  `json:"name"`
+	SPDXID string  `json:"spdx_id"`
 	URL    *string `json:"url"`
-	NodeID string `json:"node_id"`
+	NodeID string  `json:"node_id"`
 }
 
 // RepoPermissions represents repository permissions
@@ -121,30 +120,30 @@ type RepositoryListOptions struct {
 // Get retrieves a repository by owner and name
 func (r *RepositoriesService) Get(ctx context.Context, owner, repo string) (*Repository, error) {
 	path := fmt.Sprintf("repos/%s/%s", owner, repo)
-	
+
 	req, err := r.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	repository := new(Repository)
 	_, err = r.client.Do(req, repository)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return repository, nil
 }
 
 // List lists repositories for the authenticated user
 func (r *RepositoriesService) List(ctx context.Context, opts *RepositoryListOptions) ([]*Repository, error) {
 	path := "user/repos"
-	
+
 	req, err := r.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add query parameters
 	if opts != nil {
 		q := req.URL.Query()
@@ -171,25 +170,25 @@ func (r *RepositoriesService) List(ctx context.Context, opts *RepositoryListOpti
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-	
+
 	var repositories []*Repository
 	_, err = r.client.Do(req, &repositories)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return repositories, nil
 }
 
 // ListByOrg lists repositories for an organization
 func (r *RepositoriesService) ListByOrg(ctx context.Context, org string, opts *RepositoryListOptions) ([]*Repository, error) {
 	path := fmt.Sprintf("orgs/%s/repos", org)
-	
+
 	req, err := r.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add query parameters
 	if opts != nil {
 		q := req.URL.Query()
@@ -210,25 +209,25 @@ func (r *RepositoriesService) ListByOrg(ctx context.Context, org string, opts *R
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-	
+
 	var repositories []*Repository
 	_, err = r.client.Do(req, &repositories)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return repositories, nil
 }
 
 // GetContent retrieves the contents of a file or directory
 func (r *RepositoriesService) GetContent(ctx context.Context, owner, repo, path string, opts *RepositoryContentGetOptions) (*RepositoryContent, error) {
 	urlPath := fmt.Sprintf("repos/%s/%s/contents/%s", owner, repo, path)
-	
+
 	req, err := r.client.NewRequest(ctx, "GET", urlPath, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add query parameters
 	if opts != nil {
 		q := req.URL.Query()
@@ -237,13 +236,13 @@ func (r *RepositoriesService) GetContent(ctx context.Context, owner, repo, path 
 		}
 		req.URL.RawQuery = q.Encode()
 	}
-	
+
 	content := new(RepositoryContent)
 	_, err = r.client.Do(req, content)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return content, nil
 }
 
@@ -255,18 +254,18 @@ type RepositoryContentGetOptions struct {
 // CreateFile creates a new file in a repository
 func (r *RepositoriesService) CreateFile(ctx context.Context, owner, repo, path string, opts *RepositoryContentFileOptions) (*RepositoryContentResponse, error) {
 	urlPath := fmt.Sprintf("repos/%s/%s/contents/%s", owner, repo, path)
-	
+
 	req, err := r.client.NewRequest(ctx, "PUT", urlPath, opts)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	response := new(RepositoryContentResponse)
 	_, err = r.client.Do(req, response)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return response, nil
 }
 
@@ -278,55 +277,55 @@ func (r *RepositoriesService) UpdateFile(ctx context.Context, owner, repo, path 
 // DeleteFile deletes a file from a repository
 func (r *RepositoriesService) DeleteFile(ctx context.Context, owner, repo, path string, opts *RepositoryContentFileOptions) (*RepositoryContentResponse, error) {
 	urlPath := fmt.Sprintf("repos/%s/%s/contents/%s", owner, repo, path)
-	
+
 	req, err := r.client.NewRequest(ctx, "DELETE", urlPath, opts)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	response := new(RepositoryContentResponse)
 	_, err = r.client.Do(req, response)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return response, nil
 }
 
 // RepositoryContentFileOptions represents options for creating, updating, or deleting files
 type RepositoryContentFileOptions struct {
-	Message   string     `json:"message"`
-	Content   string     `json:"content,omitempty"`   // Base64 encoded content
-	SHA       string     `json:"sha,omitempty"`       // Required for updates and deletes
-	Branch    string     `json:"branch,omitempty"`
+	Message   string        `json:"message"`
+	Content   string        `json:"content,omitempty"` // Base64 encoded content
+	SHA       string        `json:"sha,omitempty"`     // Required for updates and deletes
+	Branch    string        `json:"branch,omitempty"`
 	Author    *CommitAuthor `json:"author,omitempty"`
 	Committer *CommitAuthor `json:"committer,omitempty"`
 }
 
 // CommitAuthor represents the author of a commit
 type CommitAuthor struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name  string     `json:"name"`
+	Email string     `json:"email"`
 	Date  *time.Time `json:"date,omitempty"`
 }
 
 // RepositoryContentResponse represents the response from creating, updating, or deleting files
 type RepositoryContentResponse struct {
 	Content *RepositoryContent `json:"content"`
-	Commit  *Commit           `json:"commit"`
+	Commit  *Commit            `json:"commit"`
 }
 
 // Commit represents a Git commit
 type Commit struct {
-	SHA       string       `json:"sha"`
-	NodeID    string       `json:"node_id"`
-	URL       string       `json:"url"`
-	HTMLURL   string       `json:"html_url"`
+	SHA       string        `json:"sha"`
+	NodeID    string        `json:"node_id"`
+	URL       string        `json:"url"`
+	HTMLURL   string        `json:"html_url"`
 	Author    *CommitAuthor `json:"author"`
 	Committer *CommitAuthor `json:"committer"`
-	Message   string       `json:"message"`
-	Tree      *Tree        `json:"tree"`
-	Parents   []*Commit    `json:"parents"`
+	Message   string        `json:"message"`
+	Tree      *Tree         `json:"tree"`
+	Parents   []*Commit     `json:"parents"`
 }
 
 // Tree represents a Git tree
@@ -341,11 +340,11 @@ func (r *RepositoriesService) GetPermissions(ctx context.Context, owner, repo st
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if repository.Permissions == nil {
 		return &RepoPermissions{}, nil
 	}
-	
+
 	return repository.Permissions, nil
 }
 
@@ -355,7 +354,7 @@ func (r *RepositoriesService) HasWriteAccess(ctx context.Context, owner, repo st
 	if err != nil {
 		return false, err
 	}
-	
+
 	return permissions.Push || permissions.Admin || permissions.Maintain, nil
 }
 
@@ -365,6 +364,6 @@ func (r *RepositoriesService) HasAdminAccess(ctx context.Context, owner, repo st
 	if err != nil {
 		return false, err
 	}
-	
+
 	return permissions.Admin, nil
 }

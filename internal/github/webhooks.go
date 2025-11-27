@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/8tcapital/ai-dep-manager/internal/logger"
 )
 
 // WebhooksService handles webhook-related GitHub API operations
@@ -20,17 +22,17 @@ type WebhooksService struct {
 
 // Webhook represents a GitHub webhook
 type Webhook struct {
-	ID        int64           `json:"id"`
-	URL       string          `json:"url"`
-	TestURL   string          `json:"test_url"`
-	PingURL   string          `json:"ping_url"`
-	Name      string          `json:"name"`
-	Events    []string        `json:"events"`
-	Active    bool            `json:"active"`
-	Config    *WebhookConfig  `json:"config"`
-	UpdatedAt time.Time       `json:"updated_at"`
-	CreatedAt time.Time       `json:"created_at"`
-	AppID     *int64          `json:"app_id,omitempty"`
+	ID        int64          `json:"id"`
+	URL       string         `json:"url"`
+	TestURL   string         `json:"test_url"`
+	PingURL   string         `json:"ping_url"`
+	Name      string         `json:"name"`
+	Events    []string       `json:"events"`
+	Active    bool           `json:"active"`
+	Config    *WebhookConfig `json:"config"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt time.Time      `json:"created_at"`
+	AppID     *int64         `json:"app_id,omitempty"`
 }
 
 // WebhookConfig represents webhook configuration
@@ -128,18 +130,18 @@ type DependencyUpdatePayload struct {
 // Create creates a new webhook
 func (w *WebhooksService) Create(ctx context.Context, owner, repo string, webhook *WebhookRequest) (*Webhook, error) {
 	path := fmt.Sprintf("repos/%s/%s/hooks", owner, repo)
-	
+
 	req, err := w.client.NewRequest(ctx, "POST", path, webhook)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	hook := new(Webhook)
 	_, err = w.client.Do(req, hook)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return hook, nil
 }
 
@@ -163,73 +165,73 @@ func (w *WebhooksService) CreateDependencyWebhook(ctx context.Context, owner, re
 			InsecureSSL: "0",
 		},
 	}
-	
+
 	return w.Create(ctx, owner, repo, webhook)
 }
 
 // List lists webhooks for a repository
 func (w *WebhooksService) List(ctx context.Context, owner, repo string) ([]*Webhook, error) {
 	path := fmt.Sprintf("repos/%s/%s/hooks", owner, repo)
-	
+
 	req, err := w.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var webhooks []*Webhook
 	_, err = w.client.Do(req, &webhooks)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return webhooks, nil
 }
 
 // Get retrieves a specific webhook
 func (w *WebhooksService) Get(ctx context.Context, owner, repo string, id int64) (*Webhook, error) {
 	path := fmt.Sprintf("repos/%s/%s/hooks/%d", owner, repo, id)
-	
+
 	req, err := w.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	webhook := new(Webhook)
 	_, err = w.client.Do(req, webhook)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return webhook, nil
 }
 
 // Update updates a webhook
 func (w *WebhooksService) Update(ctx context.Context, owner, repo string, id int64, webhook *WebhookRequest) (*Webhook, error) {
 	path := fmt.Sprintf("repos/%s/%s/hooks/%d", owner, repo, id)
-	
+
 	req, err := w.client.NewRequest(ctx, "PATCH", path, webhook)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	hook := new(Webhook)
 	_, err = w.client.Do(req, hook)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return hook, nil
 }
 
 // Delete deletes a webhook
 func (w *WebhooksService) Delete(ctx context.Context, owner, repo string, id int64) error {
 	path := fmt.Sprintf("repos/%s/%s/hooks/%d", owner, repo, id)
-	
+
 	req, err := w.client.NewRequest(ctx, "DELETE", path, nil)
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = w.client.Do(req, nil)
 	return err
 }
@@ -237,12 +239,12 @@ func (w *WebhooksService) Delete(ctx context.Context, owner, repo string, id int
 // Ping pings a webhook
 func (w *WebhooksService) Ping(ctx context.Context, owner, repo string, id int64) error {
 	path := fmt.Sprintf("repos/%s/%s/hooks/%d/pings", owner, repo, id)
-	
+
 	req, err := w.client.NewRequest(ctx, "POST", path, nil)
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = w.client.Do(req, nil)
 	return err
 }
@@ -250,12 +252,12 @@ func (w *WebhooksService) Ping(ctx context.Context, owner, repo string, id int64
 // Test tests a webhook
 func (w *WebhooksService) Test(ctx context.Context, owner, repo string, id int64) error {
 	path := fmt.Sprintf("repos/%s/%s/hooks/%d/tests", owner, repo, id)
-	
+
 	req, err := w.client.NewRequest(ctx, "POST", path, nil)
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = w.client.Do(req, nil)
 	return err
 }
@@ -265,15 +267,15 @@ func ValidatePayload(payload []byte, signature string, secret string) bool {
 	if secret == "" {
 		return true // No secret configured, skip validation
 	}
-	
+
 	// Remove "sha256=" prefix if present
 	signature = strings.TrimPrefix(signature, "sha256=")
-	
+
 	// Calculate expected signature
 	mac := hmac.New(sha256.New, []byte(secret))
 	mac.Write(payload)
 	expectedSignature := hex.EncodeToString(mac.Sum(nil))
-	
+
 	// Compare signatures
 	return hmac.Equal([]byte(signature), []byte(expectedSignature))
 }
@@ -287,28 +289,28 @@ func ParseWebhookPayload(eventType string, payload []byte) (interface{}, error) 
 			return nil, fmt.Errorf("failed to parse push payload: %w", err)
 		}
 		return &pushPayload, nil
-		
+
 	case "pull_request":
 		var prPayload PullRequestPayload
 		if err := json.Unmarshal(payload, &prPayload); err != nil {
 			return nil, fmt.Errorf("failed to parse pull request payload: %w", err)
 		}
 		return &prPayload, nil
-		
+
 	case "issues":
 		var issuesPayload IssuesPayload
 		if err := json.Unmarshal(payload, &issuesPayload); err != nil {
 			return nil, fmt.Errorf("failed to parse issues payload: %w", err)
 		}
 		return &issuesPayload, nil
-		
+
 	case "repository_vulnerability_alert", "dependabot_alert", "security_advisory":
 		var dependencyPayload DependencyUpdatePayload
 		if err := json.Unmarshal(payload, &dependencyPayload); err != nil {
 			return nil, fmt.Errorf("failed to parse dependency payload: %w", err)
 		}
 		return &dependencyPayload, nil
-		
+
 	default:
 		// Generic payload for unknown event types
 		var genericPayload WebhookPayload
@@ -351,21 +353,21 @@ func (ws *WebhookServer) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	
+
 	// Validate signature
 	signature := r.Header.Get("X-Hub-Signature-256")
 	if !ValidatePayload(payload, signature, ws.secret) {
 		http.Error(w, "Invalid signature", http.StatusUnauthorized)
 		return
 	}
-	
+
 	// Get event type
 	eventType := r.Header.Get("X-GitHub-Event")
 	if eventType == "" {
 		http.Error(w, "Missing event type", http.StatusBadRequest)
 		return
 	}
-	
+
 	// Parse payload
 	parsedPayload, err := ParseWebhookPayload(eventType, payload)
 	if err != nil {
@@ -373,7 +375,7 @@ func (ws *WebhookServer) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse payload", http.StatusBadRequest)
 		return
 	}
-	
+
 	// Find and execute handler
 	handler, exists := ws.handlers[eventType]
 	if !exists {
@@ -386,14 +388,14 @@ func (ws *WebhookServer) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// Execute handler
 	if err := handler(eventType, parsedPayload); err != nil {
 		logger.Error("Webhook handler failed for event %s: %v", eventType, err)
 		http.Error(w, "Handler failed", http.StatusInternalServerError)
 		return
 	}
-	
+
 	logger.Debug("Successfully processed webhook event: %s", eventType)
 	w.WriteHeader(http.StatusOK)
 }
@@ -406,12 +408,12 @@ func (ws *WebhookServer) Start(addr string) error {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
-	
+
 	ws.server = &http.Server{
 		Addr:    addr,
 		Handler: mux,
 	}
-	
+
 	logger.Info("Starting webhook server on %s", addr)
 	return ws.server.ListenAndServe()
 }
@@ -421,7 +423,7 @@ func (ws *WebhookServer) Stop(ctx context.Context) error {
 	if ws.server == nil {
 		return nil
 	}
-	
+
 	logger.Info("Stopping webhook server")
 	return ws.server.Shutdown(ctx)
 }
@@ -432,13 +434,13 @@ func (w *WebhooksService) FindDependencyWebhook(ctx context.Context, owner, repo
 	if err != nil {
 		return nil, err
 	}
-	
+
 	for _, webhook := range webhooks {
 		if webhook.Config != nil && webhook.Config.URL == webhookURL {
 			return webhook, nil
 		}
 	}
-	
+
 	return nil, nil // Not found
 }
 
@@ -449,12 +451,12 @@ func (w *WebhooksService) EnsureDependencyWebhook(ctx context.Context, owner, re
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if existing != nil {
 		logger.Info("Dependency webhook already exists for %s/%s", owner, repo)
 		return existing, nil
 	}
-	
+
 	// Create new webhook
 	logger.Info("Creating dependency webhook for %s/%s", owner, repo)
 	return w.CreateDependencyWebhook(ctx, owner, repo, webhookURL, secret)

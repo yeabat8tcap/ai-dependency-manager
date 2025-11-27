@@ -134,7 +134,7 @@ func (o *OpenAIProvider) AnalyzeChangelog(ctx context.Context, request *types.Ch
 	// Convert to our response format
 	result := o.convertToChangelogResponse(request, &analysisResult)
 
-	logger.Debug("OpenAI changelog analysis complete for %s: risk=%s, confidence=%.2f", 
+	logger.Debug("OpenAI changelog analysis complete for %s: risk=%s, confidence=%.2f",
 		request.PackageName, result.RiskLevel, result.Confidence)
 
 	return result, nil
@@ -183,7 +183,7 @@ func (o *OpenAIProvider) AnalyzeVersionDiff(ctx context.Context, request *types.
 	// Convert to our response format
 	result := o.convertToVersionDiffResponse(request, &diffResult)
 
-	logger.Debug("OpenAI version diff analysis complete for %s: risk=%s, confidence=%.2f", 
+	logger.Debug("OpenAI version diff analysis complete for %s: risk=%s, confidence=%.2f",
 		request.PackageName, result.RiskLevel, result.Confidence)
 
 	return result, nil
@@ -232,7 +232,7 @@ func (o *OpenAIProvider) PredictCompatibility(ctx context.Context, request *type
 	// Convert to our response format
 	result := o.convertToCompatibilityResponse(request, &compatResult)
 
-	logger.Debug("OpenAI compatibility prediction complete for %s: score=%.2f, confidence=%.2f", 
+	logger.Debug("OpenAI compatibility prediction complete for %s: score=%.2f, confidence=%.2f",
 		request.PackageName, result.CompatibilityScore, result.Confidence)
 
 	return result, nil
@@ -281,7 +281,7 @@ func (o *OpenAIProvider) ClassifyUpdate(ctx context.Context, request *types.Upda
 	// Convert to our response format
 	result := o.convertToUpdateClassificationResponse(request, &classifyResult)
 
-	logger.Debug("OpenAI update classification complete for %s: type=%s, priority=%s", 
+	logger.Debug("OpenAI update classification complete for %s: type=%s, priority=%s",
 		request.PackageName, result.UpdateType, result.Priority)
 
 	return result, nil

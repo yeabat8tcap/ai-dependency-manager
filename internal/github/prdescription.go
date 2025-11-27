@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
 )
 
 // PRDescriptionGenerator handles automated PR description generation
@@ -15,7 +13,7 @@ type PRDescriptionGenerator struct {
 }
 
 // NewPRDescriptionGenerator creates a new PR description generator
-func NewPRDescriptionGenerator(aiManager *ai.Manager) *PRDescriptionGenerator {
+func NewPRDescriptionGenerator(aiManager AIManager) *PRDescriptionGenerator {
 	return &PRDescriptionGenerator{
 		aiManager: aiManager,
 	}
@@ -77,46 +75,47 @@ func (pdg *PRDescriptionGenerator) GenerateDescription(ctx context.Context, requ
 
 // ChangeAnalysis represents the analysis of changes in patches
 type ChangeAnalysis struct {
-	TotalFiles       int                    `json:"total_files"`
-	ModifiedFiles    []string               `json:"modified_files"`
-	AddedFiles       []string               `json:"added_files"`
-	DeletedFiles     []string               `json:"deleted_files"`
-	CodeChanges      []*CodeChange          `json:"code_changes"`
-	ConfigChanges    []*ConfigChange        `json:"config_changes"`
-	TestChanges      []*TestChange          `json:"test_changes"`
+	TotalFiles           int                    `json:"total_files"`
+	ModifiedFiles        []string               `json:"modified_files"`
+	AddedFiles           []string               `json:"added_files"`
+	DeletedFiles         []string               `json:"deleted_files"`
+	CodeChanges          []*CodeChange          `json:"code_changes"`
+	ConfigChanges        []*ConfigChange        `json:"config_changes"`
+	TestChanges          []*TestChange          `json:"test_changes"`
 	DocumentationChanges []*DocumentationChange `json:"documentation_changes"`
-	Complexity       *ComplexityAnalysis    `json:"complexity"`
-	Impact           *ImpactAnalysis        `json:"impact"`
+	Complexity           *ComplexityAnalysis    `json:"complexity"`
+	Impact               *ImpactAnalysis        `json:"impact"`
+	Dependencies         []*DependencyUpdate    `json:"dependencies"`
 }
 
 // CodeChange represents a code change
 type CodeChange struct {
-	File        string  `json:"file"`
-	Type        string  `json:"type"` // "function", "class", "variable", "import"
-	Name        string  `json:"name"`
-	Action      string  `json:"action"` // "added", "modified", "deleted"
-	LinesAdded  int     `json:"lines_added"`
-	LinesRemoved int    `json:"lines_removed"`
-	Complexity  int     `json:"complexity"`
-	Confidence  float64 `json:"confidence"`
+	File         string  `json:"file"`
+	Type         string  `json:"type"` // "function", "class", "variable", "import"
+	Name         string  `json:"name"`
+	Action       string  `json:"action"` // "added", "modified", "deleted"
+	LinesAdded   int     `json:"lines_added"`
+	LinesRemoved int     `json:"lines_removed"`
+	Complexity   int     `json:"complexity"`
+	Confidence   float64 `json:"confidence"`
 }
 
 // ConfigChange represents a configuration change
 type ConfigChange struct {
-	File        string                 `json:"file"`
-	Type        string                 `json:"type"` // "package.json", "requirements.txt", etc.
-	Changes     map[string]interface{} `json:"changes"`
-	Impact      string                 `json:"impact"`
+	File    string                 `json:"file"`
+	Type    string                 `json:"type"` // "package.json", "requirements.txt", etc.
+	Changes map[string]interface{} `json:"changes"`
+	Impact  string                 `json:"impact"`
 }
 
 // TestChange represents a test-related change
 type TestChange struct {
-	File        string `json:"file"`
-	Type        string `json:"type"` // "unit", "integration", "e2e"
-	Action      string `json:"action"`
-	TestsAdded  int    `json:"tests_added"`
-	TestsModified int  `json:"tests_modified"`
-	Coverage    string `json:"coverage"`
+	File          string `json:"file"`
+	Type          string `json:"type"` // "unit", "integration", "e2e"
+	Action        string `json:"action"`
+	TestsAdded    int    `json:"tests_added"`
+	TestsModified int    `json:"tests_modified"`
+	Coverage      string `json:"coverage"`
 }
 
 // DocumentationChange represents a documentation change
@@ -129,43 +128,56 @@ type DocumentationChange struct {
 
 // ComplexityAnalysis analyzes the complexity of changes
 type ComplexityAnalysis struct {
-	OverallComplexity string  `json:"overall_complexity"` // "low", "medium", "high"
-	CyclomaticComplexity int  `json:"cyclomatic_complexity"`
-	CognitiveComplexity  int  `json:"cognitive_complexity"`
-	LinesOfCode         int   `json:"lines_of_code"`
-	FilesAffected       int   `json:"files_affected"`
-	Score               float64 `json:"score"`
+	OverallComplexity    string  `json:"overall_complexity"` // "low", "medium", "high"
+	CyclomaticComplexity int     `json:"cyclomatic_complexity"`
+	CognitiveComplexity  int     `json:"cognitive_complexity"`
+	LinesOfCode          int     `json:"lines_of_code"`
+	FilesAffected        int     `json:"files_affected"`
+	Score                float64 `json:"score"`
 }
 
 // ImpactAnalysis analyzes the impact of changes
 type ImpactAnalysis struct {
-	Scope           string   `json:"scope"` // "local", "module", "system", "global"
-	AffectedModules []string `json:"affected_modules"`
-	UserFacing      bool     `json:"user_facing"`
-	APIChanges      bool     `json:"api_changes"`
-	DatabaseChanges bool     `json:"database_changes"`
-	ConfigChanges   bool     `json:"config_changes"`
-	SecurityImpact  string   `json:"security_impact"`
-	PerformanceImpact string `json:"performance_impact"`
+	Scope             string   `json:"scope"` // "local", "module", "system", "global"
+	AffectedModules   []string `json:"affected_modules"`
+	UserFacing        bool     `json:"user_facing"`
+	APIChanges        bool     `json:"api_changes"`
+	DatabaseChanges   bool     `json:"database_changes"`
+	ConfigChanges     bool     `json:"config_changes"`
+	SecurityImpact    string   `json:"security_impact"`
+	PerformanceImpact string   `json:"performance_impact"`
 }
 
 // analyzeChanges analyzes patches and dependencies to understand the changes
 func (pdg *PRDescriptionGenerator) analyzeChanges(ctx context.Context, patches []*Patch, dependencies []*DependencyUpdate) (*ChangeAnalysis, error) {
 	analysis := &ChangeAnalysis{
+		TotalFiles:           len(patches), // Approximation
 		ModifiedFiles:        []string{},
-		AddedFiles:          []string{},
-		DeletedFiles:        []string{},
-		CodeChanges:         []*CodeChange{},
-		ConfigChanges:       []*ConfigChange{},
-		TestChanges:         []*TestChange{},
+		AddedFiles:           []string{},
+		DeletedFiles:         []string{},
+		CodeChanges:          []*CodeChange{},
+		ConfigChanges:        []*ConfigChange{},
+		TestChanges:          []*TestChange{},
 		DocumentationChanges: []*DocumentationChange{},
+		Dependencies:         dependencies,
+		Complexity: &ComplexityAnalysis{
+			OverallComplexity: "low",
+			Score:             1.0,
+		},
+		Impact: &ImpactAnalysis{
+			Scope:      "minor",
+			APIChanges: false,
+		},
 	}
 
 	// Analyze file patches
 	for _, patch := range patches {
-		analysis.TotalFiles++
-		
+		// analysis.TotalFiles++ // This is now handled by len(patches) above if patch represents a file.
+		// If patch represents a group of file patches, this logic needs adjustment.
+		// Assuming patch.FilePatches are the actual files.
+
 		for _, filePatch := range patch.FilePatches {
+			analysis.TotalFiles++ // Increment for each actual file patch
 			switch filePatch.Type {
 			case "create":
 				analysis.AddedFiles = append(analysis.AddedFiles, filePatch.Path)
@@ -174,20 +186,19 @@ func (pdg *PRDescriptionGenerator) analyzeChanges(ctx context.Context, patches [
 			default:
 				analysis.ModifiedFiles = append(analysis.ModifiedFiles, filePatch.Path)
 			}
+		}
 
-			// Categorize changes
-			if pdg.isTestFile(filePatch.Path) {
-				testChange := pdg.analyzeTestChange(filePatch)
-				analysis.TestChanges = append(analysis.TestChanges, testChange)
-			} else if pdg.isConfigFile(filePatch.Path) {
-				configChange := pdg.analyzeConfigChange(filePatch)
-				analysis.ConfigChanges = append(analysis.ConfigChanges, configChange)
-			} else if pdg.isDocumentationFile(filePatch.Path) {
-				docChange := pdg.analyzeDocumentationChange(filePatch)
-				analysis.DocumentationChanges = append(analysis.DocumentationChanges, docChange)
+		// Analyze file changes
+		for i := range patch.FilePatches {
+			filePatch := &patch.FilePatches[i]
+			if strings.Contains(filePatch.Path, "test") || strings.Contains(filePatch.Path, "_test.go") {
+				pdg.analyzeTestChange(filePatch, analysis)
+			} else if strings.Contains(filePatch.Path, "config") || strings.Contains(filePatch.Path, ".json") || strings.Contains(filePatch.Path, ".yaml") {
+				pdg.analyzeConfigChange(filePatch, analysis)
+			} else if strings.Contains(filePatch.Path, "README") || strings.Contains(filePatch.Path, "docs/") {
+				pdg.analyzeDocumentationChange(filePatch, analysis)
 			} else {
-				codeChange := pdg.analyzeCodeChange(filePatch)
-				analysis.CodeChanges = append(analysis.CodeChanges, codeChange)
+				pdg.analyzeCodeChange(filePatch, analysis)
 			}
 		}
 	}
@@ -204,7 +215,7 @@ func (pdg *PRDescriptionGenerator) analyzeChanges(ctx context.Context, patches [
 // generateSummary generates a summary using AI
 func (pdg *PRDescriptionGenerator) generateSummary(ctx context.Context, analysis *ChangeAnalysis) (string, error) {
 	prompt := pdg.buildSummaryPrompt(analysis)
-	
+
 	response, err := pdg.aiManager.AnalyzeChangelog(ctx, prompt)
 	if err != nil {
 		// Fallback to heuristic summary
@@ -238,19 +249,19 @@ Please write a concise, professional summary (2-3 sentences) that explains:
 
 Focus on the business value and technical significance.
 `, analysis.TotalFiles, analysis.ModifiedFiles, analysis.AddedFiles, analysis.DeletedFiles,
-   len(analysis.CodeChanges), len(analysis.ConfigChanges), len(analysis.TestChanges), 
-   len(analysis.DocumentationChanges), analysis.Complexity.OverallComplexity, analysis.Impact.Scope)
+		len(analysis.CodeChanges), len(analysis.ConfigChanges), len(analysis.TestChanges),
+		len(analysis.DocumentationChanges), analysis.Complexity.OverallComplexity, analysis.Impact.Scope)
 }
 
 // generateHeuristicSummary generates a summary using heuristics
 func (pdg *PRDescriptionGenerator) generateHeuristicSummary(analysis *ChangeAnalysis) string {
 	if len(analysis.Dependencies) > 0 {
-		return fmt.Sprintf("Updates %d dependencies and modifies %d files to maintain compatibility and security.", 
+		return fmt.Sprintf("Updates %d dependencies and modifies %d files to maintain compatibility and security.",
 			len(analysis.Dependencies), analysis.TotalFiles)
 	}
 
 	if len(analysis.CodeChanges) > 0 {
-		return fmt.Sprintf("Implements code changes across %d files with %s complexity impact.", 
+		return fmt.Sprintf("Implements code changes across %d files with %s complexity impact.",
 			len(analysis.ModifiedFiles), analysis.Complexity.OverallComplexity)
 	}
 
@@ -275,12 +286,17 @@ func (pdg *PRDescriptionGenerator) generateChangeDescriptions(patches []*Patch) 
 	var changes []*ChangeDescription
 
 	for _, patch := range patches {
-		for _, filePatch := range patch.FilePatches {
+		for i := range patch.FilePatches {
+			filePatch := &patch.FilePatches[i]
+			changeType := pdg.determineChangeType(filePatch)
+			description := pdg.generateChangeDescription(filePatch)
+			impact := pdg.assessChangeImpact(filePatch)
+
 			change := &ChangeDescription{
-				Type:        pdg.determineChangeType(filePatch),
+				Type:        changeType,
 				File:        filePatch.Path,
-				Description: pdg.generateChangeDescription(filePatch),
-				Impact:      pdg.assessChangeImpact(filePatch),
+				Description: description,
+				Impact:      impact,
 				Confidence:  filePatch.Confidence,
 			}
 			changes = append(changes, change)
@@ -375,19 +391,19 @@ func (pdg *PRDescriptionGenerator) generateTestingNotes(analysis *ChangeAnalysis
 
 	if riskAssessment.TestingRequired {
 		notes.WriteString("**Testing Required**\n\n")
-		
+
 		if len(analysis.TestChanges) > 0 {
 			notes.WriteString("- Review updated test cases\n")
 		}
-		
+
 		if analysis.Impact.APIChanges {
 			notes.WriteString("- Test API compatibility\n")
 		}
-		
+
 		if analysis.Impact.DatabaseChanges {
 			notes.WriteString("- Test database migrations\n")
 		}
-		
+
 		if riskAssessment.OverallRisk == "high" {
 			notes.WriteString("- Perform integration testing\n")
 			notes.WriteString("- Consider staging environment testing\n")
@@ -404,20 +420,20 @@ func (pdg *PRDescriptionGenerator) generateReviewGuidance(analysis *ChangeAnalys
 	var guidance strings.Builder
 
 	guidance.WriteString("**Review Focus Areas**\n\n")
-	
+
 	if len(analysis.CodeChanges) > 0 {
 		guidance.WriteString("- Code quality and maintainability\n")
 	}
-	
+
 	if analysis.Complexity.OverallComplexity == "high" {
 		guidance.WriteString("- Logic correctness and edge cases\n")
 	}
-	
+
 	if riskAssessment.OverallRisk == "high" {
 		guidance.WriteString("- Security implications\n")
 		guidance.WriteString("- Performance impact\n")
 	}
-	
+
 	if analysis.Impact.APIChanges {
 		guidance.WriteString("- API design and backward compatibility\n")
 	}
@@ -432,10 +448,10 @@ func (pdg *PRDescriptionGenerator) identifyBreakingChanges(analysis *ChangeAnaly
 	// Check for API breaking changes
 	if analysis.Impact.APIChanges {
 		breakingChanges = append(breakingChanges, &BreakingChange{
-			Type:        "api",
-			Description: "API changes detected that may affect existing integrations",
-			Migration:   "Review API documentation and update client code accordingly",
-			Affected:    []string{"API clients", "integrations"},
+			Type:          "api",
+			Description:   "API changes detected that may affect existing integrations",
+			MigrationPath: "Review API documentation and update client code accordingly",
+			AffectedAPIs:  []string{"API clients", "integrations"},
 		})
 	}
 
@@ -443,10 +459,10 @@ func (pdg *PRDescriptionGenerator) identifyBreakingChanges(analysis *ChangeAnaly
 	for _, dep := range dependencies {
 		if pdg.isMajorVersionChange(dep.CurrentVersion, dep.LatestVersion) {
 			breakingChanges = append(breakingChanges, &BreakingChange{
-				Type:        "dependency",
-				Description: fmt.Sprintf("Major version update for %s may introduce breaking changes", dep.Name),
-				Migration:   "Review changelog and update code to handle API changes",
-				Affected:    []string{fmt.Sprintf("Code using %s", dep.Name)},
+				Type:          "dependency",
+				Description:   fmt.Sprintf("Major version update for %s may introduce breaking changes", dep.Name),
+				MigrationPath: "Review changelog and update code to handle API changes",
+				AffectedAPIs:  []string{fmt.Sprintf("Code using %s", dep.Name)},
 			})
 		}
 	}
@@ -485,8 +501,8 @@ func (pdg *PRDescriptionGenerator) generateChecklist(riskAssessment *RiskAssessm
 // Helper methods for analysis
 
 func (pdg *PRDescriptionGenerator) isTestFile(path string) bool {
-	return strings.Contains(path, "test") || strings.Contains(path, "spec") || 
-		   strings.HasSuffix(path, "_test.go") || strings.HasSuffix(path, ".test.js")
+	return strings.Contains(path, "test") || strings.Contains(path, "spec") ||
+		strings.HasSuffix(path, "_test.go") || strings.HasSuffix(path, ".test.js")
 }
 
 func (pdg *PRDescriptionGenerator) isConfigFile(path string) bool {
@@ -500,12 +516,12 @@ func (pdg *PRDescriptionGenerator) isConfigFile(path string) bool {
 }
 
 func (pdg *PRDescriptionGenerator) isDocumentationFile(path string) bool {
-	return strings.HasSuffix(path, ".md") || strings.HasSuffix(path, ".rst") || 
-		   strings.Contains(path, "doc") || strings.Contains(path, "README")
+	return strings.HasSuffix(path, ".md") || strings.HasSuffix(path, ".rst") ||
+		strings.Contains(path, "doc") || strings.Contains(path, "README")
 }
 
-func (pdg *PRDescriptionGenerator) analyzeTestChange(filePatch *FilePatch) *TestChange {
-	return &TestChange{
+func (pdg *PRDescriptionGenerator) analyzeTestChange(filePatch *FilePatch, analysis *ChangeAnalysis) {
+	testChange := &TestChange{
 		File:          filePatch.Path,
 		Type:          "unit", // Simplified
 		Action:        filePatch.Type,
@@ -513,30 +529,33 @@ func (pdg *PRDescriptionGenerator) analyzeTestChange(filePatch *FilePatch) *Test
 		TestsModified: 0,
 		Coverage:      "unknown",
 	}
+	analysis.TestChanges = append(analysis.TestChanges, testChange)
 }
 
-func (pdg *PRDescriptionGenerator) analyzeConfigChange(filePatch *FilePatch) *ConfigChange {
-	return &ConfigChange{
+func (pdg *PRDescriptionGenerator) analyzeConfigChange(filePatch *FilePatch, analysis *ChangeAnalysis) {
+	configChange := &ConfigChange{
 		File:    filePatch.Path,
 		Type:    pdg.getConfigType(filePatch.Path),
 		Changes: map[string]interface{}{"changes": len(filePatch.Changes)},
 		Impact:  "medium",
 	}
+	analysis.ConfigChanges = append(analysis.ConfigChanges, configChange)
 }
 
-func (pdg *PRDescriptionGenerator) analyzeDocumentationChange(filePatch *FilePatch) *DocumentationChange {
-	return &DocumentationChange{
+func (pdg *PRDescriptionGenerator) analyzeDocumentationChange(filePatch *FilePatch, analysis *ChangeAnalysis) {
+	docChange := &DocumentationChange{
 		File:        filePatch.Path,
 		Type:        "readme",
 		Action:      filePatch.Type,
 		Description: "Documentation updated",
 	}
+	analysis.DocumentationChanges = append(analysis.DocumentationChanges, docChange)
 }
 
-func (pdg *PRDescriptionGenerator) analyzeCodeChange(filePatch *FilePatch) *CodeChange {
+func (pdg *PRDescriptionGenerator) analyzeCodeChange(filePatch *FilePatch, analysis *ChangeAnalysis) {
 	linesAdded := 0
 	linesRemoved := 0
-	
+
 	for _, change := range filePatch.Changes {
 		if change.Type == "add" {
 			linesAdded++
@@ -545,7 +564,7 @@ func (pdg *PRDescriptionGenerator) analyzeCodeChange(filePatch *FilePatch) *Code
 		}
 	}
 
-	return &CodeChange{
+	codeChange := &CodeChange{
 		File:         filePatch.Path,
 		Type:         "function", // Simplified
 		Name:         "unknown",
@@ -555,6 +574,7 @@ func (pdg *PRDescriptionGenerator) analyzeCodeChange(filePatch *FilePatch) *Code
 		Complexity:   len(filePatch.Changes),
 		Confidence:   filePatch.Confidence,
 	}
+	analysis.CodeChanges = append(analysis.CodeChanges, codeChange)
 }
 
 func (pdg *PRDescriptionGenerator) analyzeComplexity(analysis *ChangeAnalysis) *ComplexityAnalysis {
@@ -575,9 +595,9 @@ func (pdg *PRDescriptionGenerator) analyzeComplexity(analysis *ChangeAnalysis) *
 		OverallComplexity:    complexity,
 		CyclomaticComplexity: totalLines / 10, // Simplified
 		CognitiveComplexity:  totalLines / 15, // Simplified
-		LinesOfCode:         totalLines,
-		FilesAffected:       analysis.TotalFiles,
-		Score:               float64(totalLines) / 100.0,
+		LinesOfCode:          totalLines,
+		FilesAffected:        analysis.TotalFiles,
+		Score:                float64(totalLines) / 100.0,
 	}
 }
 

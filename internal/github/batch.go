@@ -37,31 +37,31 @@ type BatchConfig struct {
 	BatchTimeout         time.Duration `json:"batch_timeout"`
 	RetryAttempts        int           `json:"retry_attempts"`
 	RetryDelay           time.Duration `json:"retry_delay"`
-	GroupingStrategy     string        `json:"grouping_strategy"`     // "by_type", "by_risk", "by_project", "mixed"
-	ProcessingMode       string        `json:"processing_mode"`       // "sequential", "parallel", "adaptive"
-	ConflictResolution   string        `json:"conflict_resolution"`   // "abort", "skip", "resolve"
+	GroupingStrategy     string        `json:"grouping_strategy"`   // "by_type", "by_risk", "by_project", "mixed"
+	ProcessingMode       string        `json:"processing_mode"`     // "sequential", "parallel", "adaptive"
+	ConflictResolution   string        `json:"conflict_resolution"` // "abort", "skip", "resolve"
 	NotificationChannels []string      `json:"notification_channels"`
 	ReportingEnabled     bool          `json:"reporting_enabled"`
 }
 
 // BatchJob represents a batch processing job
 type BatchJob struct {
-	ID                string                    `json:"id"`
-	Name              string                    `json:"name"`
-	Description       string                    `json:"description"`
-	Status            string                    `json:"status"`
-	Priority          string                    `json:"priority"`
-	Updates           []*DependencyUpdate       `json:"updates"`
-	Groups            []*UpdateGroup            `json:"groups"`
-	Results           []*BatchUpdateResult      `json:"results"`
-	Progress          *BatchProgress            `json:"progress"`
-	Configuration     *BatchJobConfig           `json:"configuration"`
-	Timeline          []*BatchEvent             `json:"timeline"`
-	CreatedAt         time.Time                 `json:"created_at"`
-	StartedAt         *time.Time                `json:"started_at"`
-	CompletedAt       *time.Time                `json:"completed_at"`
-	EstimatedDuration time.Duration             `json:"estimated_duration"`
-	ActualDuration    time.Duration             `json:"actual_duration"`
+	ID                string               `json:"id"`
+	Name              string               `json:"name"`
+	Description       string               `json:"description"`
+	Status            string               `json:"status"`
+	Priority          string               `json:"priority"`
+	Updates           []*DependencyUpdate  `json:"updates"`
+	Groups            []*UpdateGroup       `json:"groups"`
+	Results           []*BatchUpdateResult `json:"results"`
+	Progress          *BatchProgress       `json:"progress"`
+	Configuration     *BatchJobConfig      `json:"configuration"`
+	Timeline          []*BatchEvent        `json:"timeline"`
+	CreatedAt         time.Time            `json:"created_at"`
+	StartedAt         *time.Time           `json:"started_at"`
+	CompletedAt       *time.Time           `json:"completed_at"`
+	EstimatedDuration time.Duration        `json:"estimated_duration"`
+	ActualDuration    time.Duration        `json:"actual_duration"`
 }
 
 // UpdateGroup represents a group of related updates
@@ -78,45 +78,45 @@ type UpdateGroup struct {
 
 // BatchUpdateResult represents the result of processing a single update
 type BatchUpdateResult struct {
-	UpdateID        string                 `json:"update_id"`
-	Repository      string                 `json:"repository"`
-	DependencyName  string                 `json:"dependency_name"`
-	Status          string                 `json:"status"` // "success", "failed", "skipped", "conflict"
-	PullRequestURL  string                 `json:"pull_request_url"`
-	PatchesApplied  int                    `json:"patches_applied"`
-	ConflictsFound  int                    `json:"conflicts_found"`
-	TestResults     map[string]interface{} `json:"test_results"`
-	ErrorMessage    string                 `json:"error_message"`
-	ProcessingTime  time.Duration          `json:"processing_time"`
-	Metadata        map[string]interface{} `json:"metadata"`
-	ProcessedAt     time.Time              `json:"processed_at"`
+	UpdateID       string                 `json:"update_id"`
+	Repository     string                 `json:"repository"`
+	DependencyName string                 `json:"dependency_name"`
+	Status         string                 `json:"status"` // "success", "failed", "skipped", "conflict"
+	PullRequestURL string                 `json:"pull_request_url"`
+	PatchesApplied int                    `json:"patches_applied"`
+	ConflictsFound int                    `json:"conflicts_found"`
+	TestResults    map[string]interface{} `json:"test_results"`
+	ErrorMessage   string                 `json:"error_message"`
+	ProcessingTime time.Duration          `json:"processing_time"`
+	Metadata       map[string]interface{} `json:"metadata"`
+	ProcessedAt    time.Time              `json:"processed_at"`
 }
 
 // BatchProgress tracks the progress of a batch job
 type BatchProgress struct {
-	TotalUpdates      int     `json:"total_updates"`
-	ProcessedUpdates  int     `json:"processed_updates"`
-	SuccessfulUpdates int     `json:"successful_updates"`
-	FailedUpdates     int     `json:"failed_updates"`
-	SkippedUpdates    int     `json:"skipped_updates"`
-	PercentComplete   float64 `json:"percent_complete"`
+	TotalUpdates      int           `json:"total_updates"`
+	ProcessedUpdates  int           `json:"processed_updates"`
+	SuccessfulUpdates int           `json:"successful_updates"`
+	FailedUpdates     int           `json:"failed_updates"`
+	SkippedUpdates    int           `json:"skipped_updates"`
+	PercentComplete   float64       `json:"percent_complete"`
 	EstimatedTimeLeft time.Duration `json:"estimated_time_left"`
-	CurrentPhase      string  `json:"current_phase"`
-	LastUpdated       time.Time `json:"last_updated"`
+	CurrentPhase      string        `json:"current_phase"`
+	LastUpdated       time.Time     `json:"last_updated"`
 }
 
 // BatchJobConfig defines configuration for a specific batch job
 type BatchJobConfig struct {
-	GroupingStrategy     string        `json:"grouping_strategy"`
-	ProcessingMode       string        `json:"processing_mode"`
-	MaxConcurrency       int           `json:"max_concurrency"`
-	ConflictResolution   string        `json:"conflict_resolution"`
-	CreatePRs            bool          `json:"create_prs"`
-	PRTemplate           string        `json:"pr_template"`
-	AutoMerge            bool          `json:"auto_merge"`
-	NotifyOnCompletion   bool          `json:"notify_on_completion"`
-	TestingRequired      bool          `json:"testing_required"`
-	ApprovalRequired     bool          `json:"approval_required"`
+	GroupingStrategy   string `json:"grouping_strategy"`
+	ProcessingMode     string `json:"processing_mode"`
+	MaxConcurrency     int    `json:"max_concurrency"`
+	ConflictResolution string `json:"conflict_resolution"`
+	CreatePRs          bool   `json:"create_prs"`
+	PRTemplate         string `json:"pr_template"`
+	AutoMerge          bool   `json:"auto_merge"`
+	NotifyOnCompletion bool   `json:"notify_on_completion"`
+	TestingRequired    bool   `json:"testing_required"`
+	ApprovalRequired   bool   `json:"approval_required"`
 }
 
 // BatchEvent represents an event in the batch processing timeline
@@ -142,9 +142,9 @@ func (bp *BatchProcessor) CreateBatchJob(ctx context.Context, updates []*Depende
 		Groups:      []*UpdateGroup{},
 		Results:     []*BatchUpdateResult{},
 		Progress: &BatchProgress{
-			TotalUpdates:    len(updates),
-			CurrentPhase:    "initialization",
-			LastUpdated:     time.Now(),
+			TotalUpdates: len(updates),
+			CurrentPhase: "initialization",
+			LastUpdated:  time.Now(),
 		},
 		Configuration:     config,
 		Timeline:          []*BatchEvent{},
@@ -216,7 +216,7 @@ func (bp *BatchProcessor) ProcessBatchJob(ctx context.Context, jobID string) err
 	// Complete job
 	job.CompletedAt = &[]time.Time{time.Now()}[0]
 	job.ActualDuration = time.Since(*job.StartedAt)
-	
+
 	if err != nil {
 		job.Status = "failed"
 		job.Timeline = append(job.Timeline, &BatchEvent{
@@ -343,7 +343,7 @@ func (bp *BatchProcessor) processUpdateGroup(ctx context.Context, job *BatchJob,
 			result = &BatchUpdateResult{
 				UpdateID:       update.ID,
 				Repository:     update.Repository,
-				DependencyName: update.DependencyName,
+				DependencyName: update.Name,
 				Status:         "failed",
 				ErrorMessage:   err.Error(),
 				ProcessedAt:    time.Now(),
@@ -378,7 +378,7 @@ func (bp *BatchProcessor) processUpdateGroup(ctx context.Context, job *BatchJob,
 // processUpdate processes a single dependency update
 func (bp *BatchProcessor) processUpdate(ctx context.Context, job *BatchJob, update *DependencyUpdate) (*BatchUpdateResult, error) {
 	startTime := time.Now()
-	
+
 	result := &BatchUpdateResult{
 		UpdateID:       update.ID,
 		Repository:     update.Repository,
@@ -391,19 +391,18 @@ func (bp *BatchProcessor) processUpdate(ctx context.Context, job *BatchJob, upda
 	job.Timeline = append(job.Timeline, &BatchEvent{
 		ID:          fmt.Sprintf("event_%d", time.Now().UnixNano()),
 		Type:        "update_started",
-		Description: fmt.Sprintf("Processing update for %s", update.DependencyName),
+		Description: fmt.Sprintf("Processing update for %s", update.Name),
 		Phase:       "processing",
 		UpdateID:    update.ID,
 		Timestamp:   time.Now(),
 	})
 
 	// Generate patches
-	patches, err := bp.patchGenerator.GeneratePatches(ctx, &DependencyInfo{
-		Name:           update.DependencyName,
-		CurrentVersion: update.CurrentVersion,
-		LatestVersion:  update.TargetVersion,
-		Repository:     update.Repository,
-	})
+	patchRequest := &PatchGenerationRequest{
+		Repository:   update.Repository,
+		Dependencies: []*DependencyUpdate{update},
+	}
+	patch, err := bp.patchGenerator.GeneratePatch(ctx, patchRequest)
 	if err != nil {
 		result.Status = "failed"
 		result.ErrorMessage = fmt.Sprintf("Failed to generate patches: %s", err.Error())
@@ -412,10 +411,16 @@ func (bp *BatchProcessor) processUpdate(ctx context.Context, job *BatchJob, upda
 	}
 
 	// Apply patches
-	applyResult, err := bp.applicator.ApplyPatches(ctx, patches, &ApplyOptions{
-		Strategy: StrategyOptimized,
-		DryRun:   false,
-	})
+	appRequest := &ApplicationRequest{
+		Repository: update.Repository,
+		Branch:     "main", // Assuming main branch for now
+		Patches:    []*Patch{convertGeneratedPatchToPatch(patch)},
+		Strategy:   StrategyOptimized,
+		Options: &ApplicationOptions{
+			DryRun: false,
+		},
+	}
+	applyResult, err := bp.applicator.ApplyPatches(ctx, appRequest)
 	if err != nil {
 		result.Status = "failed"
 		result.ErrorMessage = fmt.Sprintf("Failed to apply patches: %s", err.Error())
@@ -436,19 +441,19 @@ func (bp *BatchProcessor) processUpdate(ctx context.Context, job *BatchJob, upda
 
 	// Create PR if configured
 	if job.Configuration.CreatePRs {
-		pr := &PullRequest{
-			Title:      fmt.Sprintf("Update %s to %s", update.DependencyName, update.TargetVersion),
-			Body:       fmt.Sprintf("Automated update of %s from %s to %s", update.DependencyName, update.CurrentVersion, update.TargetVersion),
+		prRequest := &PRCreationRequest{
+			Repository: update.Repository,
 			BaseBranch: "main",
 			HeadBranch: fmt.Sprintf("update-%s-%s", update.DependencyName, update.TargetVersion),
-			Repository: update.Repository,
+			Title:      fmt.Sprintf("Update %s to %s", update.DependencyName, update.TargetVersion),
+			Patches:    []*Patch{convertGeneratedPatchToPatch(patch)},
+			Options: &PRCreationOptions{
+				AutoMergeEnabled:         job.Configuration.AutoMerge,
+				EnableTestingIntegration: job.Configuration.TestingRequired,
+			},
 		}
 
-		prResult, err := bp.prManager.CreatePR(ctx, pr, patches, &PROptions{
-			Priority:        update.Priority,
-			AutoMerge:       job.Configuration.AutoMerge,
-			TestingRequired: job.Configuration.TestingRequired,
-		})
+		prResult, err := bp.prManager.CreatePullRequest(ctx, prRequest)
 		if err != nil {
 			result.Status = "failed"
 			result.ErrorMessage = fmt.Sprintf("Failed to create PR: %s", err.Error())
@@ -456,7 +461,7 @@ func (bp *BatchProcessor) processUpdate(ctx context.Context, job *BatchJob, upda
 			return result, err
 		}
 
-		result.PullRequestURL = prResult.URL
+		result.PullRequestURL = prResult.PullRequest.URL
 	}
 
 	result.Status = "success"
@@ -493,7 +498,7 @@ func (bp *BatchProcessor) groupUpdates(ctx context.Context, updates []*Dependenc
 
 func (bp *BatchProcessor) groupByType(updates []*DependencyUpdate) []*UpdateGroup {
 	typeGroups := make(map[string][]*DependencyUpdate)
-	
+
 	for _, update := range updates {
 		typeGroups[update.UpdateType] = append(typeGroups[update.UpdateType], update)
 	}
@@ -513,14 +518,14 @@ func (bp *BatchProcessor) groupByType(updates []*DependencyUpdate) []*UpdateGrou
 
 func (bp *BatchProcessor) groupByRisk(updates []*DependencyUpdate) []*UpdateGroup {
 	riskGroups := make(map[string][]*DependencyUpdate)
-	
+
 	for _, update := range updates {
 		riskGroups[update.RiskLevel] = append(riskGroups[update.RiskLevel], update)
 	}
 
 	var groups []*UpdateGroup
 	priorities := map[string]int{"low": 1, "medium": 2, "high": 3}
-	
+
 	for riskLevel, riskUpdates := range riskGroups {
 		groups = append(groups, &UpdateGroup{
 			ID:       fmt.Sprintf("risk_%s", riskLevel),
@@ -536,7 +541,7 @@ func (bp *BatchProcessor) groupByRisk(updates []*DependencyUpdate) []*UpdateGrou
 
 func (bp *BatchProcessor) groupByProject(updates []*DependencyUpdate) []*UpdateGroup {
 	projectGroups := make(map[string][]*DependencyUpdate)
-	
+
 	for _, update := range updates {
 		projectGroups[update.Repository] = append(projectGroups[update.Repository], update)
 	}
@@ -562,21 +567,21 @@ func (bp *BatchProcessor) groupMixed(updates []*DependencyUpdate) []*UpdateGroup
 func (bp *BatchProcessor) estimateJobDuration(updates []*DependencyUpdate, config *BatchJobConfig) time.Duration {
 	baseTimePerUpdate := 2 * time.Minute
 	totalTime := time.Duration(len(updates)) * baseTimePerUpdate
-	
+
 	if config.ProcessingMode == "parallel" {
 		totalTime = totalTime / time.Duration(config.MaxConcurrency)
 	}
-	
+
 	return totalTime
 }
 
 func (bp *BatchProcessor) updateProgress(job *BatchJob) {
 	job.Progress.ProcessedUpdates = len(job.Results)
-	
+
 	successCount := 0
 	failedCount := 0
 	skippedCount := 0
-	
+
 	for _, result := range job.Results {
 		switch result.Status {
 		case "success":
@@ -587,13 +592,13 @@ func (bp *BatchProcessor) updateProgress(job *BatchJob) {
 			skippedCount++
 		}
 	}
-	
+
 	job.Progress.SuccessfulUpdates = successCount
 	job.Progress.FailedUpdates = failedCount
 	job.Progress.SkippedUpdates = skippedCount
 	job.Progress.PercentComplete = float64(job.Progress.ProcessedUpdates) / float64(job.Progress.TotalUpdates) * 100
 	job.Progress.LastUpdated = time.Now()
-	
+
 	// Estimate time remaining
 	if job.Progress.ProcessedUpdates > 0 && job.StartedAt != nil {
 		elapsed := time.Since(*job.StartedAt)
@@ -666,12 +671,12 @@ func (bp *BatchProcessor) sendCompletionNotification(ctx context.Context, job *B
 func (bp *BatchProcessor) GetBatchJob(jobID string) (*BatchJob, error) {
 	bp.mutex.RLock()
 	defer bp.mutex.RUnlock()
-	
+
 	job, exists := bp.activeBatches[jobID]
 	if !exists {
 		return nil, fmt.Errorf("batch job %s not found", jobID)
 	}
-	
+
 	return job, nil
 }
 
@@ -679,12 +684,12 @@ func (bp *BatchProcessor) GetBatchJob(jobID string) (*BatchJob, error) {
 func (bp *BatchProcessor) ListBatchJobs() []*BatchJob {
 	bp.mutex.RLock()
 	defer bp.mutex.RUnlock()
-	
+
 	var jobs []*BatchJob
 	for _, job := range bp.activeBatches {
 		jobs = append(jobs, job)
 	}
-	
+
 	return jobs
 }
 
@@ -692,19 +697,19 @@ func (bp *BatchProcessor) ListBatchJobs() []*BatchJob {
 func (bp *BatchProcessor) CancelBatchJob(ctx context.Context, jobID string) error {
 	bp.mutex.Lock()
 	defer bp.mutex.Unlock()
-	
+
 	job, exists := bp.activeBatches[jobID]
 	if !exists {
 		return fmt.Errorf("batch job %s not found", jobID)
 	}
-	
+
 	if job.Status == "completed" || job.Status == "failed" {
 		return fmt.Errorf("cannot cancel job in status: %s", job.Status)
 	}
-	
+
 	job.Status = "cancelled"
 	job.CompletedAt = &[]time.Time{time.Now()}[0]
-	
+
 	job.Timeline = append(job.Timeline, &BatchEvent{
 		ID:          fmt.Sprintf("event_%d", time.Now().UnixNano()),
 		Type:        "job_cancelled",
@@ -712,6 +717,6 @@ func (bp *BatchProcessor) CancelBatchJob(ctx context.Context, jobID string) erro
 		Phase:       "cancellation",
 		Timestamp:   time.Now(),
 	})
-	
+
 	return nil
 }

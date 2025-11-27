@@ -84,18 +84,18 @@ func init() {
 
 func runConfigureNotify(cmd *cobra.Command, args []string) {
 	channel := args[0]
-	
+
 	// Validate channel type
 	validChannels := []string{"email", "slack", "webhook"}
 	if !contains(validChannels, channel) {
 		logger.Error("Invalid channel type: %s. Valid types: %s", channel, strings.Join(validChannels, ", "))
 		os.Exit(1)
 	}
-	
+
 	fmt.Printf("🔔 Configuring %s notifications\n", channel)
 	fmt.Println(strings.Repeat("=", 40))
 	fmt.Println()
-	
+
 	switch channel {
 	case "email":
 		configureEmailNotifications()
@@ -108,13 +108,13 @@ func runConfigureNotify(cmd *cobra.Command, args []string) {
 
 func runTestNotify(cmd *cobra.Command, args []string) {
 	channel := args[0]
-	
+
 	fmt.Printf("🧪 Testing %s notification channel\n", channel)
 	fmt.Println(strings.Repeat("=", 40))
 	fmt.Println()
-	
+
 	notificationService := notifications.NewNotificationService(config.GetConfig())
-	
+
 	// Create test notification
 	notification := notifications.Notification{
 		Type:     notifications.NotificationTypeUpdateAvailable,
@@ -127,7 +127,7 @@ func runTestNotify(cmd *cobra.Command, args []string) {
 			"timestamp": "2024-01-01T12:00:00Z",
 		},
 	}
-	
+
 	if notifyDryRun {
 		fmt.Println("📋 Dry run - would send the following notification:")
 		fmt.Printf("  Channel: %s\n", channel)
@@ -137,56 +137,56 @@ func runTestNotify(cmd *cobra.Command, args []string) {
 		fmt.Printf("  Message: %s\n", notification.Message)
 		return
 	}
-	
+
 	// Send test notification
 	var err error
 	err = notificationService.SendNotification(context.Background(), &notification)
-	
+
 	if err != nil {
 		logger.Error("Failed to send test notification: %v", err)
 		fmt.Println("❌ Test notification failed")
 		os.Exit(1)
 	}
-	
-	fmt.Println("✅ Test notification sent successfully")
+
+	fmt.Println("Notification sent successfully!")
 }
 
 func runListNotify(cmd *cobra.Command, args []string) {
 	fmt.Println("🔔 Notification Channels")
 	fmt.Println(strings.Repeat("=", 40))
 	fmt.Println()
-	
+
 	// This would typically read from configuration
 	// For now, we'll show a placeholder structure
-	
+
 	channels := []struct {
-		Name    string
-		Type    string
-		Status  string
-		Config  string
+		Name   string
+		Type   string
+		Status string
+		Config string
 	}{
 		{"Email", "email", "configured", "SMTP server configured"},
 		{"Slack", "slack", "not configured", "Webhook URL not set"},
 		{"Webhook", "webhook", "configured", "Generic webhook configured"},
 	}
-	
+
 	fmt.Printf("%-15s %-10s %-15s %s\n", "Channel", "Type", "Status", "Configuration")
 	fmt.Println(strings.Repeat("-", 70))
-	
+
 	for _, channel := range channels {
 		statusIcon := "✅"
 		if channel.Status != "configured" {
 			statusIcon = "❌"
 		}
-		
-		fmt.Printf("%-15s %-10s %s%-13s %s\n", 
-			channel.Name, 
-			channel.Type, 
-			statusIcon, 
-			channel.Status, 
+
+		fmt.Printf("%-15s %-10s %s%-13s %s\n",
+			channel.Name,
+			channel.Type,
+			statusIcon,
+			channel.Status,
 			channel.Config)
 	}
-	
+
 	fmt.Println()
 	fmt.Println("💡 Use 'ai-dep-manager notify configure [channel]' to configure channels")
 	fmt.Println("🧪 Use 'ai-dep-manager notify test [channel]' to test channels")
@@ -195,14 +195,14 @@ func runListNotify(cmd *cobra.Command, args []string) {
 func runSendNotify(cmd *cobra.Command, args []string) {
 	notificationType := args[0]
 	message := args[1]
-	
+
 	// Validate notification type
 	validTypes := []string{"security", "update", "scan", "error", "info"}
 	if !contains(validTypes, notificationType) {
 		logger.Error("Invalid notification type: %s. Valid types: %s", notificationType, strings.Join(validTypes, ", "))
 		os.Exit(1)
 	}
-	
+
 	// Map string types to notification types
 	var nType notifications.NotificationType
 	switch notificationType {
@@ -217,7 +217,7 @@ func runSendNotify(cmd *cobra.Command, args []string) {
 	case "info":
 		nType = notifications.NotificationTypeUpdateAvailable
 	}
-	
+
 	// Map priority
 	var priority notifications.NotificationPriority
 	switch notifyPriority {
@@ -232,7 +232,7 @@ func runSendNotify(cmd *cobra.Command, args []string) {
 	default:
 		priority = notifications.PriorityMedium
 	}
-	
+
 	// Create notification
 	notification := notifications.Notification{
 		Type:     nType,
@@ -245,7 +245,7 @@ func runSendNotify(cmd *cobra.Command, args []string) {
 			"timestamp": "2024-01-01T12:00:00Z",
 		},
 	}
-	
+
 	if notifyDryRun {
 		fmt.Println("📋 Dry run - would send the following notification:")
 		fmt.Printf("  Type: %s\n", notification.Type)
@@ -259,16 +259,16 @@ func runSendNotify(cmd *cobra.Command, args []string) {
 		}
 		return
 	}
-	
+
 	notificationService := notifications.NewNotificationService(config.GetConfig())
-	
+
 	// Send notification through all configured channels
 	err := notificationService.SendNotification(context.Background(), &notification)
 	if err != nil {
 		logger.Error("Failed to send notification: %v", err)
 		os.Exit(1)
 	}
-	
+
 	if notifyChannel != "" {
 		fmt.Printf("✅ Notification sent (requested channel: %s)\n", notifyChannel)
 	} else {
@@ -281,10 +281,10 @@ func runSendNotify(cmd *cobra.Command, args []string) {
 func configureEmailNotifications() {
 	fmt.Println("📧 Email Notification Configuration")
 	fmt.Println()
-	
+
 	fmt.Println("Please provide the following SMTP configuration:")
 	fmt.Println()
-	
+
 	// In a real implementation, this would prompt for input and save to config
 	fmt.Println("Required settings:")
 	fmt.Println("  - SMTP Host (e.g., smtp.gmail.com)")
@@ -294,13 +294,13 @@ func configureEmailNotifications() {
 	fmt.Println("  - From Address")
 	fmt.Println("  - To Addresses (comma-separated)")
 	fmt.Println()
-	
+
 	fmt.Println("💡 Configuration should be added to your config file:")
 	fmt.Println("   ~/.ai-dep-manager/config.yaml")
 	fmt.Println()
-	
+
 	fmt.Println("Example configuration:")
-	fmt.Println(`
+	fmt.Print(`
 notifications:
   email:
     enabled: true
@@ -317,7 +317,7 @@ notifications:
 func configureSlackNotifications() {
 	fmt.Println("💬 Slack Notification Configuration")
 	fmt.Println()
-	
+
 	fmt.Println("To configure Slack notifications:")
 	fmt.Println()
 	fmt.Println("1. Create a Slack App in your workspace")
@@ -325,13 +325,13 @@ func configureSlackNotifications() {
 	fmt.Println("3. Create a webhook for your desired channel")
 	fmt.Println("4. Copy the webhook URL")
 	fmt.Println()
-	
+
 	fmt.Println("💡 Add the webhook URL to your config file:")
 	fmt.Println("   ~/.ai-dep-manager/config.yaml")
 	fmt.Println()
-	
+
 	fmt.Println("Example configuration:")
-	fmt.Println(`
+	fmt.Print(`
 notifications:
   slack:
     enabled: true
@@ -345,17 +345,17 @@ notifications:
 func configureWebhookNotifications() {
 	fmt.Println("🔗 Webhook Notification Configuration")
 	fmt.Println()
-	
+
 	fmt.Println("Configure generic webhook notifications for integration with")
 	fmt.Println("custom systems, monitoring tools, or other services.")
 	fmt.Println()
-	
+
 	fmt.Println("💡 Add webhook configuration to your config file:")
 	fmt.Println("   ~/.ai-dep-manager/config.yaml")
 	fmt.Println()
-	
+
 	fmt.Println("Example configuration:")
-	fmt.Println(`
+	fmt.Print(`
 notifications:
   webhook:
     enabled: true
@@ -366,7 +366,7 @@ notifications:
       "Content-Type": "application/json"
     timeout: "30s"
 `)
-	
+
 	fmt.Println()
 	fmt.Println("The webhook will receive JSON payloads with notification data.")
 }

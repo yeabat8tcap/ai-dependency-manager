@@ -14,59 +14,60 @@ import (
 
 // PatchApplicator handles intelligent patch application with conflict resolution
 type PatchApplicator struct {
-	client          *Client
-	aiManager       AIManager
-	validator       PatchValidator
+	client           *Client
+	aiManager        AIManager
+	validator        PatchValidator
 	conflictResolver *ConflictResolver
-	rollbackManager *RollbackManager
+	rollbackManager  *RollbackManager
 }
 
 // NewPatchApplicator creates a new patch applicator
-func NewPatchApplicator(client *Client, aiManager *ai.Manager) *PatchApplicator {
+func NewPatchApplicator(client *Client, aiManager *ai.AIManager) *PatchApplicator {
+	adapter := NewAIAdapter(aiManager)
 	validator := NewPatchValidator()
-	conflictResolver := NewConflictResolver(aiManager)
+	conflictResolver := NewConflictResolver(adapter)
 	rollbackManager := NewRollbackManager()
-	
+
 	return &PatchApplicator{
-		client:          client,
-		aiManager:       aiManager,
-		validator:       validator,
+		client:           client,
+		aiManager:        adapter,
+		validator:        validator,
 		conflictResolver: conflictResolver,
-		rollbackManager: rollbackManager,
+		rollbackManager:  rollbackManager,
 	}
 }
 
 // ApplicationRequest represents a patch application request
 type ApplicationRequest struct {
-	Repository    string                 `json:"repository"`
-	Branch        string                 `json:"branch"`
-	Patches           []*Patch      `json:"patches"`
-	Strategy      ApplicationStrategy    `json:"strategy"`
-	Options       *ApplicationOptions    `json:"options"`
-	Context       map[string]interface{} `json:"context"`
+	Repository string                 `json:"repository"`
+	Branch     string                 `json:"branch"`
+	Patches    []*Patch               `json:"patches"`
+	Strategy   ApplicationStrategy    `json:"strategy"`
+	Options    *ApplicationOptions    `json:"options"`
+	Context    map[string]interface{} `json:"context"`
 }
 
 // ApplicationStrategy defines how patches should be applied
 type ApplicationStrategy string
 
 const (
-	StrategySequential ApplicationStrategy = "sequential"
-	StrategyParallel   ApplicationStrategy = "parallel"
-	StrategyOptimized  ApplicationStrategy = "optimized"
+	StrategySequential   ApplicationStrategy = "sequential"
+	StrategyParallel     ApplicationStrategy = "parallel"
+	StrategyOptimized    ApplicationStrategy = "optimized"
 	StrategyConservative ApplicationStrategy = "conservative"
 )
 
 // ApplicationOptions configures patch application behavior
 type ApplicationOptions struct {
-	DryRun              bool                    `json:"dry_run"`
+	DryRun               bool                   `json:"dry_run"`
 	AutoResolveConflicts bool                   `json:"auto_resolve_conflicts"`
-	CreateBackup        bool                   `json:"create_backup"`
-	ValidateAfterApply  bool                   `json:"validate_after_apply"`
-	RollbackOnFailure   bool                   `json:"rollback_on_failure"`
-	MaxRetries          int                    `json:"max_retries"`
-	RetryDelay          time.Duration          `json:"retry_delay"`
-	ConflictResolution  ConflictResolutionMode `json:"conflict_resolution"`
-	NotifyOnCompletion  bool                   `json:"notify_on_completion"`
+	CreateBackup         bool                   `json:"create_backup"`
+	ValidateAfterApply   bool                   `json:"validate_after_apply"`
+	RollbackOnFailure    bool                   `json:"rollback_on_failure"`
+	MaxRetries           int                    `json:"max_retries"`
+	RetryDelay           time.Duration          `json:"retry_delay"`
+	ConflictResolution   ConflictResolutionMode `json:"conflict_resolution"`
+	NotifyOnCompletion   bool                   `json:"notify_on_completion"`
 }
 
 // ConflictResolutionMode defines how conflicts should be resolved
@@ -81,48 +82,48 @@ const (
 
 // ApplicationResult represents the result of patch application
 type ApplicationResult struct {
-	Success         bool                     `json:"success"`
-	AppliedPatches  []*AppliedPatch         `json:"applied_patches"`
-	FailedPatches   []*FailedPatch          `json:"failed_patches"`
-	Conflicts       []*Conflict             `json:"conflicts"`
-	ValidationResults []*ValidationResult   `json:"validation_results"`
-	RollbackPoint   *RollbackPoint          `json:"rollback_point,omitempty"`
-	Duration        time.Duration           `json:"duration"`
-	Summary         *ApplicationSummary     `json:"summary"`
-	Recommendations []*Recommendation       `json:"recommendations"`
+	Success           bool                    `json:"success"`
+	AppliedPatches    []*AppliedPatch         `json:"applied_patches"`
+	FailedPatches     []*FailedPatch          `json:"failed_patches"`
+	Conflicts         []*Conflict             `json:"conflicts"`
+	ValidationResults []*ValidationStepResult `json:"validation_results"`
+	RollbackPoint     *RollbackPoint          `json:"rollback_point,omitempty"`
+	Duration          time.Duration           `json:"duration"`
+	Summary           *ApplicationSummary     `json:"summary"`
+	Recommendations   []*Recommendation       `json:"recommendations"`
 }
 
 // AppliedPatch represents a successfully applied patch
 type AppliedPatch struct {
-	Patch       *Patch        `json:"patch"`
-	AppliedAt   time.Time     `json:"applied_at"`
-	Duration    time.Duration `json:"duration"`
-	Conflicts   []*Conflict   `json:"conflicts"`
-	Resolution  string        `json:"resolution"`
-	Confidence  float64       `json:"confidence"`
+	Patch      *Patch        `json:"patch"`
+	AppliedAt  time.Time     `json:"applied_at"`
+	Duration   time.Duration `json:"duration"`
+	Conflicts  []*Conflict   `json:"conflicts"`
+	Resolution string        `json:"resolution"`
+	Confidence float64       `json:"confidence"`
 }
 
 // FailedPatch represents a patch that failed to apply
 type FailedPatch struct {
-	Patch     *Patch    `json:"patch"`
-	Error     string    `json:"error"`
-	Reason    string    `json:"reason"`
-	FailedAt  time.Time `json:"failed_at"`
-	Retries   int       `json:"retries"`
+	Patch     *Patch      `json:"patch"`
+	Error     string      `json:"error"`
+	Reason    string      `json:"reason"`
+	FailedAt  time.Time   `json:"failed_at"`
+	Retries   int         `json:"retries"`
 	Conflicts []*Conflict `json:"conflicts"`
 }
 
 // Conflict represents a merge conflict during patch application
 type Conflict struct {
-	File        string              `json:"file"`
-	Type        ConflictType        `json:"type"`
-	Line        int                 `json:"line"`
-	Current     string              `json:"current"`
-	Incoming    string              `json:"incoming"`
-	Context     string              `json:"context"`
-	Severity    ConflictSeverity    `json:"severity"`
-	Resolution  *ConflictResolution `json:"resolution,omitempty"`
-	Confidence  float64             `json:"confidence"`
+	File       string              `json:"file"`
+	Type       ConflictType        `json:"type"`
+	Line       int                 `json:"line"`
+	Current    string              `json:"current"`
+	Incoming   string              `json:"incoming"`
+	Context    string              `json:"context"`
+	Severity   ConflictSeverity    `json:"severity"`
+	Resolution *ConflictResolution `json:"resolution,omitempty"`
+	Confidence float64             `json:"confidence"`
 }
 
 // ConflictType defines the type of conflict
@@ -147,12 +148,12 @@ const (
 
 // ConflictResolution represents a resolved conflict
 type ConflictResolution struct {
-	Strategy    string    `json:"strategy"`
-	Resolution  string    `json:"resolution"`
-	Reasoning   string    `json:"reasoning"`
-	ResolvedBy  string    `json:"resolved_by"`
-	ResolvedAt  time.Time `json:"resolved_at"`
-	Confidence  float64   `json:"confidence"`
+	Strategy   string    `json:"strategy"`
+	Resolution string    `json:"resolution"`
+	Reasoning  string    `json:"reasoning"`
+	ResolvedBy string    `json:"resolved_by"`
+	ResolvedAt time.Time `json:"resolved_at"`
+	Confidence float64   `json:"confidence"`
 }
 
 // ApplicationSummary provides a summary of the application process
@@ -169,16 +170,16 @@ type ApplicationSummary struct {
 // ApplyPatches applies a set of patches with intelligent conflict resolution
 func (pa *PatchApplicator) ApplyPatches(ctx context.Context, request *ApplicationRequest) (*ApplicationResult, error) {
 	startTime := time.Now()
-	
+
 	// Initialize result
 	result := &ApplicationResult{
 		AppliedPatches:    []*AppliedPatch{},
 		FailedPatches:     []*FailedPatch{},
 		Conflicts:         []*Conflict{},
-		ValidationResults: []*ValidationResult{},
+		ValidationResults: []*ValidationStepResult{},
 		Recommendations:   []*Recommendation{},
 	}
-	
+
 	// Create rollback point if requested
 	if request.Options.CreateBackup {
 		rollbackPoint, err := pa.rollbackManager.CreateRollbackPoint(request.Repository, request.Branch)
@@ -187,7 +188,7 @@ func (pa *PatchApplicator) ApplyPatches(ctx context.Context, request *Applicatio
 		}
 		result.RollbackPoint = rollbackPoint
 	}
-	
+
 	// Apply patches based on strategy
 	switch request.Strategy {
 	case StrategySequential:
@@ -213,7 +214,7 @@ func (pa *PatchApplicator) ApplyPatches(ctx context.Context, request *Applicatio
 	default:
 		return nil, fmt.Errorf("unsupported application strategy: %s", request.Strategy)
 	}
-	
+
 	// Validate results if requested
 	if request.Options.ValidateAfterApply {
 		validationResults, err := pa.validateApplication(ctx, request, result)
@@ -222,15 +223,15 @@ func (pa *PatchApplicator) ApplyPatches(ctx context.Context, request *Applicatio
 		}
 		result.ValidationResults = validationResults
 	}
-	
+
 	// Calculate summary
 	result.Duration = time.Since(startTime)
 	result.Summary = pa.calculateSummary(result)
 	result.Success = result.Summary.SuccessRate > 0.8 // 80% success threshold
-	
+
 	// Generate recommendations
 	result.Recommendations = pa.generateRecommendations(result)
-	
+
 	// Rollback on failure if requested
 	if !result.Success && request.Options.RollbackOnFailure && result.RollbackPoint != nil {
 		rollbackErr := pa.rollbackManager.Rollback(result.RollbackPoint)
@@ -238,7 +239,7 @@ func (pa *PatchApplicator) ApplyPatches(ctx context.Context, request *Applicatio
 			return result, fmt.Errorf("patch application failed and rollback failed: %w", rollbackErr)
 		}
 	}
-	
+
 	return result, nil
 }
 
@@ -250,7 +251,7 @@ func (pa *PatchApplicator) applySequential(ctx context.Context, request *Applica
 			return ctx.Err()
 		default:
 		}
-		
+
 		appliedPatch, err := pa.applySinglePatch(ctx, request, patch, i)
 		if err != nil {
 			failedPatch := &FailedPatch{
@@ -260,16 +261,16 @@ func (pa *PatchApplicator) applySequential(ctx context.Context, request *Applica
 				FailedAt: time.Now(),
 			}
 			result.FailedPatches = append(result.FailedPatches, failedPatch)
-			
+
 			if !request.Options.RollbackOnFailure {
 				continue // Continue with next patch
 			}
 			return err
 		}
-		
+
 		result.AppliedPatches = append(result.AppliedPatches, appliedPatch)
 	}
-	
+
 	return nil
 }
 
@@ -277,7 +278,7 @@ func (pa *PatchApplicator) applySequential(ctx context.Context, request *Applica
 func (pa *PatchApplicator) applyParallel(ctx context.Context, request *ApplicationRequest, result *ApplicationResult) error {
 	// Analyze patch dependencies first
 	groups := pa.groupNonConflictingPatches(request.Patches)
-	
+
 	for _, group := range groups {
 		// Apply each group sequentially, but patches within group in parallel
 		err := pa.applyPatchGroup(ctx, request, group, result)
@@ -285,7 +286,7 @@ func (pa *PatchApplicator) applyParallel(ctx context.Context, request *Applicati
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
@@ -293,12 +294,12 @@ func (pa *PatchApplicator) applyParallel(ctx context.Context, request *Applicati
 func (pa *PatchApplicator) applyOptimized(ctx context.Context, request *ApplicationRequest, result *ApplicationResult) error {
 	// Sort patches by confidence and impact
 	optimizedOrder := pa.optimizePatchOrder(request.Patches)
-	
+
 	// Create a new request with optimized order
 	optimizedRequest := *request
 	optimizedRequest.Patches = optimizedOrder
 	optimizedRequest.Strategy = StrategySequential
-	
+
 	return pa.applySequential(ctx, &optimizedRequest, result)
 }
 
@@ -306,14 +307,11 @@ func (pa *PatchApplicator) applyOptimized(ctx context.Context, request *Applicat
 func (pa *PatchApplicator) applyConservative(ctx context.Context, request *ApplicationRequest, result *ApplicationResult) error {
 	for i, patch := range request.Patches {
 		// Pre-validate each patch
-		validationResult, err := pa.validator.ValidatePatch(patch, &ValidationOptions{
-			CheckSafety:     true,
-			CheckSyntax:     true,
-			CheckSemantics:  true,
-			CheckBuild:      true,
-			CheckTests:      true,
+		validationResult, err := pa.validator.ValidatePatch(ctx, patch, &ValidationOptions{
+			SkipBuild: false, // Map conservative options to available options
+			SkipTests: false,
 		})
-		if err != nil || !validationResult.Valid {
+		if err != nil || validationResult.OverallStatus != ValidationStatusPassed {
 			failedPatch := &FailedPatch{
 				Patch:    patch,
 				Error:    "pre-validation failed",
@@ -323,7 +321,7 @@ func (pa *PatchApplicator) applyConservative(ctx context.Context, request *Appli
 			result.FailedPatches = append(result.FailedPatches, failedPatch)
 			continue
 		}
-		
+
 		// Apply with extra caution
 		appliedPatch, err := pa.applySinglePatch(ctx, request, patch, i)
 		if err != nil {
@@ -336,23 +334,23 @@ func (pa *PatchApplicator) applyConservative(ctx context.Context, request *Appli
 			result.FailedPatches = append(result.FailedPatches, failedPatch)
 			continue
 		}
-		
+
 		result.AppliedPatches = append(result.AppliedPatches, appliedPatch)
 	}
-	
+
 	return nil
 }
 
 // applySinglePatch applies a single patch with conflict resolution
 func (pa *PatchApplicator) applySinglePatch(ctx context.Context, request *ApplicationRequest, patch *Patch, index int) (*AppliedPatch, error) {
 	startTime := time.Now()
-	
+
 	// Check for potential conflicts
 	conflicts, err := pa.detectConflicts(patch, request.Repository, request.Branch)
 	if err != nil {
 		return nil, fmt.Errorf("conflict detection failed: %w", err)
 	}
-	
+
 	// Resolve conflicts if found
 	if len(conflicts) > 0 {
 		resolvedConflicts, err := pa.conflictResolver.ResolveConflicts(ctx, conflicts, request.Options.ConflictResolution)
@@ -361,13 +359,13 @@ func (pa *PatchApplicator) applySinglePatch(ctx context.Context, request *Applic
 		}
 		conflicts = resolvedConflicts
 	}
-	
+
 	// Apply the patch
 	err = pa.applyPatchToFiles(patch, request.Repository)
 	if err != nil {
 		return nil, fmt.Errorf("patch application failed: %w", err)
 	}
-	
+
 	appliedPatch := &AppliedPatch{
 		Patch:      patch,
 		AppliedAt:  time.Now(),
@@ -376,30 +374,30 @@ func (pa *PatchApplicator) applySinglePatch(ctx context.Context, request *Applic
 		Resolution: "success",
 		Confidence: patch.Confidence,
 	}
-	
+
 	return appliedPatch, nil
 }
 
 // detectConflicts detects potential conflicts before applying a patch
 func (pa *PatchApplicator) detectConflicts(patch *Patch, repository, branch string) ([]*Conflict, error) {
 	var conflicts []*Conflict
-	
+
 	// Check each file patch for conflicts
-	for _, filePatch := range patch.FilePatches {
-		fileConflicts, err := pa.detectFileConflicts(filePatch, repository)
+	for i := range patch.FilePatches {
+		fileConflicts, err := pa.detectFileConflicts(&patch.FilePatches[i], repository)
 		if err != nil {
 			return nil, err
 		}
 		conflicts = append(conflicts, fileConflicts...)
 	}
-	
+
 	return conflicts, nil
 }
 
 // detectFileConflicts detects conflicts in a single file
 func (pa *PatchApplicator) detectFileConflicts(filePatch *FilePatch, repository string) ([]*Conflict, error) {
 	var conflicts []*Conflict
-	
+
 	// Read current file content
 	filePath := filepath.Join(repository, filePatch.Path)
 	currentContent, err := os.ReadFile(filePath)
@@ -407,9 +405,9 @@ func (pa *PatchApplicator) detectFileConflicts(filePatch *FilePatch, repository 
 		// File doesn't exist - no conflict
 		return conflicts, nil
 	}
-	
+
 	currentLines := strings.Split(string(currentContent), "\n")
-	
+
 	// Check each change for conflicts
 	for _, change := range filePatch.Changes {
 		conflict := pa.checkChangeConflict(change, currentLines, filePatch.Path)
@@ -417,7 +415,7 @@ func (pa *PatchApplicator) detectFileConflicts(filePatch *FilePatch, repository 
 			conflicts = append(conflicts, conflict)
 		}
 	}
-	
+
 	return conflicts, nil
 }
 
@@ -438,52 +436,52 @@ func (pa *PatchApplicator) checkChangeConflict(change *Change, currentLines []st
 			}
 		}
 	}
-	
+
 	return nil
 }
 
 // applyPatchToFiles applies a patch to the actual files
 func (pa *PatchApplicator) applyPatchToFiles(patch *Patch, repository string) error {
-	for _, filePatch := range patch.FilePatches {
-		err := pa.applyFilePatch(filePatch, repository)
+	for i := range patch.FilePatches {
+		err := pa.applyFilePatch(&patch.FilePatches[i], repository)
 		if err != nil {
-			return fmt.Errorf("failed to apply patch to %s: %w", filePatch.Path, err)
+			return fmt.Errorf("failed to apply patch to %s: %w", patch.FilePatches[i].Path, err)
 		}
 	}
-	
-	for _, configPatch := range patch.ConfigPatches {
-		err := pa.applyConfigPatch(configPatch, repository)
+
+	for i := range patch.ConfigPatches {
+		err := pa.applyConfigPatch(&patch.ConfigPatches[i], repository)
 		if err != nil {
-			return fmt.Errorf("failed to apply config patch to %s: %w", configPatch.File, err)
+			return fmt.Errorf("failed to apply config patch to %s: %w", patch.ConfigPatches[i].File, err)
 		}
 	}
-	
+
 	return nil
 }
 
 // applyFilePatch applies a file patch
 func (pa *PatchApplicator) applyFilePatch(filePatch *FilePatch, repository string) error {
 	filePath := filepath.Join(repository, filePatch.Path)
-	
+
 	// Read current content
 	content, err := os.ReadFile(filePath)
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	
+
 	currentContent := string(content)
-	
+
 	// Apply changes
 	for _, change := range filePatch.Changes {
 		currentContent = strings.ReplaceAll(currentContent, change.OldContent, change.NewContent)
 	}
-	
+
 	// Write updated content
 	err = os.WriteFile(filePath, []byte(currentContent), 0644)
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -498,12 +496,12 @@ func (pa *PatchApplicator) applyConfigPatch(configPatch *ConfigPatch, repository
 func (pa *PatchApplicator) groupNonConflictingPatches(patches []*Patch) [][]*Patch {
 	// Simplified grouping - in real implementation would analyze file dependencies
 	var groups [][]*Patch
-	
+
 	// For now, just put each patch in its own group
 	for _, patch := range patches {
 		groups = append(groups, []*Patch{patch})
 	}
-	
+
 	return groups
 }
 
@@ -522,10 +520,10 @@ func (pa *PatchApplicator) applyPatchGroup(ctx context.Context, request *Applica
 			result.FailedPatches = append(result.FailedPatches, failedPatch)
 			continue
 		}
-		
+
 		result.AppliedPatches = append(result.AppliedPatches, appliedPatch)
 	}
-	
+
 	return nil
 }
 
@@ -534,7 +532,7 @@ func (pa *PatchApplicator) optimizePatchOrder(patches []*Patch) []*Patch {
 	// Sort by confidence (highest first)
 	optimized := make([]*Patch, len(patches))
 	copy(optimized, patches)
-	
+
 	for i := 0; i < len(optimized)-1; i++ {
 		for j := i + 1; j < len(optimized); j++ {
 			if optimized[i].Confidence < optimized[j].Confidence {
@@ -542,58 +540,78 @@ func (pa *PatchApplicator) optimizePatchOrder(patches []*Patch) []*Patch {
 			}
 		}
 	}
-	
+
 	return optimized
 }
 
 // validateApplication validates the result of patch application
-func (pa *PatchApplicator) validateApplication(ctx context.Context, request *ApplicationRequest, result *ApplicationResult) ([]*ValidationResult, error) {
-	var validationResults []*ValidationResult
-	
+func (pa *PatchApplicator) validateApplication(ctx context.Context, request *ApplicationRequest, result *ApplicationResult) ([]*ValidationStepResult, error) {
+	var validationResults []*ValidationStepResult
+
 	// Run build validation
 	buildResult, err := pa.runBuildValidation(request.Repository)
 	if err != nil {
 		return nil, err
 	}
 	validationResults = append(validationResults, buildResult)
-	
+
 	// Run test validation
 	testResult, err := pa.runTestValidation(request.Repository)
 	if err != nil {
 		return nil, err
 	}
 	validationResults = append(validationResults, testResult)
-	
+
 	return validationResults, nil
 }
 
 // runBuildValidation runs build validation
-func (pa *PatchApplicator) runBuildValidation(repository string) (*ValidationResult, error) {
+func (pa *PatchApplicator) runBuildValidation(repository string) (*ValidationStepResult, error) {
 	cmd := exec.Command("npm", "run", "build")
 	cmd.Dir = repository
-	
+
 	output, err := cmd.CombinedOutput()
-	
-	return &ValidationResult{
-		Type:    "build",
-		Success: err == nil,
-		Output:  string(output),
-		Error:   getErrorString(err),
+
+	status := ValidationStatusPassed
+	errorMsg := ""
+	if err != nil {
+		status = ValidationStatusFailed
+		errorMsg = getErrorString(err)
+	}
+
+	return &ValidationStepResult{
+		Step: &ValidationStep{
+			Type:        "build",
+			Description: "Build validation",
+		},
+		Status: status,
+		Output: string(output),
+		Error:  errorMsg,
 	}, nil
 }
 
 // runTestValidation runs test validation
-func (pa *PatchApplicator) runTestValidation(repository string) (*ValidationResult, error) {
+func (pa *PatchApplicator) runTestValidation(repository string) (*ValidationStepResult, error) {
 	cmd := exec.Command("npm", "test")
 	cmd.Dir = repository
-	
+
 	output, err := cmd.CombinedOutput()
-	
-	return &ValidationResult{
-		Type:    "test",
-		Success: err == nil,
-		Output:  string(output),
-		Error:   getErrorString(err),
+
+	status := ValidationStatusPassed
+	errorMsg := ""
+	if err != nil {
+		status = ValidationStatusFailed
+		errorMsg = getErrorString(err)
+	}
+
+	return &ValidationStepResult{
+		Step: &ValidationStep{
+			Type:        "test",
+			Description: "Test validation",
+		},
+		Status: status,
+		Output: string(output),
+		Error:  errorMsg,
 	}, nil
 }
 
@@ -604,7 +622,7 @@ func (pa *PatchApplicator) calculateSummary(result *ApplicationResult) *Applicat
 	if totalPatches > 0 {
 		successRate = float64(len(result.AppliedPatches)) / float64(totalPatches)
 	}
-	
+
 	return &ApplicationSummary{
 		TotalPatches:      totalPatches,
 		AppliedPatches:    len(result.AppliedPatches),
@@ -630,7 +648,7 @@ func (pa *PatchApplicator) countResolvedConflicts(conflicts []*Conflict) int {
 // generateRecommendations generates recommendations based on application results
 func (pa *PatchApplicator) generateRecommendations(result *ApplicationResult) []*Recommendation {
 	var recommendations []*Recommendation
-	
+
 	// Recommend strategy changes based on success rate
 	if result.Summary.SuccessRate < 0.5 {
 		recommendations = append(recommendations, &Recommendation{
@@ -641,7 +659,7 @@ func (pa *PatchApplicator) generateRecommendations(result *ApplicationResult) []
 			Confidence:  0.8,
 		})
 	}
-	
+
 	// Recommend conflict resolution improvements
 	if len(result.Conflicts) > result.Summary.ConflictsResolved {
 		recommendations = append(recommendations, &Recommendation{
@@ -652,7 +670,7 @@ func (pa *PatchApplicator) generateRecommendations(result *ApplicationResult) []
 			Confidence:  0.7,
 		})
 	}
-	
+
 	return recommendations
 }
 
@@ -660,7 +678,7 @@ func (pa *PatchApplicator) generateRecommendations(result *ApplicationResult) []
 func getContextLines(lines []string, center, radius int) string {
 	start := max(0, center-radius)
 	end := min(len(lines), center+radius+1)
-	
+
 	contextLines := lines[start:end]
 	return strings.Join(contextLines, "\n")
 }

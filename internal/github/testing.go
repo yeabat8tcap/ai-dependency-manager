@@ -63,7 +63,7 @@ type TestingPlan struct {
 
 // RequiredTest represents a required test
 type RequiredTest struct {
-	Type        string            `json:"type"`        // "unit", "integration", "e2e", "security", "performance"
+	Type        string            `json:"type"` // "unit", "integration", "e2e", "security", "performance"
 	Name        string            `json:"name"`
 	Command     string            `json:"command"`
 	Environment string            `json:"environment"`
@@ -74,33 +74,33 @@ type RequiredTest struct {
 
 // QualityGate represents a quality gate
 type QualityGate struct {
-	Name        string            `json:"name"`
-	Type        string            `json:"type"`        // "coverage", "complexity", "security", "performance"
-	Threshold   float64           `json:"threshold"`
-	Operator    string            `json:"operator"`    // ">=", "<=", "==", "!="
-	Required    bool              `json:"required"`
-	Description string            `json:"description"`
+	Name        string                 `json:"name"`
+	Type        string                 `json:"type"` // "coverage", "complexity", "security", "performance"
+	Threshold   float64                `json:"threshold"`
+	Operator    string                 `json:"operator"` // ">=", "<=", "==", "!="
+	Required    bool                   `json:"required"`
+	Description string                 `json:"description"`
 	Metadata    map[string]interface{} `json:"metadata"`
 }
 
 // CIPipeline represents a CI/CD pipeline configuration
 type CIPipeline struct {
-	Name        string            `json:"name"`
-	Provider    string            `json:"provider"`    // "github_actions", "jenkins", "gitlab_ci", "azure_devops"
-	Workflow    string            `json:"workflow"`
-	Triggers    []string          `json:"triggers"`
-	Environment string            `json:"environment"`
+	Name        string                 `json:"name"`
+	Provider    string                 `json:"provider"` // "github_actions", "jenkins", "gitlab_ci", "azure_devops"
+	Workflow    string                 `json:"workflow"`
+	Triggers    []string               `json:"triggers"`
+	Environment string                 `json:"environment"`
 	Config      map[string]interface{} `json:"config"`
 }
 
 // TestEnvironment represents a testing environment
 type TestEnvironment struct {
-	Name        string            `json:"name"`
-	Type        string            `json:"type"`        // "staging", "preview", "sandbox"
-	URL         string            `json:"url"`
-	Config      map[string]string `json:"config"`
-	Resources   *EnvironmentResources `json:"resources"`
-	Lifecycle   string            `json:"lifecycle"`   // "persistent", "ephemeral"
+	Name      string                `json:"name"`
+	Type      string                `json:"type"` // "staging", "preview", "sandbox"
+	URL       string                `json:"url"`
+	Config    map[string]string     `json:"config"`
+	Resources *EnvironmentResources `json:"resources"`
+	Lifecycle string                `json:"lifecycle"` // "persistent", "ephemeral"
 }
 
 // EnvironmentResources represents environment resource requirements
@@ -126,16 +126,13 @@ func (ti *TestingIntegrator) createTestingPlan(patches []*Patch) *TestingPlan {
 	// Analyze patches to determine testing requirements
 	hasCodeChanges := false
 	hasConfigChanges := false
-	hasTestChanges := false
 	complexity := "low"
 
 	for _, patch := range patches {
 		for _, filePatch := range patch.FilePatches {
-			if ti.isTestFile(filePatch.Path) {
-				hasTestChanges = true
-			} else if ti.isConfigFile(filePatch.Path) {
+			if ti.isConfigFile(filePatch.Path) {
 				hasConfigChanges = true
-			} else {
+			} else if !ti.isTestFile(filePatch.Path) {
 				hasCodeChanges = true
 			}
 
@@ -349,32 +346,32 @@ func (ti *TestingIntegrator) createQualityGate(ctx context.Context, pr *PullRequ
 // MonitorTestingProgress monitors the progress of testing
 func (ti *TestingIntegrator) MonitorTestingProgress(ctx context.Context, pr *PullRequest) (*TestingProgressReport, error) {
 	report := &TestingProgressReport{
-		PullRequestNumber: pr.Number,
-		OverallStatus:     "in_progress",
-		TestResults:       []*TestResult{},
+		PullRequestNumber:  pr.Number,
+		OverallStatus:      "in_progress",
+		TestResults:        []*TestResult{},
 		QualityGateResults: []*QualityGateResult{},
-		Summary:           &TestingSummary{},
-		LastUpdated:       time.Now(),
+		Summary:            &TestingSummary{},
+		LastUpdated:        time.Now(),
 	}
 
 	// Monitor test results (simplified)
 	testResults := []*TestResult{
 		{
-			Name:        "Unit Tests",
-			Status:      "passed",
-			Duration:    2 * time.Minute,
-			Coverage:    85.5,
-			TestsPassed: 45,
-			TestsFailed: 0,
+			Name:         "Unit Tests",
+			Status:       "passed",
+			Duration:     2 * time.Minute,
+			Coverage:     85.5,
+			TestsPassed:  45,
+			TestsFailed:  0,
 			TestsSkipped: 2,
 		},
 		{
-			Name:        "Integration Tests",
-			Status:      "running",
-			Duration:    5 * time.Minute,
-			Coverage:    0,
-			TestsPassed: 8,
-			TestsFailed: 0,
+			Name:         "Integration Tests",
+			Status:       "running",
+			Duration:     5 * time.Minute,
+			Coverage:     0,
+			TestsPassed:  8,
+			TestsFailed:  0,
 			TestsSkipped: 0,
 		},
 	}
@@ -403,12 +400,12 @@ func (ti *TestingIntegrator) MonitorTestingProgress(ctx context.Context, pr *Pul
 
 // TestingProgressReport represents the progress of testing
 type TestingProgressReport struct {
-	PullRequestNumber  int                   `json:"pull_request_number"`
-	OverallStatus      string                `json:"overall_status"`
-	TestResults        []*TestResult         `json:"test_results"`
-	QualityGateResults []*QualityGateResult  `json:"quality_gate_results"`
-	Summary            *TestingSummary       `json:"summary"`
-	LastUpdated        time.Time             `json:"last_updated"`
+	PullRequestNumber  int                  `json:"pull_request_number"`
+	OverallStatus      string               `json:"overall_status"`
+	TestResults        []*TestResult        `json:"test_results"`
+	QualityGateResults []*QualityGateResult `json:"quality_gate_results"`
+	Summary            *TestingSummary      `json:"summary"`
+	LastUpdated        time.Time            `json:"last_updated"`
 }
 
 // TestResult represents the result of a test
@@ -436,14 +433,14 @@ type QualityGateResult struct {
 
 // TestingSummary provides a summary of testing results
 type TestingSummary struct {
-	TotalTests       int           `json:"total_tests"`
-	PassedTests      int           `json:"passed_tests"`
-	FailedTests      int           `json:"failed_tests"`
-	SkippedTests     int           `json:"skipped_tests"`
-	OverallCoverage  float64       `json:"overall_coverage"`
-	TotalDuration    time.Duration `json:"total_duration"`
-	QualityGatesPassed int         `json:"quality_gates_passed"`
-	QualityGatesFailed int         `json:"quality_gates_failed"`
+	TotalTests         int           `json:"total_tests"`
+	PassedTests        int           `json:"passed_tests"`
+	FailedTests        int           `json:"failed_tests"`
+	SkippedTests       int           `json:"skipped_tests"`
+	OverallCoverage    float64       `json:"overall_coverage"`
+	TotalDuration      time.Duration `json:"total_duration"`
+	QualityGatesPassed int           `json:"quality_gates_passed"`
+	QualityGatesFailed int           `json:"quality_gates_failed"`
 }
 
 // calculateTestingSummary calculates testing summary
@@ -456,7 +453,7 @@ func (ti *TestingIntegrator) calculateTestingSummary(testResults []*TestResult, 
 		summary.FailedTests += result.TestsFailed
 		summary.SkippedTests += result.TestsSkipped
 		summary.TotalDuration += result.Duration
-		
+
 		if result.Coverage > summary.OverallCoverage {
 			summary.OverallCoverage = result.Coverage
 		}
@@ -503,8 +500,8 @@ func (ti *TestingIntegrator) determineOverallStatus(testResults []*TestResult, q
 
 // Helper methods
 func (ti *TestingIntegrator) isTestFile(path string) bool {
-	return strings.Contains(path, "test") || strings.Contains(path, "spec") || 
-		   strings.HasSuffix(path, "_test.go") || strings.HasSuffix(path, ".test.js")
+	return strings.Contains(path, "test") || strings.Contains(path, "spec") ||
+		strings.HasSuffix(path, "_test.go") || strings.HasSuffix(path, ".test.js")
 }
 
 func (ti *TestingIntegrator) isConfigFile(path string) bool {

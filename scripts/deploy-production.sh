@@ -14,6 +14,9 @@ SERVICE_NAME="ai-dep-manager"
 USER="ai-dep-manager"
 GROUP="ai-dep-manager"
 
+# Detect OS
+OS="$(uname -s)"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -50,6 +53,19 @@ check_root() {
 create_user() {
     log_info "Creating system user and group..."
     
+    if [[ "$OS" == "Darwin" ]]; then
+        log_warning "Skipping user creation on macOS. Using sudo user."
+        if [ -n "$SUDO_USER" ]; then
+            USER="$SUDO_USER"
+            GROUP=$(id -gn "$SUDO_USER")
+        else
+            USER=$(whoami)
+            GROUP=$(id -gn)
+        fi
+        log_info "Using user: $USER, group: $GROUP"
+        return
+    fi
+
     if ! getent group "$GROUP" > /dev/null 2>&1; then
         groupadd --system "$GROUP"
         log_success "Created group: $GROUP"
@@ -82,12 +98,23 @@ build_application() {
     mkdir -p "$BUILD_DIR"
     
     # Build for production
-    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    if [[ "$OS" == "Darwin" ]]; then
+        GOOS=darwin
+    else
+        GOOS=linux
+    fi
+    
+    CGO_ENABLED=0 GOOS=$GOOS GOARCH=amd64 go build \
         -ldflags "-X main.Version=$VERSION -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
         -o "$BUILD_DIR/$APP_NAME" .
     
     # Make executable
     chmod +x "$BUILD_DIR/$APP_NAME"
+    
+    # Fix ownership of build directory if on macOS and running as root
+    if [[ "$OS" == "Darwin" && -n "$SUDO_USER" ]]; then
+        chown -R "$SUDO_USER" "$BUILD_DIR"
+    fi
     
     log_success "Application built successfully"
 }
@@ -97,9 +124,11 @@ deploy_application() {
     log_info "Deploying application..."
     
     # Stop service if running
-    if systemctl is-active --quiet "$SERVICE_NAME"; then
-        log_info "Stopping existing service..."
-        systemctl stop "$SERVICE_NAME"
+    if [[ "$OS" != "Darwin" ]]; then
+        if systemctl is-active --quiet "$SERVICE_NAME"; then
+            log_info "Stopping existing service..."
+            systemctl stop "$SERVICE_NAME"
+        fi
     fi
     
     # Copy binary
@@ -119,6 +148,11 @@ deploy_application() {
 
 # Create systemd service
 create_service() {
+    if [[ "$OS" == "Darwin" ]]; then
+        log_warning "Skipping systemd service creation on macOS."
+        return
+    fi
+
     log_info "Creating systemd service..."
     
     cat > "/etc/systemd/system/$SERVICE_NAME.service" << EOF
@@ -168,6 +202,11 @@ EOF
 
 # Setup log rotation
 setup_logrotate() {
+    if [[ "$OS" == "Darwin" ]]; then
+        log_warning "Skipping logrotate setup on macOS."
+        return
+    fi
+
     log_info "Setting up log rotation..."
     
     cat > "/etc/logrotate.d/$SERVICE_NAME" << EOF
@@ -220,13 +259,23 @@ EOF
     chown "$USER:$GROUP" "$DEPLOY_DIR/scripts/backup.sh"
     
     # Add to crontab for daily backups
-    echo "0 2 * * * $DEPLOY_DIR/scripts/backup.sh" | crontab -u "$USER" -
+    if [[ "$OS" != "Darwin" ]]; then
+        echo "0 2 * * * $DEPLOY_DIR/scripts/backup.sh" | crontab -u "$USER" -
+    else
+        log_warning "Skipping crontab setup on macOS"
+    fi
     
-    log_success "Backup script created and scheduled"
+    log_success "Backup script created"
 }
 
 # Start service
 start_service() {
+    if [[ "$OS" == "Darwin" ]]; then
+        log_info "Skipping service start on macOS."
+        log_info "You can start the agent manually: $DEPLOY_DIR/bin/$APP_NAME agent start"
+        return
+    fi
+
     log_info "Starting service..."
     
     systemctl start "$SERVICE_NAME"
@@ -247,14 +296,26 @@ health_check() {
     log_info "Performing health check..."
     
     # Wait for service to be ready
-    sleep 10
+    sleep 5
     
     # Check if binary responds
-    if sudo -u "$USER" "$DEPLOY_DIR/bin/$APP_NAME" version > /dev/null 2>&1; then
-        log_success "Health check passed"
+    if [[ "$OS" == "Darwin" ]]; then
+        # On macOS, just run the binary directly as the current user (which is root/sudo)
+        # or switch to the target user if possible.
+        # Since we skipped service start, we just check if binary runs.
+        if "$DEPLOY_DIR/bin/$APP_NAME" version > /dev/null 2>&1; then
+            log_success "Health check passed"
+        else
+            log_error "Health check failed: Binary execution failed"
+            exit 1
+        fi
     else
-        log_error "Health check failed"
-        exit 1
+        if sudo -u "$USER" "$DEPLOY_DIR/bin/$APP_NAME" version > /dev/null 2>&1; then
+            log_success "Health check passed"
+        else
+            log_error "Health check failed"
+            exit 1
+        fi
     fi
 }
 
@@ -262,6 +323,7 @@ health_check() {
 main() {
     log_info "Starting AI Dependency Manager production deployment..."
     log_info "Version: $VERSION"
+    log_info "OS: $OS"
     
     check_root
     create_user
@@ -275,8 +337,10 @@ main() {
     health_check
     
     log_success "🎉 AI Dependency Manager deployed successfully!"
-    log_info "Service status: $(systemctl is-active $SERVICE_NAME)"
-    log_info "Logs: journalctl -u $SERVICE_NAME -f"
+    if [[ "$OS" != "Darwin" ]]; then
+        log_info "Service status: $(systemctl is-active $SERVICE_NAME)"
+        log_info "Logs: journalctl -u $SERVICE_NAME -f"
+    fi
     log_info "Config: $DEPLOY_DIR/config/config.yaml"
     log_info "Data: $DEPLOY_DIR/data/"
 }

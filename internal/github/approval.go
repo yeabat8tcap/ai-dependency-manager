@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -22,25 +23,25 @@ func NewApprovalWorkflowManager(client *Client, config *ApprovalConfig) *Approva
 
 // ApprovalConfig defines approval workflow configuration
 type ApprovalConfig struct {
-	RequiredApprovals     int                    `json:"required_approvals"`
-	RequireOwnerApproval  bool                   `json:"require_owner_approval"`
-	RequireSecurityReview bool                   `json:"require_security_review"`
-	ApprovalRules         []*ApprovalRule        `json:"approval_rules"`
-	EscalationRules       []*EscalationRule      `json:"escalation_rules"`
-	NotificationChannels  []string               `json:"notification_channels"`
-	TimeoutDuration       time.Duration          `json:"timeout_duration"`
-	AutoApprovalRules     []*AutoApprovalRule    `json:"auto_approval_rules"`
+	RequiredApprovals     int                 `json:"required_approvals"`
+	RequireOwnerApproval  bool                `json:"require_owner_approval"`
+	RequireSecurityReview bool                `json:"require_security_review"`
+	ApprovalRules         []*ApprovalRule     `json:"approval_rules"`
+	EscalationRules       []*EscalationRule   `json:"escalation_rules"`
+	NotificationChannels  []string            `json:"notification_channels"`
+	TimeoutDuration       time.Duration       `json:"timeout_duration"`
+	AutoApprovalRules     []*AutoApprovalRule `json:"auto_approval_rules"`
 }
 
 // ApprovalRule defines conditions for approval requirements
 type ApprovalRule struct {
-	ID          string            `json:"id"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Conditions  []*RuleCondition  `json:"conditions"`
-	Actions     []*RuleAction     `json:"actions"`
-	Priority    int               `json:"priority"`
-	Enabled     bool              `json:"enabled"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Conditions  []*RuleCondition `json:"conditions"`
+	Actions     []*RuleAction    `json:"actions"`
+	Priority    int              `json:"priority"`
+	Enabled     bool             `json:"enabled"`
 }
 
 // RuleCondition defines when a rule should be applied
@@ -68,40 +69,40 @@ type EscalationRule struct {
 
 // AutoApprovalRule defines conditions for automatic approval
 type AutoApprovalRule struct {
-	ID          string           `json:"id"`
-	Name        string           `json:"name"`
-	Conditions  []*RuleCondition `json:"conditions"`
-	MaxRisk     string           `json:"max_risk"`     // "low", "medium", "high"
-	MaxChanges  int              `json:"max_changes"`  // maximum number of files changed
-	Enabled     bool             `json:"enabled"`
+	ID         string           `json:"id"`
+	Name       string           `json:"name"`
+	Conditions []*RuleCondition `json:"conditions"`
+	MaxRisk    string           `json:"max_risk"`    // "low", "medium", "high"
+	MaxChanges int              `json:"max_changes"` // maximum number of files changed
+	Enabled    bool             `json:"enabled"`
 }
 
 // ApprovalRequest represents a request for approval
 type ApprovalRequest struct {
-	ID               string                 `json:"id"`
-	PullRequestID    int                    `json:"pull_request_id"`
-	RequesterID      string                 `json:"requester_id"`
-	ApprovalType     string                 `json:"approval_type"`
-	Priority         string                 `json:"priority"`
-	RequiredApprovers []string              `json:"required_approvers"`
-	OptionalApprovers []string              `json:"optional_approvers"`
-	ApprovalDeadline time.Time              `json:"approval_deadline"`
-	Context          map[string]interface{} `json:"context"`
-	Status           string                 `json:"status"`
-	CreatedAt        time.Time              `json:"created_at"`
-	UpdatedAt        time.Time              `json:"updated_at"`
+	ID                string                 `json:"id"`
+	PullRequestID     int                    `json:"pull_request_id"`
+	RequesterID       string                 `json:"requester_id"`
+	ApprovalType      string                 `json:"approval_type"`
+	Priority          string                 `json:"priority"`
+	RequiredApprovers []string               `json:"required_approvers"`
+	OptionalApprovers []string               `json:"optional_approvers"`
+	ApprovalDeadline  time.Time              `json:"approval_deadline"`
+	Context           map[string]interface{} `json:"context"`
+	Status            string                 `json:"status"`
+	CreatedAt         time.Time              `json:"created_at"`
+	UpdatedAt         time.Time              `json:"updated_at"`
 }
 
 // ApprovalResponse represents an approval response
 type ApprovalResponse struct {
-	ID            string                 `json:"id"`
-	RequestID     string                 `json:"request_id"`
-	ApproverID    string                 `json:"approver_id"`
-	Decision      string                 `json:"decision"` // "approved", "rejected", "conditional"
-	Comments      string                 `json:"comments"`
-	Conditions    []string               `json:"conditions"`
-	Metadata      map[string]interface{} `json:"metadata"`
-	RespondedAt   time.Time              `json:"responded_at"`
+	ID          string                 `json:"id"`
+	RequestID   string                 `json:"request_id"`
+	ApproverID  string                 `json:"approver_id"`
+	Decision    string                 `json:"decision"` // "approved", "rejected", "conditional"
+	Comments    string                 `json:"comments"`
+	Conditions  []string               `json:"conditions"`
+	Metadata    map[string]interface{} `json:"metadata"`
+	RespondedAt time.Time              `json:"responded_at"`
 }
 
 // ApprovalWorkflow represents the complete approval workflow for a PR
@@ -118,6 +119,7 @@ type ApprovalWorkflow struct {
 	StartedAt         time.Time           `json:"started_at"`
 	CompletedAt       *time.Time          `json:"completed_at"`
 	DeadlineAt        time.Time           `json:"deadline_at"`
+	UpdatedAt         time.Time           `json:"updated_at"`
 }
 
 // WorkflowEvent represents an event in the approval workflow
@@ -165,7 +167,7 @@ func (awm *ApprovalWorkflowManager) CreateApprovalWorkflow(ctx context.Context, 
 	if awm.canAutoApprove(ctx, pr, patches, applicableRules) {
 		workflow.Status = "auto_approved"
 		workflow.CompletedAt = &[]time.Time{time.Now()}[0]
-		
+
 		workflow.Timeline = append(workflow.Timeline, &WorkflowEvent{
 			ID:          fmt.Sprintf("event_%d", time.Now().UnixNano()),
 			Type:        "auto_approved",
@@ -173,7 +175,7 @@ func (awm *ApprovalWorkflowManager) CreateApprovalWorkflow(ctx context.Context, 
 			ActorID:     "system",
 			Timestamp:   time.Now(),
 		})
-		
+
 		return workflow, nil
 	}
 
@@ -314,14 +316,14 @@ func (awm *ApprovalWorkflowManager) createApprovalRequests(ctx context.Context, 
 
 	// Create base approval request
 	baseRequest := &ApprovalRequest{
-		ID:               fmt.Sprintf("req_%d_%d", pr.Number, time.Now().Unix()),
-		PullRequestID:    pr.Number,
-		RequesterID:      pr.Author,
-		ApprovalType:     "dependency_update",
-		Priority:         awm.calculatePriority(patches),
+		ID:                fmt.Sprintf("req_%d_%d", pr.Number, time.Now().Unix()),
+		PullRequestID:     pr.Number,
+		RequesterID:       pr.User.Login,
+		ApprovalType:      "dependency_update",
+		Priority:          awm.calculatePriority(patches),
 		RequiredApprovers: awm.getRequiredApprovers(rules),
 		OptionalApprovers: awm.getOptionalApprovers(rules),
-		ApprovalDeadline: time.Now().Add(awm.config.TimeoutDuration),
+		ApprovalDeadline:  time.Now().Add(awm.config.TimeoutDuration),
 		Context: map[string]interface{}{
 			"patches_count": len(patches),
 			"risk_level":    awm.calculatePRRiskLevel(patches),
@@ -350,17 +352,17 @@ func (awm *ApprovalWorkflowManager) createApprovalRequests(ctx context.Context, 
 // createSpecialApprovalRequest creates a special approval request based on rule action
 func (awm *ApprovalWorkflowManager) createSpecialApprovalRequest(pr *PullRequest, patches []*Patch, rule *ApprovalRule, action *RuleAction) *ApprovalRequest {
 	return &ApprovalRequest{
-		ID:            fmt.Sprintf("req_%s_%d_%d", rule.ID, pr.Number, time.Now().Unix()),
-		PullRequestID: pr.Number,
-		RequesterID:   pr.Author,
-		ApprovalType:  fmt.Sprintf("rule_%s", rule.ID),
-		Priority:      "high",
+		ID:                fmt.Sprintf("req_%s_%d_%d", rule.ID, pr.Number, time.Now().Unix()),
+		PullRequestID:     pr.Number,
+		RequesterID:       pr.User.Login,
+		ApprovalType:      fmt.Sprintf("rule_%s", rule.ID),
+		Priority:          "high",
 		RequiredApprovers: awm.extractApproversFromAction(action),
-		ApprovalDeadline: time.Now().Add(awm.config.TimeoutDuration),
+		ApprovalDeadline:  time.Now().Add(awm.config.TimeoutDuration),
 		Context: map[string]interface{}{
-			"rule_id":    rule.ID,
-			"rule_name":  rule.Name,
-			"triggered":  true,
+			"rule_id":   rule.ID,
+			"rule_name": rule.Name,
+			"triggered": true,
 		},
 		Status:    "pending",
 		CreatedAt: time.Now(),
@@ -425,14 +427,16 @@ func (awm *ApprovalWorkflowManager) ProcessApprovalResponse(ctx context.Context,
 func (awm *ApprovalWorkflowManager) matchesFilePattern(patches []*Patch, pattern, operator string) bool {
 	// Simplified pattern matching
 	for _, patch := range patches {
-		switch operator {
-		case "contains":
-			if strings.Contains(patch.File, pattern) {
-				return true
-			}
-		case "equals":
-			if patch.File == pattern {
-				return true
+		for _, filePatch := range patch.FilePatches {
+			switch operator {
+			case "contains":
+				if strings.Contains(filePatch.Path, pattern) {
+					return true
+				}
+			case "equals":
+				if filePatch.Path == pattern {
+					return true
+				}
 			}
 		}
 	}

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
 )
 
 // ReviewManager handles automated review request management
@@ -16,7 +14,7 @@ type ReviewManager struct {
 }
 
 // NewReviewManager creates a new review manager
-func NewReviewManager(client *Client, aiManager *ai.Manager) *ReviewManager {
+func NewReviewManager(client *Client, aiManager AIManager) *ReviewManager {
 	return &ReviewManager{
 		client:    client,
 		aiManager: aiManager,
@@ -231,13 +229,13 @@ func (rm *ReviewManager) getAreaBasedTeams(analysis *ReviewAnalysis) []*TeamSugg
 	var suggestions []*TeamSuggestion
 
 	areaToTeams := map[string][]string{
-		"api":           {"backend-team", "api-team"},
-		"ui":            {"frontend-team", "design-team"},
-		"database":      {"data-team", "backend-team"},
+		"api":            {"backend-team", "api-team"},
+		"ui":             {"frontend-team", "design-team"},
+		"database":       {"data-team", "backend-team"},
 		"infrastructure": {"devops-team", "platform-team"},
-		"auth":          {"security-team", "identity-team"},
-		"payment":       {"payments-team", "security-team"},
-		"integration":   {"integrations-team", "api-team"},
+		"auth":           {"security-team", "identity-team"},
+		"payment":        {"payments-team", "security-team"},
+		"integration":    {"integrations-team", "api-team"},
 	}
 
 	for _, area := range analysis.AffectedAreas {
@@ -391,19 +389,19 @@ func (rm *ReviewManager) MonitorReviewProgress(ctx context.Context, pr *PullRequ
 	// Get current review statuses (simplified)
 	reviewStatuses := []*ReviewStatus{
 		{
-			Reviewer:     "frontend-lead",
-			Type:         "user",
-			Status:       "approved",
-			SubmittedAt:  time.Now().Add(-1 * time.Hour),
-			Comments:     3,
+			Reviewer:         "frontend-lead",
+			Type:             "user",
+			Status:           "approved",
+			SubmittedAt:      time.Now().Add(-1 * time.Hour),
+			Comments:         3,
 			ChangesRequested: false,
 		},
 		{
-			Reviewer:     "backend-team",
-			Type:         "team",
-			Status:       "pending",
-			RequestedAt:  time.Now().Add(-30 * time.Minute),
-			Comments:     0,
+			Reviewer:         "backend-team",
+			Type:             "team",
+			Status:           "pending",
+			RequestedAt:      time.Now().Add(-30 * time.Minute),
+			Comments:         0,
 			ChangesRequested: false,
 		},
 	}
@@ -429,24 +427,24 @@ type ReviewProgressReport struct {
 
 // ReviewStatus represents the status of a single review
 type ReviewStatus struct {
-	Reviewer         string     `json:"reviewer"`
-	Type             string     `json:"type"`
-	Status           string     `json:"status"`
-	RequestedAt      time.Time  `json:"requested_at,omitempty"`
-	SubmittedAt      time.Time  `json:"submitted_at,omitempty"`
-	Comments         int        `json:"comments"`
-	ChangesRequested bool       `json:"changes_requested"`
-	Message          string     `json:"message,omitempty"`
+	Reviewer         string    `json:"reviewer"`
+	Type             string    `json:"type"`
+	Status           string    `json:"status"`
+	RequestedAt      time.Time `json:"requested_at,omitempty"`
+	SubmittedAt      time.Time `json:"submitted_at,omitempty"`
+	Comments         int       `json:"comments"`
+	ChangesRequested bool      `json:"changes_requested"`
+	Message          string    `json:"message,omitempty"`
 }
 
 // ReviewSummary provides a summary of review progress
 type ReviewSummary struct {
-	TotalReviewers      int `json:"total_reviewers"`
-	ApprovedReviewers   int `json:"approved_reviewers"`
-	PendingReviewers    int `json:"pending_reviewers"`
-	ChangesRequested    int `json:"changes_requested"`
-	TotalComments       int `json:"total_comments"`
-	ReadyToMerge        bool `json:"ready_to_merge"`
+	TotalReviewers    int  `json:"total_reviewers"`
+	ApprovedReviewers int  `json:"approved_reviewers"`
+	PendingReviewers  int  `json:"pending_reviewers"`
+	ChangesRequested  int  `json:"changes_requested"`
+	TotalComments     int  `json:"total_comments"`
+	ReadyToMerge      bool `json:"ready_to_merge"`
 }
 
 // calculateReviewSummary calculates review summary
@@ -577,7 +575,7 @@ func (rm *ReviewManager) hasSecurityKeywords(title, body string) bool {
 
 func (rm *ReviewManager) mergeStringSlices(slice1, slice2 []string) []string {
 	merged := append([]string{}, slice1...)
-	
+
 	for _, item := range slice2 {
 		found := false
 		for _, existing := range merged {

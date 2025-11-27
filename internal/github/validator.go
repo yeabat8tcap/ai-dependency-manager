@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/ai-dep-manager/internal/models"
 )
 
 // ValidationService handles patch validation and testing
@@ -28,18 +29,18 @@ func NewValidationService(client *Client) *ValidationService {
 
 // ValidationResult represents the result of patch validation
 type ValidationResult struct {
-	PatchID         string                `json:"patch_id"`
-	Repository      string                `json:"repository"`
-	OverallStatus   ValidationStatus      `json:"overall_status"`
-	Steps           []*ValidationStepResult `json:"steps"`
-	BuildOutput     string                `json:"build_output,omitempty"`
-	TestOutput      string                `json:"test_output,omitempty"`
-	LintOutput      string                `json:"lint_output,omitempty"`
-	Errors          []string              `json:"errors,omitempty"`
-	Warnings        []string              `json:"warnings,omitempty"`
-	Duration        time.Duration         `json:"duration"`
-	ValidatedAt     time.Time             `json:"validated_at"`
-	Environment     *ValidationEnvironment `json:"environment"`
+	PatchID       string                  `json:"patch_id"`
+	Repository    string                  `json:"repository"`
+	OverallStatus ValidationStatus        `json:"overall_status"`
+	Steps         []*ValidationStepResult `json:"steps"`
+	BuildOutput   string                  `json:"build_output,omitempty"`
+	TestOutput    string                  `json:"test_output,omitempty"`
+	LintOutput    string                  `json:"lint_output,omitempty"`
+	Errors        []string                `json:"errors,omitempty"`
+	Warnings      []string                `json:"warnings,omitempty"`
+	Duration      time.Duration           `json:"duration"`
+	ValidatedAt   time.Time               `json:"validated_at"`
+	Environment   *ValidationEnvironment  `json:"environment"`
 }
 
 // ValidationStatus represents the status of validation
@@ -66,35 +67,35 @@ type ValidationStepResult struct {
 
 // ValidationEnvironment represents the validation environment
 type ValidationEnvironment struct {
-	OS              string            `json:"os"`
-	Architecture    string            `json:"architecture"`
-	NodeVersion     string            `json:"node_version,omitempty"`
-	PythonVersion   string            `json:"python_version,omitempty"`
-	JavaVersion     string            `json:"java_version,omitempty"`
-	GoVersion       string            `json:"go_version,omitempty"`
-	WorkingDir      string            `json:"working_dir"`
-	Environment     map[string]string `json:"environment"`
-	PackageManager  string            `json:"package_manager"`
+	OS             string            `json:"os"`
+	Architecture   string            `json:"architecture"`
+	NodeVersion    string            `json:"node_version,omitempty"`
+	PythonVersion  string            `json:"python_version,omitempty"`
+	JavaVersion    string            `json:"java_version,omitempty"`
+	GoVersion      string            `json:"go_version,omitempty"`
+	WorkingDir     string            `json:"working_dir"`
+	Environment    map[string]string `json:"environment"`
+	PackageManager string            `json:"package_manager"`
 }
 
 // ValidationOptions represents options for validation
 type ValidationOptions struct {
-	SkipBuild       bool              `json:"skip_build"`
-	SkipTests       bool              `json:"skip_tests"`
-	SkipLint        bool              `json:"skip_lint"`
-	Timeout         time.Duration     `json:"timeout"`
-	Environment     map[string]string `json:"environment,omitempty"`
-	WorkingDir      string            `json:"working_dir,omitempty"`
-	Parallel        bool              `json:"parallel"`
-	FailFast        bool              `json:"fail_fast"`
+	SkipBuild   bool              `json:"skip_build"`
+	SkipTests   bool              `json:"skip_tests"`
+	SkipLint    bool              `json:"skip_lint"`
+	Timeout     time.Duration     `json:"timeout"`
+	Environment map[string]string `json:"environment,omitempty"`
+	WorkingDir  string            `json:"working_dir,omitempty"`
+	Parallel    bool              `json:"parallel"`
+	FailFast    bool              `json:"fail_fast"`
 }
 
 // ValidatePatch validates a generated patch
 func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedPatch, options *ValidationOptions) (*ValidationResult, error) {
 	logger.Info("Validating patch for repository %s", patch.Repository)
-	
+
 	startTime := time.Now()
-	
+
 	// Set default options
 	if options == nil {
 		options = &ValidationOptions{
@@ -102,7 +103,7 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 			FailFast: true,
 		}
 	}
-	
+
 	result := &ValidationResult{
 		PatchID:       generatePatchID(patch),
 		Repository:    patch.Repository,
@@ -112,7 +113,7 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 		Warnings:      []string{},
 		ValidatedAt:   startTime,
 	}
-	
+
 	// Setup validation environment
 	env, err := v.setupValidationEnvironment(ctx, patch, options)
 	if err != nil {
@@ -121,14 +122,14 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 		return result, err
 	}
 	result.Environment = env
-	
+
 	// Apply patch to temporary environment
 	if err := v.applyPatchToEnvironment(ctx, patch, env); err != nil {
 		result.OverallStatus = ValidationStatusFailed
 		result.Errors = append(result.Errors, fmt.Sprintf("Failed to apply patch: %v", err))
 		return result, err
 	}
-	
+
 	// Run validation steps
 	for _, step := range patch.ValidationSteps {
 		if ctx.Err() != nil {
@@ -136,10 +137,10 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 			result.Errors = append(result.Errors, "Validation cancelled")
 			break
 		}
-		
+
 		stepResult := v.runValidationStep(ctx, step, env, options)
 		result.Steps = append(result.Steps, stepResult)
-		
+
 		// Handle step result
 		switch stepResult.Status {
 		case ValidationStatusFailed:
@@ -150,14 +151,14 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 					break
 				}
 			} else {
-				result.Warnings = append(result.Warnings, 
+				result.Warnings = append(result.Warnings,
 					fmt.Sprintf("Optional step failed: %s", step.Description))
 			}
 		case ValidationStatusPassed:
 			logger.Debug("Validation step passed: %s", step.Description)
 		}
 	}
-	
+
 	// Set overall status if not already failed
 	if result.OverallStatus == ValidationStatusRunning {
 		allPassed := true
@@ -167,24 +168,24 @@ func (v *ValidationService) ValidatePatch(ctx context.Context, patch *GeneratedP
 				break
 			}
 		}
-		
+
 		if allPassed {
 			result.OverallStatus = ValidationStatusPassed
 		} else {
 			result.OverallStatus = ValidationStatusFailed
 		}
 	}
-	
+
 	result.Duration = time.Since(startTime)
-	
+
 	// Cleanup environment
 	if err := v.cleanupValidationEnvironment(env); err != nil {
 		logger.Warn("Failed to cleanup validation environment: %v", err)
 	}
-	
-	logger.Info("Patch validation completed for %s: %s (duration: %v)", 
+
+	logger.Info("Patch validation completed for %s: %s (duration: %v)",
 		patch.Repository, result.OverallStatus, result.Duration)
-	
+
 	return result, nil
 }
 
@@ -196,28 +197,28 @@ func (v *ValidationService) setupValidationEnvironment(ctx context.Context, patc
 		return nil, fmt.Errorf("invalid repository format: %s", patch.Repository)
 	}
 	owner, repo := parts[0], parts[1]
-	
+
 	// Create temporary directory
 	tempDir, err := os.MkdirTemp("", fmt.Sprintf("patch-validation-%s-%s-*", owner, repo))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create temp directory: %w", err)
 	}
-	
+
 	logger.Debug("Created validation environment: %s", tempDir)
-	
+
 	// Clone repository (in a real implementation, this would clone the actual repo)
 	// For now, we'll simulate this by creating the directory structure
 	if err := os.MkdirAll(filepath.Join(tempDir, "src"), 0755); err != nil {
 		return nil, fmt.Errorf("failed to create src directory: %w", err)
 	}
-	
+
 	env := &ValidationEnvironment{
 		OS:           "linux", // This would be detected
 		Architecture: "amd64", // This would be detected
 		WorkingDir:   tempDir,
 		Environment:  make(map[string]string),
 	}
-	
+
 	// Detect runtime versions
 	if nodeVersion, err := v.getNodeVersion(); err == nil {
 		env.NodeVersion = nodeVersion
@@ -231,42 +232,42 @@ func (v *ValidationService) setupValidationEnvironment(ctx context.Context, patc
 	if goVersion, err := v.getGoVersion(); err == nil {
 		env.GoVersion = goVersion
 	}
-	
+
 	// Set environment variables
 	if options.Environment != nil {
 		for key, value := range options.Environment {
 			env.Environment[key] = value
 		}
 	}
-	
+
 	return env, nil
 }
 
 // applyPatchToEnvironment applies the patch to the validation environment
 func (v *ValidationService) applyPatchToEnvironment(ctx context.Context, patch *GeneratedPatch, env *ValidationEnvironment) error {
 	logger.Debug("Applying patch to validation environment")
-	
+
 	// Apply configuration changes
 	for _, configPatch := range patch.ConfigChanges {
 		if err := v.applyConfigPatch(configPatch, env); err != nil {
 			return fmt.Errorf("failed to apply config patch %s: %w", configPatch.File, err)
 		}
 	}
-	
+
 	// Apply file changes
 	for _, filePatch := range patch.Files {
 		if err := v.applyFilePatch(filePatch, env); err != nil {
 			return fmt.Errorf("failed to apply file patch %s: %w", filePatch.Path, err)
 		}
 	}
-	
+
 	return nil
 }
 
 // applyConfigPatch applies a configuration patch
 func (v *ValidationService) applyConfigPatch(patch *ConfigPatch, env *ValidationEnvironment) error {
 	filePath := filepath.Join(env.WorkingDir, patch.File)
-	
+
 	switch patch.Type {
 	case "package.json":
 		// Create or update package.json
@@ -274,7 +275,7 @@ func (v *ValidationService) applyConfigPatch(patch *ConfigPatch, env *Validation
   "name": "test-project",
   "version": "1.0.0",
   "dependencies": {`
-		
+
 		if deps, ok := patch.Changes["dependencies"].(map[string]string); ok {
 			var depEntries []string
 			for name, version := range deps {
@@ -282,14 +283,14 @@ func (v *ValidationService) applyConfigPatch(patch *ConfigPatch, env *Validation
 			}
 			content += "\n" + strings.Join(depEntries, ",\n") + "\n"
 		}
-		
+
 		content += `  }
 }`
-		
+
 		if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
 			return fmt.Errorf("failed to write package.json: %w", err)
 		}
-		
+
 	case "requirements.txt":
 		if reqs, ok := patch.Changes["requirements"].([]string); ok {
 			content := strings.Join(reqs, "\n")
@@ -297,29 +298,29 @@ func (v *ValidationService) applyConfigPatch(patch *ConfigPatch, env *Validation
 				return fmt.Errorf("failed to write requirements.txt: %w", err)
 			}
 		}
-		
+
 	default:
 		logger.Warn("Unsupported config patch type: %s", patch.Type)
 	}
-	
+
 	return nil
 }
 
 // applyFilePatch applies a file patch
 func (v *ValidationService) applyFilePatch(patch *FilePatch, env *ValidationEnvironment) error {
 	filePath := filepath.Join(env.WorkingDir, patch.Path)
-	
+
 	// Create directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
-	
+
 	switch patch.Type {
 	case "create":
 		if err := os.WriteFile(filePath, []byte(patch.NewContent), 0644); err != nil {
 			return fmt.Errorf("failed to create file: %w", err)
 		}
-		
+
 	case "modify":
 		// For simplicity, we'll create a new file with the new content
 		// In a real implementation, this would apply the specific changes
@@ -334,13 +335,13 @@ func (v *ValidationService) applyFilePatch(patch *FilePatch, env *ValidationEnvi
 				return fmt.Errorf("failed to modify file: %w", err)
 			}
 		}
-		
+
 	case "delete":
 		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
 			return fmt.Errorf("failed to delete file: %w", err)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -351,9 +352,9 @@ func (v *ValidationService) runValidationStep(ctx context.Context, step *Validat
 		Status:    ValidationStatusRunning,
 		StartedAt: time.Now(),
 	}
-	
+
 	logger.Debug("Running validation step: %s", step.Description)
-	
+
 	// Check if step should be skipped
 	if v.shouldSkipStep(step, options) {
 		result.Status = ValidationStatusSkipped
@@ -361,7 +362,7 @@ func (v *ValidationService) runValidationStep(ctx context.Context, step *Validat
 		result.Duration = result.CompletedAt.Sub(result.StartedAt)
 		return result
 	}
-	
+
 	// Run the step
 	switch step.Type {
 	case "build":
@@ -376,10 +377,10 @@ func (v *ValidationService) runValidationStep(ctx context.Context, step *Validat
 		result.Status = ValidationStatusFailed
 		result.Error = fmt.Sprintf("Unknown validation step type: %s", step.Type)
 	}
-	
+
 	result.CompletedAt = time.Now()
 	result.Duration = result.CompletedAt.Sub(result.StartedAt)
-	
+
 	return result
 }
 
@@ -390,17 +391,17 @@ func (v *ValidationService) runBuildStep(ctx context.Context, step *ValidationSt
 		result.Output = "No build command specified"
 		return result
 	}
-	
+
 	output, err := v.executeCommand(ctx, step.Command, env)
 	result.Output = output
-	
+
 	if err != nil {
 		result.Status = ValidationStatusFailed
 		result.Error = err.Error()
 	} else {
 		result.Status = ValidationStatusPassed
 	}
-	
+
 	return result
 }
 
@@ -411,17 +412,17 @@ func (v *ValidationService) runTestStep(ctx context.Context, step *ValidationSte
 		result.Output = "No test command specified"
 		return result
 	}
-	
+
 	output, err := v.executeCommand(ctx, step.Command, env)
 	result.Output = output
-	
+
 	if err != nil {
 		result.Status = ValidationStatusFailed
 		result.Error = err.Error()
 	} else {
 		result.Status = ValidationStatusPassed
 	}
-	
+
 	return result
 }
 
@@ -432,17 +433,17 @@ func (v *ValidationService) runLintStep(ctx context.Context, step *ValidationSte
 		result.Output = "No lint command specified"
 		return result
 	}
-	
+
 	output, err := v.executeCommand(ctx, step.Command, env)
 	result.Output = output
-	
+
 	if err != nil {
 		result.Status = ValidationStatusFailed
 		result.Error = err.Error()
 	} else {
 		result.Status = ValidationStatusPassed
 	}
-	
+
 	return result
 }
 
@@ -462,16 +463,16 @@ func (v *ValidationService) executeCommand(ctx context.Context, command string, 
 	if len(parts) == 0 {
 		return "", fmt.Errorf("empty command")
 	}
-	
+
 	cmd := exec.CommandContext(ctx, parts[0], parts[1:]...)
 	cmd.Dir = env.WorkingDir
-	
+
 	// Set environment variables
 	cmd.Env = os.Environ()
 	for key, value := range env.Environment {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, value))
 	}
-	
+
 	// Execute command
 	output, err := cmd.CombinedOutput()
 	return string(output), err
@@ -544,7 +545,7 @@ func generatePatchID(patch *GeneratedPatch) string {
 // ValidatePatchSafety performs safety checks on a patch before application
 func (v *ValidationService) ValidatePatchSafety(ctx context.Context, patch *GeneratedPatch) (*ValidationResult, error) {
 	logger.Info("Performing safety validation for patch %s", patch.Repository)
-	
+
 	result := &ValidationResult{
 		PatchID:       generatePatchID(patch),
 		Repository:    patch.Repository,
@@ -554,36 +555,36 @@ func (v *ValidationService) ValidatePatchSafety(ctx context.Context, patch *Gene
 		Warnings:      []string{},
 		ValidatedAt:   time.Now(),
 	}
-	
+
 	// Check for dangerous operations
 	for _, filePatch := range patch.Files {
 		if v.isDangerousFilePatch(filePatch) {
-			result.Errors = append(result.Errors, 
+			result.Errors = append(result.Errors,
 				fmt.Sprintf("Dangerous operation detected in %s: %s", filePatch.Path, filePatch.Description))
 		}
 	}
-	
+
 	// Check for suspicious changes
 	for _, configPatch := range patch.ConfigChanges {
 		if v.isSuspiciousConfigPatch(configPatch) {
-			result.Warnings = append(result.Warnings, 
+			result.Warnings = append(result.Warnings,
 				fmt.Sprintf("Suspicious config change in %s: %s", configPatch.File, configPatch.Description))
 		}
 	}
-	
+
 	// Check risk assessment
 	if patch.RiskAssessment.OverallRisk >= models.RiskHigh {
-		result.Warnings = append(result.Warnings, 
+		result.Warnings = append(result.Warnings,
 			"High risk patch detected - additional review recommended")
 	}
-	
+
 	// Set overall status
 	if len(result.Errors) > 0 {
 		result.OverallStatus = ValidationStatusFailed
 	} else {
 		result.OverallStatus = ValidationStatusPassed
 	}
-	
+
 	return result, nil
 }
 
@@ -593,16 +594,16 @@ func (v *ValidationService) isDangerousFilePatch(patch *FilePatch) bool {
 	if patch.Type == "delete" && strings.Contains(patch.Path, "config") {
 		return true
 	}
-	
+
 	// Check for dangerous content changes
 	for _, change := range patch.Changes {
 		if strings.Contains(strings.ToLower(change.NewContent), "eval(") ||
-		   strings.Contains(strings.ToLower(change.NewContent), "exec(") ||
-		   strings.Contains(strings.ToLower(change.NewContent), "system(") {
+			strings.Contains(strings.ToLower(change.NewContent), "exec(") ||
+			strings.Contains(strings.ToLower(change.NewContent), "system(") {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
@@ -616,6 +617,38 @@ func (v *ValidationService) isSuspiciousConfigPatch(patch *ConfigPatch) bool {
 			}
 		}
 	}
-	
+
 	return false
+}
+
+// SimplePatchValidator implements PatchValidator interface
+type SimplePatchValidator struct{}
+
+func NewPatchValidator() *SimplePatchValidator {
+	return &SimplePatchValidator{}
+}
+
+func (v *SimplePatchValidator) ValidatePatch(ctx context.Context, patch *Patch, options *ValidationOptions) (*ValidationResult, error) {
+	if patch == nil {
+		return nil, fmt.Errorf("patch cannot be nil")
+	}
+	if patch.Repository == "" {
+		return nil, fmt.Errorf("repository is required")
+	}
+
+	// Return a dummy successful result
+	return &ValidationResult{
+		PatchID:       patch.ID,
+		Repository:    patch.Repository,
+		OverallStatus: ValidationStatusPassed,
+		ValidatedAt:   time.Now(),
+		Steps:         []*ValidationStepResult{},
+	}, nil
+}
+
+func (v *SimplePatchValidator) ValidateChanges(changes []*Change) error {
+	if len(changes) == 0 {
+		return fmt.Errorf("no changes provided")
+	}
+	return nil
 }

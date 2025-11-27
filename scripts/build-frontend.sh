@@ -52,7 +52,7 @@ package web
 import "embed"
 
 //go:embed dist/*
-var StaticFiles embed.FS
+var staticFiles embed.FS
 EOF
 
 echo "✅ Frontend build completed successfully!"

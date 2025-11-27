@@ -47,41 +47,41 @@ type IntegrationConfig struct {
 
 // JiraConfig defines Jira integration configuration
 type JiraConfig struct {
-	Enabled     bool   `json:"enabled"`
-	BaseURL     string `json:"base_url"`
-	Username    string `json:"username"`
-	APIToken    string `json:"api_token"`
-	ProjectKey  string `json:"project_key"`
-	IssueType   string `json:"issue_type"`
-	Priority    string `json:"priority"`
-	Labels      []string `json:"labels"`
-	Components  []string `json:"components"`
-	AutoAssign  bool   `json:"auto_assign"`
-	DefaultAssignee string `json:"default_assignee"`
+	Enabled         bool     `json:"enabled"`
+	BaseURL         string   `json:"base_url"`
+	Username        string   `json:"username"`
+	APIToken        string   `json:"api_token"`
+	ProjectKey      string   `json:"project_key"`
+	IssueType       string   `json:"issue_type"`
+	Priority        string   `json:"priority"`
+	Labels          []string `json:"labels"`
+	Components      []string `json:"components"`
+	AutoAssign      bool     `json:"auto_assign"`
+	DefaultAssignee string   `json:"default_assignee"`
 }
 
 // LinearConfig defines Linear integration configuration
 type LinearConfig struct {
-	Enabled     bool   `json:"enabled"`
-	APIKey      string `json:"api_key"`
-	TeamID      string `json:"team_id"`
-	ProjectID   string `json:"project_id"`
-	Priority    int    `json:"priority"`
-	Labels      []string `json:"labels"`
-	AutoAssign  bool   `json:"auto_assign"`
-	DefaultAssignee string `json:"default_assignee"`
+	Enabled         bool     `json:"enabled"`
+	APIKey          string   `json:"api_key"`
+	TeamID          string   `json:"team_id"`
+	ProjectID       string   `json:"project_id"`
+	Priority        int      `json:"priority"`
+	Labels          []string `json:"labels"`
+	AutoAssign      bool     `json:"auto_assign"`
+	DefaultAssignee string   `json:"default_assignee"`
 }
 
 // AsanaConfig defines Asana integration configuration
 type AsanaConfig struct {
-	Enabled     bool   `json:"enabled"`
-	APIKey      string `json:"api_key"`
-	WorkspaceID string `json:"workspace_id"`
-	ProjectID   string `json:"project_id"`
-	Priority    string `json:"priority"`
-	Tags        []string `json:"tags"`
-	AutoAssign  bool   `json:"auto_assign"`
-	DefaultAssignee string `json:"default_assignee"`
+	Enabled         bool     `json:"enabled"`
+	APIKey          string   `json:"api_key"`
+	WorkspaceID     string   `json:"workspace_id"`
+	ProjectID       string   `json:"project_id"`
+	Priority        string   `json:"priority"`
+	Tags            []string `json:"tags"`
+	AutoAssign      bool     `json:"auto_assign"`
+	DefaultAssignee string   `json:"default_assignee"`
 }
 
 // JiraIntegration handles Jira-specific operations
@@ -130,13 +130,13 @@ type IssueRequest struct {
 
 // IssueResponse represents the response from creating an issue
 type IssueResponse struct {
-	ID          string                 `json:"id"`
-	Key         string                 `json:"key"`
-	URL         string                 `json:"url"`
-	Status      string                 `json:"status"`
-	Platform    string                 `json:"platform"` // "jira", "linear", "asana"
-	CreatedAt   time.Time              `json:"created_at"`
-	Metadata    map[string]interface{} `json:"metadata"`
+	ID        string                 `json:"id"`
+	Key       string                 `json:"key"`
+	URL       string                 `json:"url"`
+	Status    string                 `json:"status"`
+	Platform  string                 `json:"platform"` // "jira", "linear", "asana"
+	CreatedAt time.Time              `json:"created_at"`
+	Metadata  map[string]interface{} `json:"metadata"`
 }
 
 // CreateIssueForPR creates an issue in the configured project management tool for a PR
@@ -179,10 +179,10 @@ func (im *IntegrationManager) generateIssueRequest(pr *PullRequest, patches []*P
 	// Determine issue type and priority based on patches
 	issueType := "dependency_update"
 	priority := "medium"
-	
+
 	hasSecurityFix := false
 	hasBreakingChanges := false
-	
+
 	for _, patch := range patches {
 		if patch.Type == "security" {
 			hasSecurityFix = true
@@ -194,7 +194,7 @@ func (im *IntegrationManager) generateIssueRequest(pr *PullRequest, patches []*P
 			priority = "high"
 		}
 	}
-	
+
 	if hasSecurityFix {
 		issueType = "security_fix"
 	}
@@ -244,7 +244,7 @@ func (im *IntegrationManager) generateIssueDescription(pr *PullRequest, patches 
 - **Breaking Changes:** %t
 
 ## Patch Details
-`, pr.Title, pr.URL, pr.Repository, pr.Author, pr.CreatedAt.Format("2006-01-02 15:04"), len(patches), hasSecurityFix, hasBreakingChanges)
+`, pr.Title, pr.URL, pr.Repository, pr.User.Login, pr.CreatedAt.Format("2006-01-02 15:04"), len(patches), hasSecurityFix, hasBreakingChanges)
 
 	// Add patch details
 	for i, patch := range patches {
@@ -252,14 +252,14 @@ func (im *IntegrationManager) generateIssueDescription(pr *PullRequest, patches 
 			description += fmt.Sprintf("... and %d more patches\n", len(patches)-5)
 			break
 		}
-		
+
 		description += fmt.Sprintf(`
 ### Patch %d: %s
-- **File:** %s
+- **Files:** %d files changed
 - **Type:** %s
 - **Risk Level:** %s
 - **Breaking Change:** %t
-`, i+1, patch.Description, patch.File, patch.Type, patch.RiskLevel, patch.BreakingChange)
+`, i+1, patch.Description, len(patch.FilePatches), patch.Type, patch.RiskLevel, patch.BreakingChange)
 	}
 
 	// Add action items
@@ -288,7 +288,7 @@ func (im *IntegrationManager) generateIssueDescription(pr *PullRequest, patches 
 func (ji *JiraIntegration) CreateIssue(ctx context.Context, req *IssueRequest) (*IssueResponse, error) {
 	// Simulate Jira API call
 	issueKey := fmt.Sprintf("%s-%d", ji.config.ProjectKey, time.Now().Unix()%10000)
-	
+
 	response := &IssueResponse{
 		ID:        fmt.Sprintf("jira_%d", time.Now().Unix()),
 		Key:       issueKey,
@@ -315,7 +315,7 @@ func (ji *JiraIntegration) UpdateIssue(ctx context.Context, issueKey string, upd
 func (li *LinearIntegration) CreateIssue(ctx context.Context, req *IssueRequest) (*IssueResponse, error) {
 	// Simulate Linear API call
 	issueID := fmt.Sprintf("LIN-%d", time.Now().Unix()%10000)
-	
+
 	response := &IssueResponse{
 		ID:        fmt.Sprintf("linear_%d", time.Now().Unix()),
 		Key:       issueID,
@@ -342,7 +342,7 @@ func (li *LinearIntegration) UpdateIssue(ctx context.Context, issueID string, up
 func (ai *AsanaIntegration) CreateTask(ctx context.Context, req *IssueRequest) (*IssueResponse, error) {
 	// Simulate Asana API call
 	taskID := fmt.Sprintf("task_%d", time.Now().Unix())
-	
+
 	response := &IssueResponse{
 		ID:        taskID,
 		Key:       taskID,
@@ -466,7 +466,7 @@ func (im *IntegrationManager) generateEpicDescription(batchJob *BatchJob) string
 	// Group updates by type
 	updateTypes := make(map[string]int)
 	riskLevels := make(map[string]int)
-	
+
 	for _, update := range batchJob.Updates {
 		updateTypes[update.UpdateType]++
 		riskLevels[update.RiskLevel]++
@@ -514,12 +514,12 @@ func (im *IntegrationManager) NotifyCompletion(ctx context.Context, batchJob *Ba
 - **Conflicts:** %d
 
 The batch dependency update has been completed. Please review the individual PRs and verify the updates.
-`, batchJob.Status, batchJob.ActualDuration, 
-	float64(batchJob.Progress.SuccessfulUpdates)/float64(batchJob.Progress.TotalUpdates)*100,
-	batchJob.Progress.TotalUpdates,
-	batchJob.Progress.SuccessfulUpdates,
-	batchJob.Progress.FailedUpdates,
-	len(batchJob.Results))
+`, batchJob.Status, batchJob.ActualDuration,
+		float64(batchJob.Progress.SuccessfulUpdates)/float64(batchJob.Progress.TotalUpdates)*100,
+		batchJob.Progress.TotalUpdates,
+		batchJob.Progress.SuccessfulUpdates,
+		batchJob.Progress.FailedUpdates,
+		len(batchJob.Results))
 
 	// Update all linked issues with completion summary
 	for _, issue := range issues {
@@ -550,30 +550,30 @@ The batch dependency update has been completed. Please review the individual PRs
 // GetIntegrationStatus returns the status of all integrations
 func (im *IntegrationManager) GetIntegrationStatus() map[string]bool {
 	status := make(map[string]bool)
-	
+
 	status["jira"] = im.jira != nil && im.jira.config.Enabled
 	status["linear"] = im.linear != nil && im.linear.config.Enabled
 	status["asana"] = im.asana != nil && im.asana.config.Enabled
-	
+
 	return status
 }
 
 // TestConnections tests connectivity to all enabled integrations
 func (im *IntegrationManager) TestConnections(ctx context.Context) map[string]error {
 	results := make(map[string]error)
-	
+
 	if im.jira != nil {
 		results["jira"] = im.testJiraConnection(ctx)
 	}
-	
+
 	if im.linear != nil {
 		results["linear"] = im.testLinearConnection(ctx)
 	}
-	
+
 	if im.asana != nil {
 		results["asana"] = im.testAsanaConnection(ctx)
 	}
-	
+
 	return results
 }
 
@@ -593,4 +593,14 @@ func (im *IntegrationManager) testLinearConnection(ctx context.Context) error {
 func (im *IntegrationManager) testAsanaConnection(ctx context.Context) error {
 	// Simulate connection test
 	return nil
+}
+func getPatchFiles(patch *Patch) string {
+	var files []string
+	for _, fp := range patch.FilePatches {
+		files = append(files, fp.Path)
+	}
+	if len(files) == 0 {
+		return "none"
+	}
+	return fmt.Sprintf("%v", files)
 }

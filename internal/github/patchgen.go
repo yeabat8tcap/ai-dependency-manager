@@ -22,12 +22,13 @@ type PatchGenerator struct {
 }
 
 // NewPatchGenerator creates a new patch generator
-func NewPatchGenerator(aiManager *ai.Manager, client *Client) *PatchGenerator {
+func NewPatchGenerator(aiManager *ai.AIManager, client *Client) *PatchGenerator {
+	adapter := NewAIAdapter(aiManager)
 	return &PatchGenerator{
-		aiManager:       aiManager,
+		aiManager:       adapter,
 		templateService: NewTemplateService(),
 		parser:          NewParsingService(client),
-		analyzer:        NewAnalysisService(client, aiManager),
+		analyzer:        NewAnalysisService(client, adapter),
 		client:          client,
 		repositories:    client.Repositories,
 	}
@@ -48,29 +49,11 @@ type GeneratedPatch struct {
 	GeneratedBy     string              `json:"generated_by"` // "ai", "template", "heuristic"
 }
 
-// FilePatch represents changes to a specific file
-type FilePatch struct {
-	Path        string       `json:"path"`
-	Type        string       `json:"type"`        // "modify", "create", "delete"
-	Language    string       `json:"language"`
-	Changes     []*Change    `json:"changes"`
-	NewContent  string       `json:"new_content,omitempty"`
-	Confidence  float64      `json:"confidence"`
-	Description string       `json:"description"`
-}
-
 // Change is now defined in shared_types.go
-// ConfigPatch represents changes to configuration files
-type ConfigPatch struct {
-	File        string                 `json:"file"`
-	Type        string                 `json:"type"`        // "package.json", "requirements.txt", etc.
-	Changes     map[string]interface{} `json:"changes"`
-	Description string                 `json:"description"`
-}
 
 // ValidationStep represents a step to validate the patch
 type ValidationStep struct {
-	Type        string `json:"type"`        // "build", "test", "lint", "manual"
+	Type        string `json:"type"` // "build", "test", "lint", "manual"
 	Command     string `json:"command,omitempty"`
 	Description string `json:"description"`
 	Required    bool   `json:"required"`
@@ -80,12 +63,12 @@ type ValidationStep struct {
 
 // PatchGenerationRequest represents a request to generate a patch
 type PatchGenerationRequest struct {
-	Repository      string              `json:"repository"`
-	Dependencies    []*DependencyUpdate `json:"dependencies"`
-	BaseBranch      string              `json:"base_branch"`
-	ProjectStructure *ProjectStructure  `json:"project_structure,omitempty"`
-	Analysis        []*BreakingChangeAnalysis `json:"analysis,omitempty"`
-	Options         *PatchOptions       `json:"options,omitempty"`
+	Repository       string                    `json:"repository"`
+	Dependencies     []*DependencyUpdate       `json:"dependencies"`
+	BaseBranch       string                    `json:"base_branch"`
+	ProjectStructure *ProjectStructure         `json:"project_structure,omitempty"`
+	Analysis         []*BreakingChangeAnalysis `json:"analysis,omitempty"`
+	Options          *PatchOptions             `json:"options,omitempty"`
 }
 
 // PatchOptions represents options for patch generation
@@ -100,16 +83,16 @@ type PatchOptions struct {
 
 // GeneratePatch generates a comprehensive patch for dependency updates
 func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGenerationRequest) (*GeneratedPatch, error) {
-	logger.Info("Generating patch for repository %s with %d dependencies", 
+	logger.Info("Generating patch for repository %s with %d dependencies",
 		request.Repository, len(request.Dependencies))
-	
+
 	// Parse repository name
 	parts := strings.Split(request.Repository, "/")
 	if len(parts) != 2 {
 		return nil, fmt.Errorf("invalid repository format: %s", request.Repository)
 	}
 	owner, repo := parts[0], parts[1]
-	
+
 	// Get project structure if not provided
 	if request.ProjectStructure == nil {
 		structure, err := pg.parser.ParseProject(ctx, owner, repo)
@@ -118,18 +101,18 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 		}
 		request.ProjectStructure = structure
 	}
-	
+
 	// Perform analysis if not provided
 	if request.Analysis == nil {
 		analysis, err := pg.analyzer.AnalyzeProject(ctx, owner, repo, request.Dependencies)
 		if err != nil {
 			return nil, fmt.Errorf("failed to analyze project: %w", err)
 		}
-		
+
 		// Convert project analysis to breaking change analysis
 		request.Analysis = analysis.Dependencies
 	}
-	
+
 	// Set default options
 	if request.Options == nil {
 		request.Options = &PatchOptions{
@@ -140,7 +123,7 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 			ValidateChanges: true,
 		}
 	}
-	
+
 	patch := &GeneratedPatch{
 		Repository:      request.Repository,
 		Dependencies:    request.Dependencies,
@@ -149,7 +132,7 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 		ValidationSteps: []*ValidationStep{},
 		GeneratedAt:     time.Now(),
 	}
-	
+
 	// Generate configuration file patches
 	configPatches, err := pg.generateConfigPatches(request)
 	if err != nil {
@@ -157,7 +140,7 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 	} else {
 		patch.ConfigChanges = configPatches
 	}
-	
+
 	// Generate code patches
 	if request.Options.UseAI && pg.aiManager != nil {
 		aiPatches, err := pg.generateAIPatches(ctx, request)
@@ -168,7 +151,7 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 			patch.GeneratedBy = "ai"
 		}
 	}
-	
+
 	// Generate template-based patches
 	if request.Options.UseTemplates {
 		templatePatches, err := pg.generateTemplatePatches(request)
@@ -183,28 +166,96 @@ func (pg *PatchGenerator) GeneratePatch(ctx context.Context, request *PatchGener
 			}
 		}
 	}
-	
+
 	// Generate validation steps
 	patch.ValidationSteps = pg.generateValidationSteps(request)
-	
+
 	// Assess risk
 	patch.RiskAssessment = pg.assessPatchRisk(patch, request.Analysis)
-	
+
 	// Generate commit message and PR details
 	patch.CommitMessage = pg.generateCommitMessage(request.Dependencies)
 	patch.PRTitle = pg.generatePRTitle(request.Dependencies)
 	patch.PRDescription = pg.generatePRDescription(patch, request.Analysis)
-	
-	logger.Info("Generated patch for %s: %d file changes, %d config changes, risk level %s", 
+
+	logger.Info("Generated patch for %s: %d file changes, %d config changes, risk level %s",
 		request.Repository, len(patch.Files), len(patch.ConfigChanges), patch.RiskAssessment.OverallRisk)
-	
+
 	return patch, nil
+}
+
+// GeneratePatches generates patches for a single dependency update (adapter for batch processor)
+func (pg *PatchGenerator) GeneratePatches(ctx context.Context, update *DependencyUpdate) ([]*Patch, error) {
+	// Create request
+	request := &PatchGenerationRequest{
+		Repository:   update.Repository,
+		Dependencies: []*DependencyUpdate{update},
+	}
+
+	// Generate patch
+	generated, err := pg.GeneratePatch(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert GeneratedPatch to Patch
+	// Note: GeneratedPatch uses pointers for FilePatch/ConfigPatch, Patch uses values
+	var filePatches []FilePatch
+	for _, fp := range generated.Files {
+		if fp != nil {
+			filePatches = append(filePatches, *fp)
+		}
+	}
+
+	var configPatches []ConfigPatch
+	for _, cp := range generated.ConfigChanges {
+		if cp != nil {
+			configPatches = append(configPatches, *cp)
+		}
+	}
+
+	// Flatten changes from all file patches
+	var changes []*Change
+	for _, fp := range filePatches {
+		changes = append(changes, fp.Changes...)
+	}
+
+	patch := &Patch{
+		ID:            fmt.Sprintf("patch_%d", time.Now().UnixNano()),
+		Repository:    update.Repository,
+		Dependency:    update.Name,
+		Changes:       changes,
+		FilePatches:   filePatches,
+		ConfigPatches: configPatches,
+		Description:   generated.PRDescription,
+		CreatedAt:     generated.GeneratedAt,
+		Status:        "generated",
+		Confidence:    0.8, // Aggregate confidence?
+		Type:          "chore",
+	}
+
+	if update.SecurityFix {
+		patch.Type = "security"
+	}
+
+	if generated.RiskAssessment != nil {
+		patch.Confidence = generated.RiskAssessment.Confidence
+		patch.RiskLevel = generated.RiskAssessment.OverallRisk
+		if generated.RiskAssessment.BreakingChanges > 0 {
+			patch.BreakingChange = true
+			if patch.Type == "chore" {
+				patch.Type = "breaking"
+			}
+		}
+	}
+
+	return []*Patch{patch}, nil
 }
 
 // generateConfigPatches generates patches for configuration files
 func (pg *PatchGenerator) generateConfigPatches(request *PatchGenerationRequest) ([]*ConfigPatch, error) {
 	var patches []*ConfigPatch
-	
+
 	// Update package.json dependencies
 	if request.ProjectStructure.ProjectType == "nodejs" {
 		patch := &ConfigPatch{
@@ -213,23 +264,23 @@ func (pg *PatchGenerator) generateConfigPatches(request *PatchGenerationRequest)
 			Changes:     make(map[string]interface{}),
 			Description: "Update dependency versions in package.json",
 		}
-		
+
 		dependencies := make(map[string]string)
 		for _, dep := range request.Dependencies {
 			dependencies[dep.Name] = dep.LatestVersion
 		}
 		patch.Changes["dependencies"] = dependencies
-		
+
 		patches = append(patches, patch)
 	}
-	
+
 	// Update requirements.txt
 	if request.ProjectStructure.ProjectType == "python" {
 		var newRequirements []string
 		for _, dep := range request.Dependencies {
 			newRequirements = append(newRequirements, fmt.Sprintf("%s==%s", dep.Name, dep.LatestVersion))
 		}
-		
+
 		patch := &ConfigPatch{
 			File:        "requirements.txt",
 			Type:        "requirements.txt",
@@ -238,7 +289,7 @@ func (pg *PatchGenerator) generateConfigPatches(request *PatchGenerationRequest)
 		}
 		patches = append(patches, patch)
 	}
-	
+
 	// Update pom.xml for Maven projects
 	if request.ProjectStructure.PackageManager == "maven" {
 		patch := &ConfigPatch{
@@ -247,7 +298,7 @@ func (pg *PatchGenerator) generateConfigPatches(request *PatchGenerationRequest)
 			Changes:     make(map[string]interface{}),
 			Description: "Update dependency versions in pom.xml",
 		}
-		
+
 		var dependencies []map[string]string
 		for _, dep := range request.Dependencies {
 			parts := strings.Split(dep.Name, ":")
@@ -260,22 +311,22 @@ func (pg *PatchGenerator) generateConfigPatches(request *PatchGenerationRequest)
 			}
 		}
 		patch.Changes["dependencies"] = dependencies
-		
+
 		patches = append(patches, patch)
 	}
-	
+
 	return patches, nil
 }
 
 // generateAIPatches generates patches using AI
 func (pg *PatchGenerator) generateAIPatches(ctx context.Context, request *PatchGenerationRequest) ([]*FilePatch, error) {
 	var patches []*FilePatch
-	
+
 	for _, analysis := range request.Analysis {
 		if !analysis.HasBreakingChanges {
 			continue
 		}
-		
+
 		// Create AI request for patch generation
 		aiRequest := &models.PatchGenerationRequest{
 			PackageName:     analysis.Dependency.Name,
@@ -285,14 +336,14 @@ func (pg *PatchGenerator) generateAIPatches(ctx context.Context, request *PatchG
 			ProjectType:     request.ProjectStructure.ProjectType,
 			AffectedFiles:   analysis.Dependency.AffectedFiles,
 		}
-		
+
 		// Get AI-generated patches
 		aiPatches, err := pg.aiManager.GeneratePatches(ctx, aiRequest)
 		if err != nil {
 			logger.Warn("AI patch generation failed for %s: %v", analysis.Dependency.Name, err)
 			continue
 		}
-		
+
 		// Convert AI patches to our format
 		for _, aiPatch := range aiPatches {
 			patch := &FilePatch{
@@ -303,7 +354,7 @@ func (pg *PatchGenerator) generateAIPatches(ctx context.Context, request *PatchG
 				Confidence:  aiPatch.Confidence,
 				Description: aiPatch.Description,
 			}
-			
+
 			// Convert AI changes
 			for _, change := range aiPatch.Changes {
 				patch.Changes = append(patch.Changes, &Change{
@@ -316,30 +367,30 @@ func (pg *PatchGenerator) generateAIPatches(ctx context.Context, request *PatchG
 					Confidence: change.Confidence,
 				})
 			}
-			
+
 			patches = append(patches, patch)
 		}
 	}
-	
+
 	return patches, nil
 }
 
 // generateTemplatePatches generates patches using templates
 func (pg *PatchGenerator) generateTemplatePatches(request *PatchGenerationRequest) ([]*FilePatch, error) {
 	var patches []*FilePatch
-	
+
 	for _, analysis := range request.Analysis {
 		templatePatches := pg.getTemplatePatches(analysis.Dependency, request.ProjectStructure.ProjectType)
 		patches = append(patches, templatePatches...)
 	}
-	
+
 	return patches, nil
 }
 
 // getTemplatePatches gets template-based patches for common scenarios
 func (pg *PatchGenerator) getTemplatePatches(dependency *DependencyUpdate, projectType string) []*FilePatch {
 	var patches []*FilePatch
-	
+
 	// Express.js template patches
 	if dependency.Name == "express" && projectType == "nodejs" {
 		patches = append(patches, &FilePatch{
@@ -359,7 +410,7 @@ func (pg *PatchGenerator) getTemplatePatches(dependency *DependencyUpdate, proje
 			},
 		})
 	}
-	
+
 	// React template patches
 	if dependency.Name == "react" && projectType == "nodejs" {
 		patches = append(patches, &FilePatch{
@@ -379,14 +430,14 @@ func (pg *PatchGenerator) getTemplatePatches(dependency *DependencyUpdate, proje
 			},
 		})
 	}
-	
+
 	return patches
 }
 
 // generateValidationSteps generates validation steps for the patch
 func (pg *PatchGenerator) generateValidationSteps(request *PatchGenerationRequest) []*ValidationStep {
 	var steps []*ValidationStep
-	
+
 	// Build validation
 	switch request.ProjectStructure.ProjectType {
 	case "nodejs":
@@ -423,7 +474,7 @@ func (pg *PatchGenerator) generateValidationSteps(request *PatchGenerationReques
 			Required:    true,
 		})
 	}
-	
+
 	// Lint validation
 	steps = append(steps, &ValidationStep{
 		Type:        "lint",
@@ -431,14 +482,14 @@ func (pg *PatchGenerator) generateValidationSteps(request *PatchGenerationReques
 		Description: "Run linting to check code quality",
 		Required:    false,
 	})
-	
+
 	// Manual validation
 	steps = append(steps, &ValidationStep{
 		Type:        "manual",
 		Description: "Manually test critical functionality",
 		Required:    true,
 	})
-	
+
 	return steps
 }
 
@@ -450,33 +501,33 @@ func (pg *PatchGenerator) assessPatchRisk(patch *GeneratedPatch, analyses []*Bre
 		Reversible:      true,
 		Recommendations: []string{},
 	}
-	
+
 	// Count breaking changes
 	for _, analysis := range analyses {
 		if analysis.HasBreakingChanges {
 			assessment.BreakingChanges += len(analysis.BreakingChanges)
 		}
-		
+
 		// Use highest risk level
 		if analysis.RiskLevel > assessment.OverallRisk {
 			assessment.OverallRisk = analysis.RiskLevel
 		}
 	}
-	
+
 	// Assess based on files modified
 	if assessment.FilesModified > 10 {
 		assessment.OverallRisk = models.RiskHigh
-		assessment.Recommendations = append(assessment.Recommendations, 
+		assessment.Recommendations = append(assessment.Recommendations,
 			"Large number of files modified - consider breaking into smaller patches")
 	}
-	
+
 	// Assess based on breaking changes
 	if assessment.BreakingChanges > 5 {
 		assessment.OverallRisk = models.RiskHigh
-		assessment.Recommendations = append(assessment.Recommendations, 
+		assessment.Recommendations = append(assessment.Recommendations,
 			"Multiple breaking changes detected - thorough testing required")
 	}
-	
+
 	return assessment
 }
 
@@ -486,7 +537,7 @@ func (pg *PatchGenerator) generateCommitMessage(dependencies []*DependencyUpdate
 		dep := dependencies[0]
 		return fmt.Sprintf("Update %s from %s to %s", dep.Name, dep.CurrentVersion, dep.LatestVersion)
 	}
-	
+
 	return fmt.Sprintf("Update %d dependencies", len(dependencies))
 }
 
@@ -500,17 +551,17 @@ func (pg *PatchGenerator) generatePRTitle(dependencies []*DependencyUpdate) stri
 		}
 		return fmt.Sprintf("chore: %s update %s to %s", updateType, dep.Name, dep.LatestVersion)
 	}
-	
+
 	return fmt.Sprintf("chore: update %d dependencies", len(dependencies))
 }
 
 // generatePRDescription generates a pull request description
 func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses []*BreakingChangeAnalysis) string {
 	var description strings.Builder
-	
+
 	description.WriteString("## Dependency Updates\n\n")
 	description.WriteString("This PR updates the following dependencies:\n\n")
-	
+
 	for _, dep := range patch.Dependencies {
 		description.WriteString(fmt.Sprintf("- **%s**: %s → %s", dep.Name, dep.CurrentVersion, dep.LatestVersion))
 		if dep.SecurityFix {
@@ -521,7 +572,7 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 		}
 		description.WriteString("\n")
 	}
-	
+
 	// Add breaking changes section
 	hasBreakingChanges := false
 	for _, analysis := range analyses {
@@ -530,7 +581,7 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 			break
 		}
 	}
-	
+
 	if hasBreakingChanges {
 		description.WriteString("\n## Breaking Changes\n\n")
 		for _, analysis := range analyses {
@@ -543,7 +594,7 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 			}
 		}
 	}
-	
+
 	// Add changes section
 	if len(patch.Files) > 0 {
 		description.WriteString("## Changes Made\n\n")
@@ -552,7 +603,7 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 		}
 		description.WriteString("\n")
 	}
-	
+
 	// Add validation section
 	if len(patch.ValidationSteps) > 0 {
 		description.WriteString("## Validation\n\n")
@@ -569,23 +620,23 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 			description.WriteString("\n")
 		}
 	}
-	
+
 	// Add risk assessment
 	description.WriteString(fmt.Sprintf("\n## Risk Assessment\n\n"))
 	description.WriteString(fmt.Sprintf("- **Overall Risk**: %s\n", patch.RiskAssessment.OverallRisk))
 	description.WriteString(fmt.Sprintf("- **Files Modified**: %d\n", patch.RiskAssessment.FilesModified))
 	description.WriteString(fmt.Sprintf("- **Breaking Changes**: %d\n", patch.RiskAssessment.BreakingChanges))
 	description.WriteString(fmt.Sprintf("- **Reversible**: %t\n", patch.RiskAssessment.Reversible))
-	
+
 	if len(patch.RiskAssessment.Recommendations) > 0 {
 		description.WriteString("\n### Recommendations\n\n")
 		for _, rec := range patch.RiskAssessment.Recommendations {
 			description.WriteString(fmt.Sprintf("- %s\n", rec))
 		}
 	}
-	
+
 	description.WriteString("\n---\n*This PR was generated automatically by AI Dependency Manager*")
-	
+
 	return description.String()
 }
 

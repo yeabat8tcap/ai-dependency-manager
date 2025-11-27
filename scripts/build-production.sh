@@ -27,8 +27,13 @@ echo ""
 
 # Clean previous builds
 echo -e "${YELLOW}🧹 Cleaning previous builds...${NC}"
-rm -rf $BUILD_DIR
-mkdir -p $BUILD_DIR/{bin,web,docs,config}
+if [ -d "$BUILD_DIR" ]; then
+    rm -rf $BUILD_DIR || {
+        echo -e "${RED}❌ Failed to clean build directory. You may need to run: sudo rm -rf $BUILD_DIR${NC}"
+        exit 1
+    }
+fi
+mkdir -p $BUILD_DIR/{bin,web,docs,config,data,logs,db,projects,scan-targets}
 
 # Build frontend with Geist Mono font
 echo -e "${YELLOW}🎨 Building frontend with Geist Mono font...${NC}"
@@ -83,7 +88,7 @@ cp CONTRIBUTING.md $BUILD_DIR/
 
 # Copy configuration templates
 echo -e "${YELLOW}⚙️  Packaging configuration templates...${NC}"
-cp config/config.example.yaml $BUILD_DIR/config/
+cp config.yaml.example $BUILD_DIR/config/config.example.yaml
 cp docker-compose.yml $BUILD_DIR/
 cp Dockerfile $BUILD_DIR/
 

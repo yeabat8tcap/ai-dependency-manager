@@ -61,21 +61,23 @@ type VersionDiffAnalysisRequest struct {
 
 // VersionDiffAnalysisResponse represents the result of version diff analysis
 type VersionDiffAnalysisResponse struct {
-	PackageName     string
-	FromVersion     string
-	ToVersion       string
-	UpdateType      string
-	SemanticImpact  string
-	APIChanges      []APIChange
-	BehaviorChanges []BehaviorChange
-	RiskLevel       RiskLevel
-	RiskScore       float64
-	Confidence      float64
-	ConfidenceScore float64
-	Recommendations []string
-	Summary         string
-	ProcessedAt     time.Time
-	AnalyzedAt      time.Time
+	PackageName           string
+	FromVersion           string
+	ToVersion             string
+	UpdateType            string
+	SemanticImpact        string
+	APIChanges            []APIChange
+	BehaviorChanges       []BehaviorChange
+	RiskLevel             RiskLevel
+	RiskScore             float64
+	Confidence            float64
+	ConfidenceScore       float64
+	Recommendations       []string
+	Summary               string
+	MigrationEffort       string
+	BackwardCompatibility bool
+	ProcessedAt           time.Time
+	AnalyzedAt            time.Time
 }
 
 // CompatibilityPredictionRequest represents a request for compatibility prediction
@@ -91,21 +93,21 @@ type CompatibilityPredictionRequest struct {
 
 // CompatibilityPredictionResponse represents the result of compatibility prediction
 type CompatibilityPredictionResponse struct {
-	PackageName             string
-	FromVersion             string
-	ToVersion               string
-	CompatibilityScore      float64
-	RiskLevel               RiskLevel
-	RiskScore               float64
-	Confidence              float64
-	ConfidenceScore         float64
-	PotentialIssues         []CompatibilityIssue
-	MigrationSteps          []string
-	TestingRecommendations  []string
-	Recommendations         []string
-	Summary                 string
-	ProcessedAt             time.Time
-	PredictedAt             time.Time
+	PackageName            string
+	FromVersion            string
+	ToVersion              string
+	CompatibilityScore     float64
+	RiskLevel              RiskLevel
+	RiskScore              float64
+	Confidence             float64
+	ConfidenceScore        float64
+	PotentialIssues        []CompatibilityIssue
+	MigrationSteps         []string
+	TestingRecommendations []string
+	Recommendations        []string
+	Summary                string
+	ProcessedAt            time.Time
+	PredictedAt            time.Time
 }
 
 // CompatibilityResponse is an alias for backward compatibility
@@ -173,6 +175,7 @@ type SecurityFix struct {
 	Description string
 	Impact      string
 	Confidence  float64
+	CVSS        float64
 }
 
 type DeprecatedAPI struct {
@@ -207,8 +210,8 @@ const (
 )
 
 type FileChange struct {
-	Path      string
-	Type      string
+	Path         string
+	Type         string
 	LinesAdded   int
 	LinesRemoved int
 }
@@ -227,10 +230,12 @@ type BehaviorChange struct {
 }
 
 type ProjectContext struct {
-	Language     string
-	Framework    string
-	Dependencies []string
-	TestCoverage float64
+	Language        string
+	LanguageVersion string
+	Framework       string
+	BuildSystem     string
+	Dependencies    []string
+	TestCoverage    float64
 }
 
 type Dependency struct {
@@ -259,17 +264,17 @@ const (
 type Priority string
 
 const (
-	PriorityLow    Priority = "low"
-	PriorityMedium Priority = "medium"
-	PriorityHigh   Priority = "high"
+	PriorityLow      Priority = "low"
+	PriorityMedium   Priority = "medium"
+	PriorityHigh     Priority = "high"
 	PriorityCritical Priority = "critical"
 )
 
 type RiskLevel string
 
 const (
-	RiskLevelLow    RiskLevel = "low"
-	RiskLevelMedium RiskLevel = "medium"
-	RiskLevelHigh   RiskLevel = "high"
+	RiskLevelLow      RiskLevel = "low"
+	RiskLevelMedium   RiskLevel = "medium"
+	RiskLevelHigh     RiskLevel = "high"
 	RiskLevelCritical RiskLevel = "critical"
 )

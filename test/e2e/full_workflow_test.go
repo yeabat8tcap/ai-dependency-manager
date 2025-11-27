@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -27,7 +26,7 @@ func TestFullWorkflow(t *testing.T) {
 		// Test system configuration
 		cmd := exec.Command(binaryPath, "configure", "--data-dir", ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Configure output: %s", string(output))
 		}
@@ -38,7 +37,7 @@ func TestFullWorkflow(t *testing.T) {
 		// Test project discovery
 		cmd := exec.Command(binaryPath, "configure", "add-project", ctx.Projects[0].Path)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Add project output: %s", string(output))
 		}
@@ -50,7 +49,7 @@ func TestFullWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "scan", "--project-id", "1")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Scan output: %s", string(output))
 		}
@@ -62,7 +61,7 @@ func TestFullWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "status")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		// Status should always work
 		testingPkg.AssertNoError(t, err, "Status command should not fail")
 		testingPkg.AssertTrue(t, len(output) > 0, "Status should produce output")
@@ -73,7 +72,7 @@ func TestFullWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "security", "scan", "--project-id", "1")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Security scan output: %s", string(output))
 		}
@@ -86,11 +85,11 @@ func TestFullWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "report", "generate", "summary", "--output", reportFile)
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Report generation output: %s", string(output))
 		}
-		
+
 		// Check if report file was created
 		if _, err := os.Stat(reportFile); err == nil {
 			t.Logf("Report successfully generated at %s", reportFile)
@@ -163,7 +162,7 @@ func TestAgentWorkflow(t *testing.T) {
 		// Start agent in background
 		startCmd := exec.Command(binaryPath, "agent", "start", "--foreground")
 		startCmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
-		
+
 		// Start the agent
 		err := startCmd.Start()
 		if err != nil {
@@ -186,10 +185,10 @@ func TestAgentWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "agent", "status")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		// Status command should work even if agent is not running
 		testingPkg.AssertNoError(t, err, "Agent status should not fail")
-		testingPkg.AssertTrue(t, strings.Contains(string(output), "stopped") || 
+		testingPkg.AssertTrue(t, strings.Contains(string(output), "stopped") ||
 			strings.Contains(string(output), "running"), "Should show agent status")
 	})
 }
@@ -206,7 +205,7 @@ func TestPolicyWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "policy", "list")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		testingPkg.AssertNoError(t, err, "Policy list should not fail")
 		testingPkg.AssertTrue(t, strings.Contains(string(output), "No policies") ||
 			strings.Contains(string(output), "policies"), "Should show policy status")
@@ -215,12 +214,12 @@ func TestPolicyWorkflow(t *testing.T) {
 	t.Run("policy_templates", func(t *testing.T) {
 		// Show policy templates
 		templates := []string{"security", "conservative", "aggressive"}
-		
+
 		for _, template := range templates {
 			cmd := exec.Command(binaryPath, "policy", "template", template)
 			cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 			output, err := cmd.CombinedOutput()
-			
+
 			testingPkg.AssertNoError(t, err, "Policy template should not fail")
 			testingPkg.AssertTrue(t, len(output) > 0, "Should show template content")
 		}
@@ -239,7 +238,7 @@ func TestNotificationWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "notify", "list")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		testingPkg.AssertNoError(t, err, "Notification list should not fail")
 		testingPkg.AssertTrue(t, len(output) > 0, "Should show notification channels")
 	})
@@ -249,7 +248,7 @@ func TestNotificationWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "notify", "test", "email", "--dry-run")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		testingPkg.AssertNoError(t, err, "Notification test dry run should not fail")
 		testingPkg.AssertTrue(t, strings.Contains(string(output), "dry run") ||
 			strings.Contains(string(output), "would send"), "Should show dry run message")
@@ -268,7 +267,7 @@ func TestLagAnalysisWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "lag", "analyze", "1")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Lag analysis output: %s", string(output))
 		}
@@ -280,7 +279,7 @@ func TestLagAnalysisWorkflow(t *testing.T) {
 		cmd := exec.Command(binaryPath, "lag", "plan", "1", "--strategy", "balanced")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Lag plan output: %s", string(output))
 		}
@@ -300,7 +299,7 @@ func TestErrorHandling(t *testing.T) {
 		cmd := exec.Command(binaryPath, "scan", "--invalid-flag")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		_, err := cmd.CombinedOutput()
-		
+
 		testingPkg.AssertError(t, err, "Invalid arguments should cause error")
 	})
 
@@ -309,7 +308,7 @@ func TestErrorHandling(t *testing.T) {
 		cmd := exec.Command(binaryPath, "policy", "show")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR="+ctx.TempDir)
 		_, err := cmd.CombinedOutput()
-		
+
 		testingPkg.AssertError(t, err, "Missing required arguments should cause error")
 	})
 
@@ -318,7 +317,7 @@ func TestErrorHandling(t *testing.T) {
 		cmd := exec.Command(binaryPath, "status")
 		cmd.Env = append(os.Environ(), "AI_DEP_MANAGER_DATA_DIR=/invalid/path")
 		output, err := cmd.CombinedOutput()
-		
+
 		if err != nil {
 			t.Logf("Invalid data dir output: %s", string(output))
 		}
@@ -334,11 +333,11 @@ func buildCLIBinary(t *testing.T) string {
 	testingPkg.AssertNoError(t, err, "Should create temp dir for binary")
 
 	binaryPath := filepath.Join(tempDir, "ai-dep-manager")
-	
+
 	// Build the binary
 	cmd := exec.Command("go", "build", "-o", binaryPath, "../../cmd/ai-dep-manager")
 	cmd.Dir = filepath.Join("..", "..")
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Logf("Build output: %s", string(output))

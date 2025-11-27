@@ -6,20 +6,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
 	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
 )
 
 // AnalysisService handles code analysis and breaking change detection
 type AnalysisService struct {
-	aiManager    interface{}
+	aiManager    AIManager
 	client       *Client
 	repositories *RepositoriesService
 }
 
 // NewAnalysisService creates a new analysis service
-func NewAnalysisService(client *Client, aiManager interface{}) *AnalysisService {
+func NewAnalysisService(client *Client, aiManager AIManager) *AnalysisService {
 	return &AnalysisService{
 		aiManager:    aiManager,
 		client:       client,
@@ -27,21 +25,13 @@ func NewAnalysisService(client *Client, aiManager interface{}) *AnalysisService 
 	}
 }
 
-// AnalysisRecommendation represents a recommendation for handling a dependency update
-type AnalysisRecommendation struct {
-	Action      string `json:"action"`
-	Description string `json:"description"`
-	Priority    string `json:"priority"` // "required", "recommended", "optional"
-	Effort      string `json:"effort"`   // "low", "medium", "high"
-}
-
 // ProjectAnalysis represents analysis of a project's dependencies
 type ProjectAnalysis struct {
 	Repository      string                    `json:"repository"`
-	ProjectType     string                    `json:"project_type"`     // "nodejs", "python", "java", etc.
-	PackageManager  string                    `json:"package_manager"`  // "npm", "pip", "maven", etc.
+	ProjectType     string                    `json:"project_type"`    // "nodejs", "python", "java", etc.
+	PackageManager  string                    `json:"package_manager"` // "npm", "pip", "maven", etc.
 	Dependencies    []*BreakingChangeAnalysis `json:"dependencies"`
-	OverallRisk     string          `json:"overall_risk"`
+	OverallRisk     string                    `json:"overall_risk"`
 	TotalChanges    int                       `json:"total_changes"`
 	BreakingChanges int                       `json:"breaking_changes"`
 	AnalyzedAt      time.Time                 `json:"analyzed_at"`
@@ -49,17 +39,17 @@ type ProjectAnalysis struct {
 
 // AnalyzeDependencyUpdate analyzes a dependency update for breaking changes
 func (a *AnalysisService) AnalyzeDependencyUpdate(ctx context.Context, dependency *DependencyUpdate) (*BreakingChangeAnalysis, error) {
-	logger.Info("Analyzing dependency update: %s %s -> %s", 
+	logger.Info("Analyzing dependency update: %s %s -> %s",
 		dependency.Name, dependency.CurrentVersion, dependency.LatestVersion)
-	
+
 	analysis := &BreakingChangeAnalysis{
-		Dependency:      dependency,
-		BreakingChanges: []*BreakingChange{},
-		Recommendations: []*Recommendation{},
+		Dependency:       dependency,
+		BreakingChanges:  []*BreakingChange{},
+		Recommendations:  []*Recommendation{},
 		PatchSuggestions: []*PatchSuggestion{},
-		AnalyzedAt:      time.Now(),
+		AnalyzedAt:       time.Now(),
 	}
-	
+
 	// Try AI analysis first
 	if a.aiManager != nil {
 		aiAnalysis, err := a.performAIAnalysis(ctx, dependency)
@@ -68,11 +58,11 @@ func (a *AnalysisService) AnalyzeDependencyUpdate(ctx context.Context, dependenc
 		} else {
 			analysis = aiAnalysis
 			analysis.AnalysisSource = "ai"
-			logger.Info("AI analysis completed for %s with confidence %.2f", 
+			logger.Info("AI analysis completed for %s with confidence %.2f",
 				dependency.Name, analysis.Confidence)
 		}
 	}
-	
+
 	// Fallback to heuristic analysis if AI failed or confidence is low
 	if analysis.AnalysisSource == "" || analysis.Confidence < 0.7 {
 		heuristicAnalysis := a.performHeuristicAnalysis(dependency)
@@ -85,7 +75,7 @@ func (a *AnalysisService) AnalyzeDependencyUpdate(ctx context.Context, dependenc
 			analysis.AnalysisSource = "ai+heuristic"
 		}
 	}
-	
+
 	// Enhance with changelog analysis if available
 	if changelogAnalysis, err := a.performChangelogAnalysis(ctx, dependency); err == nil {
 		analysis = a.mergeAnalysis(analysis, changelogAnalysis)
@@ -93,30 +83,21 @@ func (a *AnalysisService) AnalyzeDependencyUpdate(ctx context.Context, dependenc
 			analysis.AnalysisSource += "+changelog"
 		}
 	}
-	
-	logger.Info("Analysis completed for %s: %d breaking changes, risk level %s", 
+
+	logger.Info("Analysis completed for %s: %d breaking changes, risk level %s",
 		dependency.Name, len(analysis.BreakingChanges), analysis.RiskLevel)
-	
+
 	return analysis, nil
 }
 
 // performAIAnalysis performs AI-powered breaking change analysis
 func (a *AnalysisService) performAIAnalysis(ctx context.Context, dependency *DependencyUpdate) (*BreakingChangeAnalysis, error) {
-	// Create analysis request for AI
-	request := &models.AnalysisRequest{
-		PackageName:    dependency.Name,
-		CurrentVersion: dependency.CurrentVersion,
-		TargetVersion:  dependency.LatestVersion,
-		PackageManager: "npm", // TODO: Detect from context
-		ChangelogURL:   dependency.ChangelogURL,
-	}
-	
 	// Get AI analysis
-	result, err := a.aiManager.AnalyzeDependencyUpdate(ctx, request)
+	result, err := a.aiManager.AnalyzeDependencyUpdate(ctx, dependency)
 	if err != nil {
 		return nil, fmt.Errorf("AI analysis failed: %w", err)
 	}
-	
+
 	// Convert AI result to our format
 	analysis := &BreakingChangeAnalysis{
 		Dependency:         dependency,
@@ -125,7 +106,7 @@ func (a *AnalysisService) performAIAnalysis(ctx context.Context, dependency *Dep
 		Confidence:         result.Confidence,
 		AnalyzedAt:         time.Now(),
 	}
-	
+
 	// Convert breaking changes
 	for _, bc := range result.BreakingChanges {
 		analysis.BreakingChanges = append(analysis.BreakingChanges, &BreakingChange{
@@ -139,52 +120,52 @@ func (a *AnalysisService) performAIAnalysis(ctx context.Context, dependency *Dep
 			DocumentationURL: bc.DocumentationURL,
 		})
 	}
-	
+
 	// Convert recommendations
 	for _, rec := range result.Recommendations {
-		analysis.Recommendations = append(analysis.Recommendations, &AnalysisRecommendation{
+		analysis.Recommendations = append(analysis.Recommendations, &Recommendation{
 			Action:      rec.Action,
 			Description: rec.Description,
 			Priority:    rec.Priority,
 			Effort:      rec.Effort,
 		})
 	}
-	
+
 	// Generate patch suggestions based on AI analysis
 	patchSuggestions := a.generatePatchSuggestions(dependency, analysis.BreakingChanges)
 	analysis.PatchSuggestions = patchSuggestions
-	
+
 	return analysis, nil
 }
 
 // performHeuristicAnalysis performs rule-based breaking change analysis
 func (a *AnalysisService) performHeuristicAnalysis(dependency *DependencyUpdate) *BreakingChangeAnalysis {
 	analysis := &BreakingChangeAnalysis{
-		Dependency:         dependency,
-		BreakingChanges:    []*BreakingChange{},
-		Recommendations:    []*Recommendation{},
-		PatchSuggestions:   []*PatchSuggestion{},
-		AnalyzedAt:         time.Now(),
-		Confidence:         0.6, // Moderate confidence for heuristics
+		Dependency:       dependency,
+		BreakingChanges:  []*BreakingChange{},
+		Recommendations:  []*Recommendation{},
+		PatchSuggestions: []*PatchSuggestion{},
+		AnalyzedAt:       time.Now(),
+		Confidence:       0.6, // Moderate confidence for heuristics
 	}
-	
+
 	// Analyze version change pattern
 	versionAnalysis := a.analyzeVersionChange(dependency.CurrentVersion, dependency.LatestVersion)
-	
+
 	// Check for major version changes
 	if versionAnalysis.IsMajorChange {
 		analysis.HasBreakingChanges = true
 		analysis.RiskLevel = "high"
-		
+
 		analysis.BreakingChanges = append(analysis.BreakingChanges, &BreakingChange{
-			Type:        "major_version_change",
-			Description: fmt.Sprintf("Major version change from %s to %s likely contains breaking changes", 
+			Type: "major_version_change",
+			Description: fmt.Sprintf("Major version change from %s to %s likely contains breaking changes",
 				dependency.CurrentVersion, dependency.LatestVersion),
-			Severity:    "high",
+			Severity:      "high",
 			MigrationPath: "Review changelog and migration guide for breaking changes",
 		})
-		
-		analysis.Recommendations = append(analysis.Recommendations, &AnalysisRecommendation{
+
+		analysis.Recommendations = append(analysis.Recommendations, &Recommendation{
 			Action:      "review_changelog",
 			Description: "Review the changelog and migration guide before updating",
 			Priority:    "required",
@@ -192,7 +173,7 @@ func (a *AnalysisService) performHeuristicAnalysis(dependency *DependencyUpdate)
 		})
 	} else if versionAnalysis.IsMinorChange {
 		analysis.RiskLevel = "medium"
-		analysis.Recommendations = append(analysis.Recommendations, &AnalysisRecommendation{
+		analysis.Recommendations = append(analysis.Recommendations, &Recommendation{
 			Action:      "test_thoroughly",
 			Description: "Test thoroughly as minor versions may introduce new features",
 			Priority:    "recommended",
@@ -201,24 +182,24 @@ func (a *AnalysisService) performHeuristicAnalysis(dependency *DependencyUpdate)
 	} else {
 		analysis.RiskLevel = "low"
 	}
-	
+
 	// Check for security updates
 	if dependency.SecurityFix {
-		analysis.Recommendations = append(analysis.Recommendations, &AnalysisRecommendation{
+		analysis.Recommendations = append(analysis.Recommendations, &Recommendation{
 			Action:      "update_immediately",
 			Description: "Security fix - update as soon as possible",
 			Priority:    "required",
 			Effort:      "low",
 		})
 	}
-	
+
 	// Package-specific heuristics
 	packageHeuristics := a.getPackageSpecificHeuristics(dependency.Name)
 	if packageHeuristics != nil {
 		analysis.BreakingChanges = append(analysis.BreakingChanges, packageHeuristics.BreakingChanges...)
 		analysis.Recommendations = append(analysis.Recommendations, packageHeuristics.Recommendations...)
 	}
-	
+
 	return analysis
 }
 
@@ -227,21 +208,21 @@ func (a *AnalysisService) performChangelogAnalysis(ctx context.Context, dependen
 	if dependency.ChangelogURL == "" {
 		return nil, fmt.Errorf("no changelog URL available")
 	}
-	
+
 	// This would fetch and parse the changelog
 	// For now, return a placeholder analysis
 	analysis := &BreakingChangeAnalysis{
-		Dependency:      dependency,
-		BreakingChanges: []*BreakingChange{},
-		Recommendations: []*Recommendation{},
+		Dependency:       dependency,
+		BreakingChanges:  []*BreakingChange{},
+		Recommendations:  []*Recommendation{},
 		PatchSuggestions: []*PatchSuggestion{},
-		AnalyzedAt:      time.Now(),
-		Confidence:      0.8,
+		AnalyzedAt:       time.Now(),
+		Confidence:       0.8,
 	}
-	
+
 	// TODO: Implement actual changelog parsing
 	logger.Debug("Changelog analysis not yet implemented for %s", dependency.Name)
-	
+
 	return analysis, nil
 }
 
@@ -258,9 +239,9 @@ func (a *AnalysisService) analyzeVersionChange(current, target string) *VersionA
 	// Simple semantic version parsing
 	currentParts := strings.Split(strings.TrimPrefix(current, "v"), ".")
 	targetParts := strings.Split(strings.TrimPrefix(target, "v"), ".")
-	
+
 	analysis := &VersionAnalysis{}
-	
+
 	if len(currentParts) >= 1 && len(targetParts) >= 1 {
 		if currentParts[0] != targetParts[0] {
 			analysis.IsMajorChange = true
@@ -270,20 +251,20 @@ func (a *AnalysisService) analyzeVersionChange(current, target string) *VersionA
 			analysis.IsPatchChange = true
 		}
 	}
-	
+
 	// Check for prerelease versions
-	if strings.Contains(target, "-") || strings.Contains(target, "alpha") || 
-	   strings.Contains(target, "beta") || strings.Contains(target, "rc") {
+	if strings.Contains(target, "-") || strings.Contains(target, "alpha") ||
+		strings.Contains(target, "beta") || strings.Contains(target, "rc") {
 		analysis.IsPrerelease = true
 	}
-	
+
 	return analysis
 }
 
 // PackageHeuristics represents package-specific breaking change patterns
 type PackageHeuristics struct {
 	BreakingChanges []*BreakingChange
-	Recommendations []*AnalysisRecommendation
+	Recommendations []*Recommendation
 }
 
 // getPackageSpecificHeuristics returns package-specific heuristics
@@ -294,13 +275,13 @@ func (a *AnalysisService) getPackageSpecificHeuristics(packageName string) *Pack
 		return &PackageHeuristics{
 			BreakingChanges: []*BreakingChange{
 				{
-					Type:        "middleware_changes",
-					Description: "Express major versions often change middleware behavior",
-					Severity:    "medium",
+					Type:          "middleware_changes",
+					Description:   "Express major versions often change middleware behavior",
+					Severity:      "medium",
 					MigrationPath: "Review middleware configuration and error handling",
 				},
 			},
-			Recommendations: []*AnalysisRecommendation{
+			Recommendations: []*Recommendation{
 				{
 					Action:      "test_middleware",
 					Description: "Test all middleware and route handlers",
@@ -313,13 +294,13 @@ func (a *AnalysisService) getPackageSpecificHeuristics(packageName string) *Pack
 		return &PackageHeuristics{
 			BreakingChanges: []*BreakingChange{
 				{
-					Type:        "lifecycle_changes",
-					Description: "React major versions often change component lifecycle methods",
-					Severity:    "high",
+					Type:          "lifecycle_changes",
+					Description:   "React major versions often change component lifecycle methods",
+					Severity:      "high",
 					MigrationPath: "Update lifecycle methods and hooks usage",
 				},
 			},
-			Recommendations: []*AnalysisRecommendation{
+			Recommendations: []*Recommendation{
 				{
 					Action:      "update_components",
 					Description: "Review and update component lifecycle methods",
@@ -332,22 +313,22 @@ func (a *AnalysisService) getPackageSpecificHeuristics(packageName string) *Pack
 		return &PackageHeuristics{
 			BreakingChanges: []*BreakingChange{
 				{
-					Type:        "method_removal",
-					Description: "Lodash major versions may remove or rename utility methods",
-					Severity:    "medium",
+					Type:          "method_removal",
+					Description:   "Lodash major versions may remove or rename utility methods",
+					Severity:      "medium",
 					MigrationPath: "Check for removed or renamed methods",
 				},
 			},
 		}
 	}
-	
+
 	return nil
 }
 
 // generatePatchSuggestions generates patch suggestions based on breaking changes
 func (a *AnalysisService) generatePatchSuggestions(dependency *DependencyUpdate, breakingChanges []*BreakingChange) []*PatchSuggestion {
 	var suggestions []*PatchSuggestion
-	
+
 	for _, bc := range breakingChanges {
 		if bc.ExampleBefore != "" && bc.ExampleAfter != "" {
 			suggestion := &PatchSuggestion{
@@ -359,67 +340,67 @@ func (a *AnalysisService) generatePatchSuggestions(dependency *DependencyUpdate,
 			suggestions = append(suggestions, suggestion)
 		}
 	}
-	
+
 	return suggestions
 }
 
 // mergeAnalysis merges two analysis results
 func (a *AnalysisService) mergeAnalysis(primary, secondary *BreakingChangeAnalysis) *BreakingChangeAnalysis {
 	merged := *primary // Copy primary analysis
-	
+
 	// Merge breaking changes (avoid duplicates)
 	existingChanges := make(map[string]bool)
 	for _, bc := range merged.BreakingChanges {
 		existingChanges[bc.Type+":"+bc.Description] = true
 	}
-	
+
 	for _, bc := range secondary.BreakingChanges {
 		key := bc.Type + ":" + bc.Description
 		if !existingChanges[key] {
 			merged.BreakingChanges = append(merged.BreakingChanges, bc)
 		}
 	}
-	
+
 	// Merge recommendations
 	existingRecs := make(map[string]bool)
 	for _, rec := range merged.Recommendations {
 		existingRecs[rec.Action+":"+rec.Description] = true
 	}
-	
+
 	for _, rec := range secondary.Recommendations {
 		key := rec.Action + ":" + rec.Description
 		if !existingRecs[key] {
 			merged.Recommendations = append(merged.Recommendations, rec)
 		}
 	}
-	
+
 	// Merge patch suggestions
 	merged.PatchSuggestions = append(merged.PatchSuggestions, secondary.PatchSuggestions...)
-	
+
 	// Update flags
 	merged.HasBreakingChanges = len(merged.BreakingChanges) > 0
-	
+
 	// Use higher risk level
 	if secondary.RiskLevel > merged.RiskLevel {
 		merged.RiskLevel = secondary.RiskLevel
 	}
-	
+
 	// Average confidence scores
 	merged.Confidence = (merged.Confidence + secondary.Confidence) / 2
-	
+
 	return &merged
 }
 
 // AnalyzeProject analyzes all dependencies in a project
 func (a *AnalysisService) AnalyzeProject(ctx context.Context, owner, repo string, dependencies []*DependencyUpdate) (*ProjectAnalysis, error) {
 	logger.Info("Analyzing project %s/%s with %d dependencies", owner, repo, len(dependencies))
-	
+
 	analysis := &ProjectAnalysis{
-		Repository:      fmt.Sprintf("%s/%s", owner, repo),
-		Dependencies:    []*BreakingChangeAnalysis{},
-		AnalyzedAt:      time.Now(),
+		Repository:   fmt.Sprintf("%s/%s", owner, repo),
+		Dependencies: []*BreakingChangeAnalysis{},
+		AnalyzedAt:   time.Now(),
 	}
-	
+
 	// Detect project type and package manager
 	projectInfo, err := a.detectProjectType(ctx, owner, repo)
 	if err != nil {
@@ -428,36 +409,36 @@ func (a *AnalysisService) AnalyzeProject(ctx context.Context, owner, repo string
 		analysis.ProjectType = projectInfo.Type
 		analysis.PackageManager = projectInfo.PackageManager
 	}
-	
+
 	// Analyze each dependency
 	var totalBreakingChanges int
-	var maxRiskLevel models.RiskLevel
-	
+	var maxRiskLevel string
+
 	for _, dep := range dependencies {
 		depAnalysis, err := a.AnalyzeDependencyUpdate(ctx, dep)
 		if err != nil {
 			logger.Error("Failed to analyze dependency %s: %v", dep.Name, err)
 			continue
 		}
-		
+
 		analysis.Dependencies = append(analysis.Dependencies, depAnalysis)
-		
+
 		if depAnalysis.HasBreakingChanges {
 			totalBreakingChanges += len(depAnalysis.BreakingChanges)
 		}
-		
+
 		if depAnalysis.RiskLevel > maxRiskLevel {
 			maxRiskLevel = depAnalysis.RiskLevel
 		}
 	}
-	
+
 	analysis.TotalChanges = len(dependencies)
 	analysis.BreakingChanges = totalBreakingChanges
 	analysis.OverallRisk = maxRiskLevel
-	
-	logger.Info("Project analysis completed: %d total changes, %d breaking changes, risk level %s", 
+
+	logger.Info("Project analysis completed: %d total changes, %d breaking changes, risk level %s",
 		analysis.TotalChanges, analysis.BreakingChanges, analysis.OverallRisk)
-	
+
 	return analysis, nil
 }
 
@@ -471,9 +452,9 @@ type ProjectInfo struct {
 func (a *AnalysisService) detectProjectType(ctx context.Context, owner, repo string) (*ProjectInfo, error) {
 	// Check for common project files
 	files := []string{"package.json", "requirements.txt", "pom.xml", "build.gradle", "Cargo.toml", "go.mod"}
-	
+
 	for _, file := range files {
-		_, err := a.repositories.GetContents(ctx, owner, repo, file, "")
+		_, err := a.repositories.GetContent(ctx, owner, repo, file, nil)
 		if err == nil {
 			// File exists, determine project type
 			switch file {
@@ -492,6 +473,6 @@ func (a *AnalysisService) detectProjectType(ctx context.Context, owner, repo str
 			}
 		}
 	}
-	
+
 	return &ProjectInfo{Type: "unknown", PackageManager: "unknown"}, nil
 }

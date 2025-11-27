@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/8tcapital/ai-dep-manager/internal/logger"
 )
 
 // BranchesService handles branch-related GitHub API operations
@@ -14,9 +16,9 @@ type BranchesService struct {
 
 // Branch represents a GitHub branch
 type Branch struct {
-	Name      string    `json:"name"`
-	Commit    *Commit   `json:"commit"`
-	Protected bool      `json:"protected"`
+	Name      string       `json:"name"`
+	Commit    *Commit      `json:"commit"`
+	Protected bool         `json:"protected"`
 	Links     *BranchLinks `json:"_links,omitempty"`
 }
 
@@ -28,9 +30,9 @@ type BranchLinks struct {
 
 // Reference represents a Git reference
 type Reference struct {
-	Ref    string    `json:"ref"`
-	NodeID string    `json:"node_id"`
-	URL    string    `json:"url"`
+	Ref    string     `json:"ref"`
+	NodeID string     `json:"node_id"`
+	URL    string     `json:"url"`
 	Object *GitObject `json:"object"`
 }
 
@@ -113,13 +115,13 @@ type AllowDeletions struct {
 
 // PatchBranchConfig represents configuration for creating patch branches
 type PatchBranchConfig struct {
-	BaseBranch    string
-	BranchPrefix  string
-	PackageName   string
-	FromVersion   string
-	ToVersion     string
-	PatchType     string // "breaking", "security", "minor", etc.
-	Timestamp     time.Time
+	BaseBranch   string
+	BranchPrefix string
+	PackageName  string
+	FromVersion  string
+	ToVersion    string
+	PatchType    string // "breaking", "security", "minor", etc.
+	Timestamp    time.Time
 }
 
 // GeneratePatchBranchName generates a standardized patch branch name
@@ -127,15 +129,15 @@ func GeneratePatchBranchName(config *PatchBranchConfig) string {
 	if config.Timestamp.IsZero() {
 		config.Timestamp = time.Now()
 	}
-	
+
 	// Sanitize package name for branch naming
 	packageName := strings.ReplaceAll(config.PackageName, "/", "-")
 	packageName = strings.ReplaceAll(packageName, "@", "")
 	packageName = strings.ToLower(packageName)
-	
+
 	// Create branch name with format: prefix/package-name/from-to/type/timestamp
 	timestamp := config.Timestamp.Format("20060102-150405")
-	
+
 	branchName := fmt.Sprintf("%s/%s/%s-%s/%s/%s",
 		config.BranchPrefix,
 		packageName,
@@ -144,47 +146,47 @@ func GeneratePatchBranchName(config *PatchBranchConfig) string {
 		config.PatchType,
 		timestamp,
 	)
-	
+
 	// Ensure branch name is valid (no spaces, special characters)
 	branchName = strings.ReplaceAll(branchName, " ", "-")
 	branchName = strings.ReplaceAll(branchName, "_", "-")
-	
+
 	return branchName
 }
 
 // Get retrieves a specific branch
 func (b *BranchesService) Get(ctx context.Context, owner, repo, branch string) (*Branch, error) {
 	path := fmt.Sprintf("repos/%s/%s/branches/%s", owner, repo, branch)
-	
+
 	req, err := b.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	branchInfo := new(Branch)
 	_, err = b.client.Do(req, branchInfo)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return branchInfo, nil
 }
 
 // List lists all branches in a repository
 func (b *BranchesService) List(ctx context.Context, owner, repo string) ([]*Branch, error) {
 	path := fmt.Sprintf("repos/%s/%s/branches", owner, repo)
-	
+
 	req, err := b.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var branches []*Branch
 	_, err = b.client.Do(req, &branches)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return branches, nil
 }
 
@@ -195,10 +197,10 @@ func (b *BranchesService) Create(ctx context.Context, owner, repo, branchName, b
 	if err != nil {
 		return nil, fmt.Errorf("failed to get base branch %s: %w", baseBranch, err)
 	}
-	
+
 	// Create the new branch reference
 	path := fmt.Sprintf("repos/%s/%s/git/refs", owner, repo)
-	
+
 	createRef := struct {
 		Ref string `json:"ref"`
 		SHA string `json:"sha"`
@@ -206,18 +208,18 @@ func (b *BranchesService) Create(ctx context.Context, owner, repo, branchName, b
 		Ref: "refs/heads/" + branchName,
 		SHA: baseBranchInfo.Commit.SHA,
 	}
-	
+
 	req, err := b.client.NewRequest(ctx, "POST", path, createRef)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	reference := new(Reference)
 	_, err = b.client.Do(req, reference)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return reference, nil
 }
 
@@ -226,7 +228,7 @@ func (b *BranchesService) CreatePatchBranch(ctx context.Context, owner, repo str
 	if config.BranchPrefix == "" {
 		config.BranchPrefix = "patch"
 	}
-	
+
 	if config.BaseBranch == "" {
 		// Get the default branch
 		repoInfo, err := b.client.Repositories.Get(ctx, owner, repo)
@@ -235,26 +237,26 @@ func (b *BranchesService) CreatePatchBranch(ctx context.Context, owner, repo str
 		}
 		config.BaseBranch = repoInfo.DefaultBranch
 	}
-	
+
 	branchName := GeneratePatchBranchName(config)
-	
+
 	// Check if branch already exists
 	if _, err := b.Get(ctx, owner, repo, branchName); err == nil {
 		return nil, fmt.Errorf("patch branch %s already exists", branchName)
 	}
-	
+
 	return b.Create(ctx, owner, repo, branchName, config.BaseBranch)
 }
 
 // Delete deletes a branch
 func (b *BranchesService) Delete(ctx context.Context, owner, repo, branch string) error {
 	path := fmt.Sprintf("repos/%s/%s/git/refs/heads/%s", owner, repo, branch)
-	
+
 	req, err := b.client.NewRequest(ctx, "DELETE", path, nil)
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = b.client.Do(req, nil)
 	return err
 }
@@ -274,18 +276,18 @@ func (b *BranchesService) Exists(ctx context.Context, owner, repo, branch string
 // GetProtection retrieves branch protection settings
 func (b *BranchesService) GetProtection(ctx context.Context, owner, repo, branch string) (*BranchProtection, error) {
 	path := fmt.Sprintf("repos/%s/%s/branches/%s/protection", owner, repo, branch)
-	
+
 	req, err := b.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	protection := new(BranchProtection)
 	_, err = b.client.Do(req, protection)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return protection, nil
 }
 
@@ -295,7 +297,7 @@ func (b *BranchesService) IsProtected(ctx context.Context, owner, repo, branch s
 	if err != nil {
 		return false, err
 	}
-	
+
 	return branchInfo.Protected, nil
 }
 
@@ -305,7 +307,7 @@ func (b *BranchesService) GetDefaultBranch(ctx context.Context, owner, repo stri
 	if err != nil {
 		return "", err
 	}
-	
+
 	return repoInfo.DefaultBranch, nil
 }
 
@@ -314,19 +316,19 @@ func (b *BranchesService) ListPatchBranches(ctx context.Context, owner, repo str
 	if prefix == "" {
 		prefix = "patch"
 	}
-	
+
 	branches, err := b.List(ctx, owner, repo)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var patchBranches []*Branch
 	for _, branch := range branches {
 		if strings.HasPrefix(branch.Name, prefix+"/") {
 			patchBranches = append(patchBranches, branch)
 		}
 	}
-	
+
 	return patchBranches, nil
 }
 
@@ -335,28 +337,28 @@ func (b *BranchesService) CleanupOldPatchBranches(ctx context.Context, owner, re
 	if prefix == "" {
 		prefix = "patch"
 	}
-	
+
 	patchBranches, err := b.ListPatchBranches(ctx, owner, repo, prefix)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var deletedBranches []string
 	cutoffTime := time.Now().Add(-maxAge)
-	
+
 	for _, branch := range patchBranches {
 		// Extract timestamp from branch name
 		parts := strings.Split(branch.Name, "/")
 		if len(parts) < 5 {
 			continue // Invalid patch branch format
 		}
-		
+
 		timestampStr := parts[len(parts)-1]
 		branchTime, err := time.Parse("20060102-150405", timestampStr)
 		if err != nil {
 			continue // Invalid timestamp format
 		}
-		
+
 		if branchTime.Before(cutoffTime) {
 			if err := b.Delete(ctx, owner, repo, branch.Name); err != nil {
 				logger.Warn("Failed to delete old patch branch %s: %v", branch.Name, err)
@@ -366,19 +368,19 @@ func (b *BranchesService) CleanupOldPatchBranches(ctx context.Context, owner, re
 			logger.Info("Deleted old patch branch: %s", branch.Name)
 		}
 	}
-	
+
 	return deletedBranches, nil
 }
 
 // GetBranchCommits gets the commits for a specific branch
 func (b *BranchesService) GetBranchCommits(ctx context.Context, owner, repo, branch string, limit int) ([]*Commit, error) {
 	path := fmt.Sprintf("repos/%s/%s/commits", owner, repo)
-	
+
 	req, err := b.client.NewRequest(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add query parameters
 	q := req.URL.Query()
 	q.Add("sha", branch)
@@ -386,12 +388,12 @@ func (b *BranchesService) GetBranchCommits(ctx context.Context, owner, repo, bra
 		q.Add("per_page", fmt.Sprintf("%d", limit))
 	}
 	req.URL.RawQuery = q.Encode()
-	
+
 	var commits []*Commit
 	_, err = b.client.Do(req, &commits)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return commits, nil
 }

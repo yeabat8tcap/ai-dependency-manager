@@ -18,13 +18,13 @@ import (
 const (
 	// GitHub API base URL
 	DefaultBaseURL = "https://api.github.com"
-	
+
 	// API version header
 	APIVersion = "2022-11-28"
-	
+
 	// User agent for API requests
 	UserAgent = "AI-Dependency-Manager/1.0"
-	
+
 	// Rate limit headers
 	RateLimitRemaining = "X-RateLimit-Remaining"
 	RateLimitReset     = "X-RateLimit-Reset"
@@ -35,11 +35,11 @@ type Client struct {
 	baseURL    *url.URL
 	httpClient *http.Client
 	auth       AuthProvider
-	
+
 	// Rate limiting
 	rateLimitRemaining int
 	rateLimitReset     time.Time
-	
+
 	// Services
 	Repositories *RepositoriesService
 	PullRequests *PullRequestsService
@@ -62,16 +62,16 @@ func NewClient(auth AuthProvider) (*Client, error) {
 	if auth == nil {
 		return nil, fmt.Errorf("authentication provider is required")
 	}
-	
+
 	if !auth.IsValid() {
 		return nil, fmt.Errorf("invalid authentication credentials")
 	}
-	
+
 	baseURL, err := url.Parse(DefaultBaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse base URL: %w", err)
 	}
-	
+
 	httpClient := &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
@@ -81,21 +81,21 @@ func NewClient(auth AuthProvider) (*Client, error) {
 			MaxIdleConnsPerHost: 10,
 		},
 	}
-	
+
 	client := &Client{
 		baseURL:    baseURL,
 		httpClient: httpClient,
 		auth:       auth,
 	}
-	
+
 	// Initialize services
 	client.Repositories = &RepositoriesService{client: client}
 	client.PullRequests = &PullRequestsService{client: client}
 	client.Branches = &BranchesService{client: client}
 	client.Webhooks = &WebhooksService{client: client}
-	
+
 	logger.Info("GitHub client initialized with %s authentication", auth.GetType())
-	
+
 	return client, nil
 }
 
@@ -106,7 +106,7 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body inter
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse URL path %s: %w", path, err)
 	}
-	
+
 	// Prepare request body
 	var buf io.ReadWriter
 	if body != nil {
@@ -117,27 +117,27 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, body inter
 			return nil, fmt.Errorf("failed to encode request body: %w", err)
 		}
 	}
-	
+
 	// Create request
 	req, err := http.NewRequestWithContext(ctx, method, u.String(), buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
-	
+
 	// Set headers
 	req.Header.Set("Accept", "application/vnd.github+json")
 	req.Header.Set("X-GitHub-Api-Version", APIVersion)
 	req.Header.Set("User-Agent", UserAgent)
-	
+
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
-	
+
 	// Add authentication
 	if err := c.auth.Authenticate(req); err != nil {
 		return nil, fmt.Errorf("failed to authenticate request: %w", err)
 	}
-	
+
 	return req, nil
 }
 
@@ -147,23 +147,23 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	if err := c.checkRateLimit(); err != nil {
 		return nil, err
 	}
-	
+
 	logger.Debug("GitHub API request: %s %s", req.Method, req.URL.String())
-	
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP request failed: %w", err)
 	}
 	defer resp.Body.Close()
-	
+
 	// Update rate limit information
 	c.updateRateLimit(resp)
-	
+
 	// Check for API errors
 	if err := c.checkResponse(resp); err != nil {
 		return resp, err
 	}
-	
+
 	// Decode response if needed
 	if v != nil {
 		if w, ok := v.(io.Writer); ok {
@@ -176,7 +176,7 @@ func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 			err = decErr
 		}
 	}
-	
+
 	return resp, err
 }
 
@@ -197,14 +197,14 @@ func (c *Client) updateRateLimit(resp *http.Response) {
 			c.rateLimitRemaining = r
 		}
 	}
-	
+
 	if reset := resp.Header.Get(RateLimitReset); reset != "" {
 		if r, err := strconv.ParseInt(reset, 10, 64); err == nil {
 			c.rateLimitReset = time.Unix(r, 0)
 		}
 	}
-	
-	logger.Debug("GitHub API rate limit: %d remaining, resets at %v", 
+
+	logger.Debug("GitHub API rate limit: %d remaining, resets at %v",
 		c.rateLimitRemaining, c.rateLimitReset)
 }
 
@@ -213,13 +213,13 @@ func (c *Client) checkResponse(resp *http.Response) error {
 	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
 		return nil
 	}
-	
+
 	errorResponse := &ErrorResponse{Response: resp}
 	data, err := io.ReadAll(resp.Body)
 	if err == nil && data != nil {
 		json.Unmarshal(data, errorResponse)
 	}
-	
+
 	return errorResponse
 }
 
@@ -234,7 +234,7 @@ func (c *Client) SetBaseURL(baseURL string) error {
 	if err != nil {
 		return fmt.Errorf("failed to parse base URL: %w", err)
 	}
-	
+
 	c.baseURL = u
 	logger.Info("GitHub client base URL updated to %s", baseURL)
 	return nil
@@ -262,8 +262,8 @@ func (r *ErrorResponse) Error() string {
 // IsRateLimitError checks if the error is due to rate limiting
 func IsRateLimitError(err error) bool {
 	if errorResponse, ok := err.(*ErrorResponse); ok {
-		return errorResponse.Response.StatusCode == 403 && 
-			   strings.Contains(strings.ToLower(errorResponse.Message), "rate limit")
+		return errorResponse.Response.StatusCode == 403 &&
+			strings.Contains(strings.ToLower(errorResponse.Message), "rate limit")
 	}
 	return false
 }
@@ -282,4 +282,20 @@ func IsUnauthorizedError(err error) bool {
 		return errorResponse.Response.StatusCode == 401
 	}
 	return false
+}
+
+// GetAuthenticatedUser returns the authenticated user
+func (c *Client) GetAuthenticatedUser(ctx context.Context) (*User, error) {
+	req, err := c.NewRequest(ctx, "GET", "user", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	user := new(User)
+	_, err = c.Do(req, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

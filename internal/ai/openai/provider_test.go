@@ -52,28 +52,28 @@ func TestOpenAIProviderInitialization(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			provider, err := NewOpenAIProvider(tt.config)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Error("Expected error but got none")
 				}
 				return
 			}
-			
+
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 				return
 			}
-			
+
 			if provider == nil {
 				t.Error("Provider should not be nil")
 				return
 			}
-			
+
 			if provider.GetName() != "openai" {
 				t.Errorf("Expected provider name 'openai', got %s", provider.GetName())
 			}
-			
+
 			if provider.GetVersion() == "" {
 				t.Error("Provider version should not be empty")
 			}
@@ -87,11 +87,11 @@ func TestOpenAIChangelogAnalysis(t *testing.T) {
 		if r.URL.Path != "/chat/completions" {
 			t.Errorf("Expected path /chat/completions, got %s", r.URL.Path)
 		}
-		
+
 		if r.Method != "POST" {
 			t.Errorf("Expected POST method, got %s", r.Method)
 		}
-		
+
 		// Mock successful response
 		response := ChatCompletionResponse{
 			ID:      "test-id",
@@ -101,7 +101,7 @@ func TestOpenAIChangelogAnalysis(t *testing.T) {
 			Choices: []Choice{
 				{
 					Index: 0,
-					Message: Message{
+					Message: ChatMessage{
 						Role: "assistant",
 						Content: `{
 							"package_name": "test-package",
@@ -143,7 +143,7 @@ func TestOpenAIChangelogAnalysis(t *testing.T) {
 				TotalTokens:      300,
 			},
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	}))
@@ -224,7 +224,7 @@ func TestOpenAIVersionDiffAnalysis(t *testing.T) {
 			Choices: []Choice{
 				{
 					Index: 0,
-					Message: Message{
+					Message: ChatMessage{
 						Role: "assistant",
 						Content: `{
 							"package_name": "test-package",
@@ -262,7 +262,7 @@ func TestOpenAIVersionDiffAnalysis(t *testing.T) {
 				TotalTokens:      300,
 			},
 		}
-		
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response)
 	}))
@@ -418,8 +418,8 @@ func TestOpenAIJSONExtraction(t *testing.T) {
 			expected: `{"key": "value"}`,
 		},
 		{
-			name: "JSON in markdown",
-			content: "Here's the analysis:\n```json\n{\"key\": \"value\"}\n```\nThat's it.",
+			name:     "JSON in markdown",
+			content:  "Here's the analysis:\n```json\n{\"key\": \"value\"}\n```\nThat's it.",
 			expected: `{"key": "value"}`,
 		},
 		{
@@ -468,9 +468,9 @@ func BenchmarkOpenAIPromptGeneration(b *testing.B) {
 
 // Helper function to check if string contains substring
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) && 
-		(s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
-		 containsAt(s, substr, 1)))
+	return len(s) >= len(substr) && (s == substr || len(s) > len(substr) &&
+		(s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
+			containsAt(s, substr, 1)))
 }
 
 func containsAt(s, substr string, start int) bool {
