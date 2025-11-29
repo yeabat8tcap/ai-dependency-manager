@@ -13,8 +13,6 @@ import (
 	"github.com/rs/cors"
 )
 
-
-
 // Server represents the web server for serving the Angular frontend
 type Server struct {
 	router *mux.Router
@@ -24,7 +22,7 @@ type Server struct {
 // NewServer creates a new web server instance
 func NewServer() *Server {
 	router := mux.NewRouter()
-	
+
 	// Configure CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:4200", "http://localhost:8080"},
@@ -43,7 +41,7 @@ func NewServer() *Server {
 func (s *Server) Handler() http.Handler {
 	// Set up basic routes
 	s.setupBasicRoutes()
-	
+
 	// Apply CORS middleware
 	return s.cors.Handler(s.router)
 }
@@ -52,13 +50,13 @@ func (s *Server) Handler() http.Handler {
 func (s *Server) setupBasicRoutes() {
 	// Serve the main frontend page
 	s.router.HandleFunc("/", s.serveFrontend).Methods("GET")
-	
+
 	// API health check
 	s.router.HandleFunc("/api/health", s.healthCheck).Methods("GET")
-	
+
 	// API status endpoint
 	s.router.HandleFunc("/api/status", s.statusCheck).Methods("GET")
-	
+
 	// Setup logs routes for comprehensive logging system
 	s.SetupLogsRoutes(s.router)
 }
@@ -69,10 +67,11 @@ func (s *Server) serveFrontend(w http.ResponseWriter, r *http.Request) {
 	file, err := staticFiles.Open("dist/index.html")
 	if err != nil {
 		// Fallback to simple HTML
-		w.Header().Set("Content-Type", "text/html")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		fmt.Fprint(w, `<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>AI Dependency Manager</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 40px; background: #f5f5f5; }
@@ -105,16 +104,16 @@ func (s *Server) serveFrontend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-	
+
 	// Copy the embedded file content
 	content, err := io.ReadAll(file)
 	if err != nil {
 		http.Error(w, "Failed to read file", http.StatusInternalServerError)
 		return
 	}
-	
+
 	// Serve the content
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write(content)
 }
 
@@ -142,7 +141,7 @@ func (s *Server) statusCheck(w http.ResponseWriter, r *http.Request) {
 func (s *Server) SetupRoutes() {
 	// Serve Angular static files
 	s.setupStaticFileServer()
-	
+
 	// API routes will be handled by the main API router
 	// This is just for serving the frontend
 }
@@ -159,15 +158,15 @@ func (s *Server) setupStaticFileServer() {
 
 	// Serve static files from embedded filesystem
 	staticHandler := http.FileServer(http.FS(staticFiles))
-	
+
 	// Handle static assets (JS, CSS, images, etc.)
 	s.router.PathPrefix("/assets/").Handler(staticHandler)
 	s.router.PathPrefix("/static/").Handler(staticHandler)
-	
+
 	// Handle specific files
 	s.router.HandleFunc("/favicon.ico", s.serveEmbeddedFile(distFS, "favicon.ico"))
 	s.router.HandleFunc("/manifest.json", s.serveEmbeddedFile(distFS, "manifest.json"))
-	
+
 	// Handle Angular routes - serve index.html for all non-API routes
 	s.router.PathPrefix("/").HandlerFunc(s.serveAngularApp(distFS))
 }
@@ -176,12 +175,12 @@ func (s *Server) setupStaticFileServer() {
 func (s *Server) setupDevelopmentFileServer() {
 	// In development, serve files from the web/dist directory
 	distPath := "./web/dist"
-	
+
 	// Serve static files
 	fileServer := http.FileServer(http.Dir(distPath))
 	s.router.PathPrefix("/assets/").Handler(http.StripPrefix("/", fileServer))
 	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/", fileServer))
-	
+
 	// Serve index.html for Angular routes
 	s.router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Don't serve index.html for API routes
@@ -189,7 +188,7 @@ func (s *Server) setupDevelopmentFileServer() {
 			http.NotFound(w, r)
 			return
 		}
-		
+
 		http.ServeFile(w, r, path.Join(distPath, "index.html"))
 	})
 }
@@ -224,8 +223,8 @@ func (s *Server) serveEmbeddedFile(fsys fs.FS, filename string) http.HandlerFunc
 func (s *Server) serveAngularApp(fsys fs.FS) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Don't serve Angular app for API routes
-		if strings.HasPrefix(r.URL.Path, "/api/") || 
-		   strings.HasPrefix(r.URL.Path, "/ws") {
+		if strings.HasPrefix(r.URL.Path, "/api/") ||
+			strings.HasPrefix(r.URL.Path, "/ws") {
 			http.NotFound(w, r)
 			return
 		}
@@ -240,7 +239,7 @@ func (s *Server) serveAngularApp(fsys fs.FS) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-		
+
 		http.ServeContent(w, r, "index.html", time.Time{}, file.(io.ReadSeeker))
 	}
 }
