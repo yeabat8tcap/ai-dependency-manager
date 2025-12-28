@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
@@ -211,7 +211,7 @@ func runExecuteLag(cmd *cobra.Command, args []string) {
 		fmt.Println("✅ Dry run completed successfully")
 	} else {
 		fmt.Println("✅ Lag resolution plan executed successfully")
-		fmt.Println("💡 Run 'ai-dep-manager scan' to verify the updates")
+		fmt.Println("💡 Run 'superint-dep-manager scan' to verify the updates")
 	}
 }
 
@@ -309,7 +309,7 @@ func displayLagAnalysis(analysis *services.LagAnalysis) {
 		fmt.Println()
 	}
 	
-	fmt.Println("💡 Use 'ai-dep-manager lag plan [project-id]' to create a resolution plan")
+	fmt.Println("💡 Use 'superint-dep-manager lag plan [project-id]' to create a resolution plan")
 }
 
 func displayResolutionPlan(plan *services.LagResolutionPlan) {
@@ -362,7 +362,7 @@ func displayResolutionPlan(plan *services.LagResolutionPlan) {
 	if plan.TotalPackages == 0 {
 		fmt.Println("✅ No lag resolution needed - all dependencies are up to date!")
 	} else {
-		fmt.Printf("💡 Use 'ai-dep-manager lag execute %d' to execute this plan\n", plan.ProjectID)
+		fmt.Printf("💡 Use 'superint-dep-manager lag execute %d' to execute this plan\n", plan.ProjectID)
 	}
 }
 

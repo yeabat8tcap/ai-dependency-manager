@@ -1,6 +1,6 @@
-# AI Dependency Manager - Docker Deployment Guide
+# Superintelligence Dependency Manager - Docker Deployment Guide
 
-This guide provides comprehensive instructions for deploying the AI Dependency Manager using Docker and Docker Compose with the integrated logging system and unified full-stack architecture.
+This guide provides comprehensive instructions for deploying the Superintelligence Dependency Manager using Docker and Docker Compose with the integrated logging system and unified full-stack architecture.
 
 ## 🚀 Quick Start
 
@@ -34,7 +34,7 @@ open http://localhost:8080
 docker-compose up -d
 
 # View logs
-docker-compose logs -f ai-dep-manager
+docker-compose logs -f superint-dep-manager
 ```
 
 ### Production Environment
@@ -62,7 +62,7 @@ docker-compose -f docker-compose.yml -f docker-compose.staging.yml up -d
 ## 🏗️ Architecture Overview
 
 ### Unified Full-Stack Application
-The AI Dependency Manager runs as a single container with:
+The Superintelligence Dependency Manager runs as a single container with:
 - **Frontend**: Angular 17+ with Material Design
 - **Backend**: Go web server with embedded frontend assets
 - **Database**: SQLite with automatic migrations
@@ -71,10 +71,10 @@ The AI Dependency Manager runs as a single container with:
 
 ### Container Structure
 ```
-ai-dep-manager-app/
+superint-dep-manager-app/
 ├── Frontend (Angular) - Port 8080
 ├── Backend API - Port 8080/api
-├── Database (SQLite) - /data/ai-dep-manager.db
+├── Database (SQLite) - /data/superint-dep-manager.db
 ├── Logs - /app/logs/
 └── Configuration - /data/config.yaml
 ```
@@ -87,7 +87,7 @@ ai-dep-manager-app/
 ```bash
 AI_DEP_MANAGER_DATA_DIR=/data              # Data directory
 AI_DEP_MANAGER_CONFIG_FILE=/data/config.yaml  # Configuration file
-AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager.db # Database path
+AI_DEP_MANAGER_DB_PATH=/data/superint-dep-manager.db # Database path
 ```
 
 #### Logging Configuration
@@ -112,9 +112,9 @@ GOGC=100                                   # Go garbage collection target
 ### Volume Mounts
 
 #### Required Volumes
-- `ai-dep-manager-data:/data` - Application data and database
-- `ai-dep-manager-logs:/app/logs` - Application logs
-- `ai-dep-manager-db:/app/db` - Database files
+- `superint-dep-manager-data:/data` - Application data and database
+- `superint-dep-manager-logs:/app/logs` - Application logs
+- `superint-dep-manager-db:/app/db` - Database files
 
 #### Optional Volumes
 - `./projects:/projects:ro` - Project directories to scan
@@ -149,13 +149,13 @@ Enable with `--profile monitoring`:
 ### Log Management
 ```bash
 # View application logs
-docker-compose logs -f ai-dep-manager
+docker-compose logs -f superint-dep-manager
 
 # View all logs
 docker-compose logs -f
 
 # Export logs
-docker cp ai-dep-manager-app:/app/logs ./exported-logs
+docker cp superint-dep-manager-app:/app/logs ./exported-logs
 ```
 
 ## 🛠️ Maintenance
@@ -201,7 +201,7 @@ docker-compose up -d
 #### Database Migrations
 Database migrations run automatically on startup. Check logs for migration status:
 ```bash
-docker-compose logs ai-dep-manager | grep migration
+docker-compose logs superint-dep-manager | grep migration
 ```
 
 ### Troubleshooting
@@ -211,7 +211,7 @@ docker-compose logs ai-dep-manager | grep migration
 **Container won't start:**
 ```bash
 # Check logs
-docker-compose logs ai-dep-manager
+docker-compose logs superint-dep-manager
 
 # Check health
 docker-compose ps
@@ -254,7 +254,7 @@ ports:
 ```bash
 # Restrict network access
 networks:
-  ai-dep-manager-network:
+  superint-dep-manager-network:
     driver: bridge
     internal: true  # Disable external access
 ```
@@ -299,8 +299,8 @@ deploy:
 # Use with Traefik or nginx
 labels:
   - "traefik.enable=true"
-  - "traefik.http.routers.ai-dep-manager.rule=Host(`yourdomain.com`)"
-  - "traefik.http.routers.ai-dep-manager.tls=true"
+  - "traefik.http.routers.superint-dep-manager.rule=Host(`yourdomain.com`)"
+  - "traefik.http.routers.superint-dep-manager.tls=true"
 ```
 
 ### High Availability
@@ -313,7 +313,7 @@ labels:
 ### Scaling
 ```bash
 # Scale horizontally
-docker-compose up -d --scale ai-dep-manager=3
+docker-compose up -d --scale superint-dep-manager=3
 ```
 
 ## 📞 Support

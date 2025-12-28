@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	testingPkg "github.com/8tcapital/ai-dep-manager/internal/testing"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	testingPkg "github.com/8tcapital/superint-dep-manager/internal/testing"
 )
 
 func TestSecurityService_ScanPackage(t *testing.T) {

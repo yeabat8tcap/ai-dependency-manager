@@ -1,15 +1,15 @@
 version: '3.8'
 
 services:
-  # AI Dependency Manager - Unified Full-Stack Application
-  ai-dep-manager:
+  # Superintelligence Dependency Manager - Unified Full-Stack Application
+  superint-dep-manager:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - BUILDKIT_INLINE_CACHE=1
-    image: ai-dep-manager:latest
-    container_name: ai-dep-manager-app
+    image: superint-dep-manager:latest
+    container_name: superint-dep-manager-app
     restart: unless-stopped
     ports:
       # Unified web server port (frontend + API)
@@ -20,7 +20,7 @@ services:
       # Application configuration
       - AI_DEP_MANAGER_DATA_DIR=/data
       - AI_DEP_MANAGER_CONFIG_FILE=/data/config.yaml
-      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager.db
+      - AI_DEP_MANAGER_DB_PATH=/data/superint-dep-manager.db
       
       # Logging configuration
       - AI_DEP_MANAGER_LOG_LEVEL=info
@@ -53,7 +53,7 @@ services:
       # Configuration override (optional)
       - ./config/production.yaml:/data/config.yaml:ro
     networks:
-      - ai-dep-manager-network
+      - superint-dep-manager-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 30s
@@ -65,31 +65,31 @@ services:
       options:
         max-size: "50m"
         max-file: "5"
-        labels: "service=ai-dep-manager"
+        labels: "service=superint-dep-manager"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ai-dep-manager.rule=Host(`localhost`)"
-      - "traefik.http.services.ai-dep-manager.loadbalancer.server.port=8080"
+      - "traefik.http.routers.superint-dep-manager.rule=Host(`localhost`)"
+      - "traefik.http.services.superint-dep-manager.loadbalancer.server.port=8080"
 
   # Log aggregation and monitoring (optional)
   log-aggregator:
     image: fluent/fluent-bit:latest
-    container_name: ai-dep-manager-logs
+    container_name: superint-dep-manager-logs
     restart: unless-stopped
     volumes:
-      - ./logs:/var/log/ai-dep-manager:ro
+      - ./logs:/var/log/superint-dep-manager:ro
       - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
     networks:
-      - ai-dep-manager-network
+      - superint-dep-manager-network
     depends_on:
-      - ai-dep-manager
+      - superint-dep-manager
     profiles:
       - monitoring
 
   # Metrics and monitoring (optional)
   prometheus:
     image: prom/prometheus:latest
-    container_name: ai-dep-manager-metrics
+    container_name: superint-dep-manager-metrics
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -104,14 +104,14 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     networks:
-      - ai-dep-manager-network
+      - superint-dep-manager-network
     profiles:
       - monitoring
 
   # Grafana dashboard (optional)
   grafana:
     image: grafana/grafana:latest
-    container_name: ai-dep-manager-dashboard
+    container_name: superint-dep-manager-dashboard
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -123,7 +123,7 @@ services:
       - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
     networks:
-      - ai-dep-manager-network
+      - superint-dep-manager-network
     depends_on:
       - prometheus
     profiles:
@@ -140,7 +140,7 @@ volumes:
 
 # Network configuration
 networks:
-  ai-dep-manager-network:
+  superint-dep-manager-network:
     driver: bridge
     ipam:
       config:

@@ -1,6 +1,6 @@
 # Enterprise Features & Scaling Architecture
 
-This document outlines the enterprise-grade features and scaling architecture for the AI Dependency Manager, designed to support large organizations with complex requirements.
+This document outlines the enterprise-grade features and scaling architecture for the Superintelligence Dependency Manager, designed to support large organizations with complex requirements.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document outlines the enterprise-grade features and scaling architecture fo
 
 ## Overview
 
-Enterprise features enable the AI Dependency Manager to scale across large organizations with thousands of projects, complex approval workflows, compliance requirements, and advanced governance needs.
+Enterprise features enable the Superintelligence Dependency Manager to scale across large organizations with thousands of projects, complex approval workflows, compliance requirements, and advanced governance needs.
 
 ### Key Enterprise Requirements
 
@@ -291,21 +291,21 @@ type ScalingPolicy struct {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ai-dep-manager-api
-  namespace: ai-dep-manager
+  name: superint-dep-manager-api
+  namespace: superint-dep-manager
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: ai-dep-manager-api
+      app: superint-dep-manager-api
   template:
     metadata:
       labels:
-        app: ai-dep-manager-api
+        app: superint-dep-manager-api
     spec:
       containers:
       - name: api
-        image: ai-dep-manager:latest
+        image: superint-dep-manager:latest
         ports:
         - containerPort: 8080
         env:
@@ -339,13 +339,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ai-dep-manager-api-hpa
-  namespace: ai-dep-manager
+  name: superint-dep-manager-api-hpa
+  namespace: superint-dep-manager
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ai-dep-manager-api
+    name: superint-dep-manager-api
   minReplicas: 3
   maxReplicas: 20
   metrics:
@@ -475,4 +475,4 @@ type SlackIntegration struct {
 - [ ] Add business intelligence capabilities
 - [ ] Create custom reporting tools
 
-This enterprise architecture provides the foundation for scaling the AI Dependency Manager to support large organizations with complex requirements and strict compliance needs.
+This enterprise architecture provides the foundation for scaling the Superintelligence Dependency Manager to support large organizations with complex requirements and strict compliance needs.

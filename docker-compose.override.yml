@@ -3,7 +3,7 @@
 version: '3.8'
 
 services:
-  ai-dep-manager:
+  superint-dep-manager:
     # Development-specific configuration
     environment:
       # Enable debug logging in development
@@ -12,7 +12,7 @@ services:
       - GIN_MODE=debug
       
       # Development database path
-      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager-dev.db
+      - AI_DEP_MANAGER_DB_PATH=/data/superint-dep-manager-dev.db
     
     # Mount source code for hot reload (development only)
     volumes:

@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# AI Dependency Manager Deployment Script
-# This script helps deploy the AI Dependency Manager in various environments
+# Superintelligence Dependency Manager Deployment Script
+# This script helps deploy the Superintelligence Dependency Manager in various environments
 
 set -e
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-BINARY_NAME="ai-dep-manager"
-SERVICE_NAME="ai-dep-manager"
+BINARY_NAME="superint-dep-manager"
+SERVICE_NAME="superint-dep-manager"
 
 # Colors for output
 RED='\033[0;31m'
@@ -84,7 +84,7 @@ check_requirements() {
 
 # Build the application
 build_app() {
-    log_info "Building AI Dependency Manager..."
+    log_info "Building Superintelligence Dependency Manager..."
     
     cd "$PROJECT_DIR"
     
@@ -112,11 +112,11 @@ build_app() {
 
 # Install the application
 install_app() {
-    log_info "Installing AI Dependency Manager..."
+    log_info "Installing Superintelligence Dependency Manager..."
     
     local install_dir="/usr/local/bin"
-    local config_dir="/etc/ai-dep-manager"
-    local data_dir="/var/lib/ai-dep-manager"
+    local config_dir="/etc/superint-dep-manager"
+    local data_dir="/var/lib/superint-dep-manager"
     
     # Create directories
     sudo mkdir -p "$config_dir" "$data_dir"
@@ -147,14 +147,14 @@ install_service() {
     
     local service_file="/etc/systemd/system/$SERVICE_NAME.service"
     local binary_path="/usr/local/bin/$BINARY_NAME"
-    local config_path="/etc/ai-dep-manager/config.yaml"
-    local data_dir="/var/lib/ai-dep-manager"
+    local config_path="/etc/superint-dep-manager/config.yaml"
+    local data_dir="/var/lib/superint-dep-manager"
     
     # Create service file
     sudo tee "$service_file" > /dev/null <<EOF
 [Unit]
-Description=AI Dependency Manager
-Documentation=https://github.com/8tcapital/ai-dep-manager
+Description=Superintelligence Dependency Manager
+Documentation=https://github.com/8tcapital/superint-dep-manager
 After=network.target
 Wants=network.target
 
@@ -208,7 +208,7 @@ deploy_docker() {
     
     # Build Docker image
     log_info "Building Docker image..."
-    docker build -t ai-dep-manager:latest .
+    docker build -t superint-dep-manager:latest .
     
     # Check if docker-compose is available
     if command -v docker-compose &> /dev/null; then
@@ -217,32 +217,32 @@ deploy_docker() {
         
         log_success "Docker deployment completed"
         log_info "Check status: docker-compose ps"
-        log_info "View logs: docker-compose logs -f ai-dep-manager"
+        log_info "View logs: docker-compose logs -f superint-dep-manager"
         log_info "Stop: docker-compose down"
     else
         log_info "Starting with docker run..."
         
         # Create data volume
-        docker volume create ai-dep-manager-data
+        docker volume create superint-dep-manager-data
         
         # Run container
         docker run -d \
-            --name ai-dep-manager \
+            --name superint-dep-manager \
             --restart unless-stopped \
-            -v ai-dep-manager-data:/data \
+            -v superint-dep-manager-data:/data \
             -v "$(pwd)/projects:/projects:ro" \
-            ai-dep-manager:latest
+            superint-dep-manager:latest
         
         log_success "Docker deployment completed"
         log_info "Check status: docker ps"
-        log_info "View logs: docker logs -f ai-dep-manager"
-        log_info "Stop: docker stop ai-dep-manager"
+        log_info "View logs: docker logs -f superint-dep-manager"
+        log_info "Stop: docker stop superint-dep-manager"
     fi
 }
 
 # Uninstall the application
 uninstall_app() {
-    log_info "Uninstalling AI Dependency Manager..."
+    log_info "Uninstalling Superintelligence Dependency Manager..."
     
     # Stop and disable service if it exists
     if systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
@@ -272,14 +272,14 @@ uninstall_app() {
     read -p "Remove configuration files? [y/N]: " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        sudo rm -rf "/etc/ai-dep-manager"
+        sudo rm -rf "/etc/superint-dep-manager"
         log_info "Configuration files removed"
     fi
     
     read -p "Remove data directory? [y/N]: " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        sudo rm -rf "/var/lib/ai-dep-manager"
+        sudo rm -rf "/var/lib/superint-dep-manager"
         log_info "Data directory removed"
     fi
     
@@ -288,7 +288,7 @@ uninstall_app() {
 
 # Show usage
 usage() {
-    echo "AI Dependency Manager Deployment Script"
+    echo "Superintelligence Dependency Manager Deployment Script"
     echo
     echo "Usage: $0 [COMMAND]"
     echo

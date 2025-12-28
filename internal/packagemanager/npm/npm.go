@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 )
 
 // NPMManager implements PackageManager interface for npm

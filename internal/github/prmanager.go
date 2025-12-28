@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
 )
 
 // PRManager handles comprehensive pull request management and automation
@@ -21,7 +21,7 @@ type PRManager struct {
 }
 
 // NewPRManager creates a new PR manager
-func NewPRManager(client *Client, aiManager *ai.AIManager) *PRManager {
+func NewPRManager(client *Client, aiManager *superint.AIManager) *PRManager {
 	adapter := NewAIAdapter(aiManager)
 	return &PRManager{
 		client:            client,

@@ -1,9 +1,9 @@
-# AI Dependency Manager - Production Configuration
-# This file contains production-specific settings for the AI Dependency Manager
+# Superintelligence Dependency Manager - Production Configuration
+# This file contains production-specific settings for the Superintelligence Dependency Manager
 
 # Database configuration
 database:
-  path: "/data/ai-dep-manager-prod.db"
+  path: "/data/superint-dep-manager-prod.db"
   max_connections: 25
   connection_timeout: 30s
   backup_interval: "24h"
@@ -12,7 +12,7 @@ database:
 logging:
   level: "info"
   format: "json"
-  output: "/app/logs/ai-dep-manager.log"
+  output: "/app/logs/superint-dep-manager.log"
   max_size: 100  # MB
   max_files: 10
   max_age: 30    # days

@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -29,7 +29,7 @@ type TestContext struct {
 // SetupTestEnvironment creates a complete test environment
 func SetupTestEnvironment(t *testing.T) *TestContext {
 	// Create temporary directory
-	tempDir, err := os.MkdirTemp("", "ai-dep-manager-test-*")
+	tempDir, err := os.MkdirTemp("", "superint-dep-manager-test-*")
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}

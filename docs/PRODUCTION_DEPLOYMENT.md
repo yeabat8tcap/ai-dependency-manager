@@ -1,8 +1,8 @@
-# AI Dependency Manager - Production Deployment Guide
+# Superintelligence Dependency Manager - Production Deployment Guide
 
 ## 🚀 Production Deployment Overview
 
-This guide provides comprehensive instructions for deploying the AI Dependency Manager to production environments with enterprise-grade reliability, monitoring, and security.
+This guide provides comprehensive instructions for deploying the Superintelligence Dependency Manager to production environments with enterprise-grade reliability, monitoring, and security.
 
 ## 📋 Prerequisites
 
@@ -30,8 +30,8 @@ The fastest way to deploy to production is using our automated deployment script
 
 ```bash
 # Clone the repository
-git clone https://github.com/8tcapital/ai-dep-manager.git
-cd ai-dep-manager
+git clone https://github.com/8tcapital/superint-dep-manager.git
+cd superint-dep-manager
 
 # Run production deployment (requires root)
 sudo ./scripts/deploy-production.sh
@@ -46,16 +46,16 @@ If you prefer manual deployment or need customization:
 
 #### Step 1: Create System User
 ```bash
-sudo groupadd --system ai-dep-manager
-sudo useradd --system --gid ai-dep-manager --home-dir /opt/ai-dep-manager \
-             --shell /bin/false --comment "AI Dependency Manager" ai-dep-manager
+sudo groupadd --system superint-dep-manager
+sudo useradd --system --gid superint-dep-manager --home-dir /opt/superint-dep-manager \
+             --shell /bin/false --comment "Superintelligence Dependency Manager" superint-dep-manager
 ```
 
 #### Step 2: Create Directory Structure
 ```bash
-sudo mkdir -p /opt/ai-dep-manager/{bin,config,logs,data,scripts,monitoring}
-sudo chown -R ai-dep-manager:ai-dep-manager /opt/ai-dep-manager
-sudo chmod 755 /opt/ai-dep-manager
+sudo mkdir -p /opt/superint-dep-manager/{bin,config,logs,data,scripts,monitoring}
+sudo chown -R superint-dep-manager:superint-dep-manager /opt/superint-dep-manager
+sudo chmod 755 /opt/superint-dep-manager
 ```
 
 #### Step 3: Build and Deploy Binary
@@ -63,24 +63,24 @@ sudo chmod 755 /opt/ai-dep-manager
 # Build for production
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
     -ldflags "-X main.Version=$(git describe --tags --always) -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-    -o ai-dep-manager .
+    -o superint-dep-manager .
 
 # Deploy binary
-sudo cp ai-dep-manager /opt/ai-dep-manager/bin/
-sudo chown ai-dep-manager:ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager
-sudo chmod 755 /opt/ai-dep-manager/bin/ai-dep-manager
+sudo cp superint-dep-manager /opt/superint-dep-manager/bin/
+sudo chown superint-dep-manager:superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager
+sudo chmod 755 /opt/superint-dep-manager/bin/superint-dep-manager
 ```
 
 #### Step 4: Configure Application
 ```bash
 # Create production configuration
-sudo tee /opt/ai-dep-manager/config/config.yaml << EOF
-# AI Dependency Manager Production Configuration
+sudo tee /opt/superint-dep-manager/config/config.yaml << EOF
+# Superintelligence Dependency Manager Production Configuration
 
 # Database Configuration
 database:
   type: sqlite
-  path: /opt/ai-dep-manager/data/ai-dep-manager.db
+  path: /opt/superint-dep-manager/data/superint-dep-manager.db
 
 # Logging Configuration
 log_level: info
@@ -120,45 +120,45 @@ performance:
   max_retries: 3
 EOF
 
-sudo chown ai-dep-manager:ai-dep-manager /opt/ai-dep-manager/config/config.yaml
-sudo chmod 600 /opt/ai-dep-manager/config/config.yaml
+sudo chown superint-dep-manager:superint-dep-manager /opt/superint-dep-manager/config/config.yaml
+sudo chmod 600 /opt/superint-dep-manager/config/config.yaml
 ```
 
 #### Step 5: Create Systemd Service
 ```bash
-sudo tee /etc/systemd/system/ai-dep-manager.service << EOF
+sudo tee /etc/systemd/system/superint-dep-manager.service << EOF
 [Unit]
-Description=AI Dependency Manager
-Documentation=https://github.com/8tcapital/ai-dep-manager
+Description=Superintelligence Dependency Manager
+Documentation=https://github.com/8tcapital/superint-dep-manager
 After=network.target
 Wants=network.target
 
 [Service]
 Type=simple
-User=ai-dep-manager
-Group=ai-dep-manager
-WorkingDirectory=/opt/ai-dep-manager
-ExecStart=/opt/ai-dep-manager/bin/ai-dep-manager agent start --config /opt/ai-dep-manager/config/config.yaml
+User=superint-dep-manager
+Group=superint-dep-manager
+WorkingDirectory=/opt/superint-dep-manager
+ExecStart=/opt/superint-dep-manager/bin/superint-dep-manager agent start --config /opt/superint-dep-manager/config/config.yaml
 ExecReload=/bin/kill -HUP \$MAINPID
 Restart=always
 RestartSec=10
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=ai-dep-manager
+SyslogIdentifier=superint-dep-manager
 
 # Security settings
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ProtectHome=yes
-ReadWritePaths=/opt/ai-dep-manager/data /opt/ai-dep-manager/logs
+ReadWritePaths=/opt/superint-dep-manager/data /opt/superint-dep-manager/logs
 CapabilityBoundingSet=
 AmbientCapabilities=
 SystemCallFilter=@system-service
 SystemCallErrorNumber=EPERM
 
 # Environment
-Environment=HOME=/opt/ai-dep-manager
+Environment=HOME=/opt/superint-dep-manager
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
 
 [Install]
@@ -166,8 +166,8 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable ai-dep-manager
-sudo systemctl start ai-dep-manager
+sudo systemctl enable superint-dep-manager
+sudo systemctl start superint-dep-manager
 ```
 
 ## 📊 Monitoring and Logging
@@ -181,24 +181,24 @@ The deployment includes comprehensive health monitoring:
 - **Automated Backups**: Daily at 2 AM
 
 ### Log Files
-- **Application Logs**: `/opt/ai-dep-manager/logs/application.log`
-- **Health Check Logs**: `/opt/ai-dep-manager/logs/health-check.log`
-- **Metrics Logs**: `/opt/ai-dep-manager/logs/metrics.log`
-- **Alert Logs**: `/opt/ai-dep-manager/logs/alerts.log`
+- **Application Logs**: `/opt/superint-dep-manager/logs/application.log`
+- **Health Check Logs**: `/opt/superint-dep-manager/logs/health-check.log`
+- **Metrics Logs**: `/opt/superint-dep-manager/logs/metrics.log`
+- **Alert Logs**: `/opt/superint-dep-manager/logs/alerts.log`
 
 ### Monitoring Commands
 ```bash
 # Check service status
-sudo systemctl status ai-dep-manager
+sudo systemctl status superint-dep-manager
 
 # View real-time logs
-sudo journalctl -u ai-dep-manager -f
+sudo journalctl -u superint-dep-manager -f
 
 # Check health status
-sudo -u ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager status
+sudo -u superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager status
 
 # View recent metrics
-tail -f /opt/ai-dep-manager/logs/metrics.log
+tail -f /opt/superint-dep-manager/logs/metrics.log
 ```
 
 ## 🔒 Security Configuration
@@ -211,8 +211,8 @@ For production environments, ensure all external communications use HTTPS:
 security:
   tls:
     enabled: true
-    cert_file: /opt/ai-dep-manager/certs/server.crt
-    key_file: /opt/ai-dep-manager/certs/server.key
+    cert_file: /opt/superint-dep-manager/certs/server.crt
+    key_file: /opt/superint-dep-manager/certs/server.key
 ```
 
 ### Firewall Configuration
@@ -229,41 +229,41 @@ Store sensitive credentials securely:
 
 ```bash
 # Create credentials directory
-sudo mkdir -p /opt/ai-dep-manager/secrets
-sudo chmod 700 /opt/ai-dep-manager/secrets
-sudo chown ai-dep-manager:ai-dep-manager /opt/ai-dep-manager/secrets
+sudo mkdir -p /opt/superint-dep-manager/secrets
+sudo chmod 700 /opt/superint-dep-manager/secrets
+sudo chown superint-dep-manager:superint-dep-manager /opt/superint-dep-manager/secrets
 
 # Store credentials (example)
-echo "your-registry-token" | sudo tee /opt/ai-dep-manager/secrets/npm-token
-sudo chmod 600 /opt/ai-dep-manager/secrets/npm-token
+echo "your-registry-token" | sudo tee /opt/superint-dep-manager/secrets/npm-token
+sudo chmod 600 /opt/superint-dep-manager/secrets/npm-token
 ```
 
 ## 🔄 Backup and Recovery
 
 ### Automated Backups
-Backups are automatically created daily and stored in `/var/backups/ai-dep-manager/`:
+Backups are automatically created daily and stored in `/var/backups/superint-dep-manager/`:
 
 ```bash
 # Manual backup
-sudo /opt/ai-dep-manager/scripts/backup.sh
+sudo /opt/superint-dep-manager/scripts/backup.sh
 
 # Restore from backup
-sudo tar -xzf /var/backups/ai-dep-manager/ai-dep-manager_backup_YYYYMMDD_HHMMSS.tar.gz -C /opt/ai-dep-manager/
+sudo tar -xzf /var/backups/superint-dep-manager/superint-dep-manager_backup_YYYYMMDD_HHMMSS.tar.gz -C /opt/superint-dep-manager/
 ```
 
 ### Database Recovery
 ```bash
 # Stop service
-sudo systemctl stop ai-dep-manager
+sudo systemctl stop superint-dep-manager
 
 # Restore database
-sudo cp /path/to/backup/ai-dep-manager.db /opt/ai-dep-manager/data/
+sudo cp /path/to/backup/superint-dep-manager.db /opt/superint-dep-manager/data/
 
 # Fix permissions
-sudo chown ai-dep-manager:ai-dep-manager /opt/ai-dep-manager/data/ai-dep-manager.db
+sudo chown superint-dep-manager:superint-dep-manager /opt/superint-dep-manager/data/superint-dep-manager.db
 
 # Start service
-sudo systemctl start ai-dep-manager
+sudo systemctl start superint-dep-manager
 ```
 
 ## 🚨 Alerting and Notifications
@@ -276,7 +276,7 @@ Configure webhook alerts for critical events:
 export WEBHOOK_URL="https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
 
 # Test webhook
-sudo -u ai-dep-manager /opt/ai-dep-manager/monitoring/scripts/send-alert.sh \
+sudo -u superint-dep-manager /opt/superint-dep-manager/monitoring/scripts/send-alert.sh \
     "TEST" "Test alert message" "INFO"
 ```
 
@@ -298,29 +298,29 @@ export EMAIL_TO="admin@yourcompany.com"
 ### Application Updates
 ```bash
 # Stop service
-sudo systemctl stop ai-dep-manager
+sudo systemctl stop superint-dep-manager
 
 # Backup current version
-sudo cp /opt/ai-dep-manager/bin/ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager.backup
+sudo cp /opt/superint-dep-manager/bin/superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager.backup
 
 # Deploy new version
-sudo cp new-ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager
-sudo chown ai-dep-manager:ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager
+sudo cp new-superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager
+sudo chown superint-dep-manager:superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager
 
 # Start service
-sudo systemctl start ai-dep-manager
+sudo systemctl start superint-dep-manager
 
 # Verify deployment
-sudo systemctl status ai-dep-manager
+sudo systemctl status superint-dep-manager
 ```
 
 ### Configuration Updates
 ```bash
 # Edit configuration
-sudo nano /opt/ai-dep-manager/config/config.yaml
+sudo nano /opt/superint-dep-manager/config/config.yaml
 
 # Reload service
-sudo systemctl reload ai-dep-manager
+sudo systemctl reload superint-dep-manager
 ```
 
 ## 📈 Performance Tuning
@@ -328,17 +328,17 @@ sudo systemctl reload ai-dep-manager
 ### Database Optimization
 ```bash
 # Vacuum database periodically
-sudo -u ai-dep-manager sqlite3 /opt/ai-dep-manager/data/ai-dep-manager.db "VACUUM;"
+sudo -u superint-dep-manager sqlite3 /opt/superint-dep-manager/data/superint-dep-manager.db "VACUUM;"
 
 # Analyze database
-sudo -u ai-dep-manager sqlite3 /opt/ai-dep-manager/data/ai-dep-manager.db "ANALYZE;"
+sudo -u superint-dep-manager sqlite3 /opt/superint-dep-manager/data/superint-dep-manager.db "ANALYZE;"
 ```
 
 ### Resource Limits
 Configure systemd resource limits:
 
 ```ini
-# In /etc/systemd/system/ai-dep-manager.service
+# In /etc/systemd/system/superint-dep-manager.service
 [Service]
 MemoryMax=2G
 CPUQuota=200%
@@ -352,34 +352,34 @@ TasksMax=1000
 #### Service Won't Start
 ```bash
 # Check service status
-sudo systemctl status ai-dep-manager
+sudo systemctl status superint-dep-manager
 
 # Check logs
-sudo journalctl -u ai-dep-manager -n 50
+sudo journalctl -u superint-dep-manager -n 50
 
 # Check configuration
-sudo -u ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager --config /opt/ai-dep-manager/config/config.yaml version
+sudo -u superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager --config /opt/superint-dep-manager/config/config.yaml version
 ```
 
 #### Database Issues
 ```bash
 # Check database permissions
-ls -la /opt/ai-dep-manager/data/
+ls -la /opt/superint-dep-manager/data/
 
 # Test database connectivity
-sudo -u ai-dep-manager /opt/ai-dep-manager/bin/ai-dep-manager status
+sudo -u superint-dep-manager /opt/superint-dep-manager/bin/superint-dep-manager status
 ```
 
 #### High Resource Usage
 ```bash
 # Check resource usage
-top -p $(pgrep ai-dep-manager)
+top -p $(pgrep superint-dep-manager)
 
 # Check disk usage
-du -sh /opt/ai-dep-manager/
+du -sh /opt/superint-dep-manager/
 
 # Clean old logs
-sudo find /opt/ai-dep-manager/logs -name "*.log" -mtime +7 -delete
+sudo find /opt/superint-dep-manager/logs -name "*.log" -mtime +7 -delete
 ```
 
 ## 📞 Support and Maintenance
@@ -413,6 +413,6 @@ Before going live, ensure:
 
 ---
 
-**🚀 Your AI Dependency Manager is now ready for production! 🚀**
+**🚀 Your Superintelligence Dependency Manager is now ready for production! 🚀**
 
 For additional support and advanced configuration options, refer to the complete documentation suite in the `/docs/` directory.

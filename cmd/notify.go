@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/notifications"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/notifications"
 	"github.com/spf13/cobra"
 )
 
@@ -120,7 +120,7 @@ func runTestNotify(cmd *cobra.Command, args []string) {
 		Type:     notifications.NotificationTypeUpdateAvailable,
 		Priority: notifications.PriorityMedium,
 		Title:    "Test Notification",
-		Message:  "This is a test notification from AI Dependency Manager",
+		Message:  "This is a test notification from Superintelligence Dependency Manager",
 		Metadata: map[string]interface{}{
 			"test":      true,
 			"channel":   channel,
@@ -188,8 +188,8 @@ func runListNotify(cmd *cobra.Command, args []string) {
 	}
 
 	fmt.Println()
-	fmt.Println("💡 Use 'ai-dep-manager notify configure [channel]' to configure channels")
-	fmt.Println("🧪 Use 'ai-dep-manager notify test [channel]' to test channels")
+	fmt.Println("💡 Use 'superint-dep-manager notify configure [channel]' to configure channels")
+	fmt.Println("🧪 Use 'superint-dep-manager notify test [channel]' to test channels")
 }
 
 func runSendNotify(cmd *cobra.Command, args []string) {
@@ -296,7 +296,7 @@ func configureEmailNotifications() {
 	fmt.Println()
 
 	fmt.Println("💡 Configuration should be added to your config file:")
-	fmt.Println("   ~/.ai-dep-manager/config.yaml")
+	fmt.Println("   ~/.superint-dep-manager/config.yaml")
 	fmt.Println()
 
 	fmt.Println("Example configuration:")
@@ -327,7 +327,7 @@ func configureSlackNotifications() {
 	fmt.Println()
 
 	fmt.Println("💡 Add the webhook URL to your config file:")
-	fmt.Println("   ~/.ai-dep-manager/config.yaml")
+	fmt.Println("   ~/.superint-dep-manager/config.yaml")
 	fmt.Println()
 
 	fmt.Println("Example configuration:")
@@ -337,7 +337,7 @@ notifications:
     enabled: true
     webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
     channel: "#dependency-updates"
-    username: "AI Dependency Manager"
+    username: "Superintelligence Dependency Manager"
     icon_emoji: ":robot_face:"
 `)
 }
@@ -351,7 +351,7 @@ func configureWebhookNotifications() {
 	fmt.Println()
 
 	fmt.Println("💡 Add webhook configuration to your config file:")
-	fmt.Println("   ~/.ai-dep-manager/config.yaml")
+	fmt.Println("   ~/.superint-dep-manager/config.yaml")
 	fmt.Println()
 
 	fmt.Println("Example configuration:")

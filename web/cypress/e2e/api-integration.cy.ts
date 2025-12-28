@@ -1,4 +1,4 @@
-describe('AI Dependency Manager - Backend API Integration Tests', () => {
+describe('Superintelligence Dependency Manager - Backend API Integration Tests', () => {
   const baseUrl = Cypress.env('API_URL') || 'http://localhost:8081/api';
 
   describe('Project Management API', () => {

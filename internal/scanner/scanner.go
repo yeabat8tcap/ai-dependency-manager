@@ -6,13 +6,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	"github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager"
-	pmtypes "github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager"
+	pmtypes "github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 	"gorm.io/gorm"
 )
 
@@ -370,9 +370,9 @@ func (s *Scanner) ScanAllProjects(ctx context.Context, options *ScanOptions) ([]
 }
 
 // performAIAnalysis performs AI analysis on changelog and stores predictions
-func (s *Scanner) performAIAnalysis(ctx context.Context, dependency *models.Dependency, update *models.Update, changelogText string) (*ai.ChangelogAnalysisResponse, error) {
+func (s *Scanner) performAIAnalysis(ctx context.Context, dependency *models.Dependency, update *models.Update, changelogText string) (*superint.ChangelogAnalysisResponse, error) {
 	// Create AI analysis request
-	request := &ai.ChangelogAnalysisRequest{
+	request := &superint.ChangelogAnalysisRequest{
 		PackageName:    dependency.Name,
 		FromVersion:    dependency.CurrentVersion,
 		ToVersion:      update.ToVersion,
@@ -383,7 +383,7 @@ func (s *Scanner) performAIAnalysis(ctx context.Context, dependency *models.Depe
 	}
 
 	// Perform AI analysis
-	response, err := ai.AnalyzeChangelog(ctx, request)
+	response, err := superint.AnalyzeChangelog(ctx, request)
 	if err != nil {
 		return nil, fmt.Errorf("AI changelog analysis failed: %w", err)
 	}
@@ -397,7 +397,7 @@ func (s *Scanner) performAIAnalysis(ctx context.Context, dependency *models.Depe
 }
 
 // storeAIPredictions stores AI analysis results as predictions in the database
-func (s *Scanner) storeAIPredictions(dependencyID, updateID uint, analysis *ai.ChangelogAnalysisResponse) error {
+func (s *Scanner) storeAIPredictions(dependencyID, updateID uint, analysis *superint.ChangelogAnalysisResponse) error {
 	// Store breaking change prediction
 	breakingPrediction := &models.AIPrediction{
 		DependencyID:   dependencyID,

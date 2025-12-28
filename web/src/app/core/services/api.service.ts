@@ -193,7 +193,7 @@ export class ApiService {
       );
   }
 
-  // AI Insights
+  // Superintelligence Insights
   getAIInsights(projectId?: number): Observable<ApiResponse<any[]>> {
     if (this.useMockData) {
       return this.getMockAIInsightsList(projectId);

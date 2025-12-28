@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AI Dependency Manager - Component Generation Script
+# Superintelligence Dependency Manager - Component Generation Script
 # Creates all missing component stubs for successful Angular build
 
 echo "🚀 Creating missing Angular component stubs..."

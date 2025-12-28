@@ -1,6 +1,6 @@
-# AI Dependency Manager - API Reference
+# Superintelligence Dependency Manager - API Reference
 
-Complete command-line interface reference for the AI Dependency Manager.
+Complete command-line interface reference for the Superintelligence Dependency Manager.
 
 ## Table of Contents
 
@@ -21,8 +21,8 @@ Complete command-line interface reference for the AI Dependency Manager.
 These options are available for all commands:
 
 ```
---config string      Configuration file path (default: ~/.ai-dep-manager/config.yaml)
---data-dir string    Data directory path (default: ~/.ai-dep-manager)
+--config string      Configuration file path (default: ~/.superint-dep-manager/config.yaml)
+--data-dir string    Data directory path (default: ~/.superint-dep-manager)
 --log-level string   Log level: debug, info, warn, error (default: info)
 --verbose, -v        Enable verbose output
 --quiet, -q          Suppress non-error output
@@ -32,17 +32,17 @@ These options are available for all commands:
 
 ## Configuration Commands
 
-### `ai-dep-manager configure`
+### `superint-dep-manager configure`
 
 Initialize and manage system configuration.
 
 #### Subcommands
 
 ##### `configure init`
-Initialize the AI Dependency Manager configuration.
+Initialize the Superintelligence Dependency Manager configuration.
 
 ```bash
-ai-dep-manager configure init [flags]
+superint-dep-manager configure init [flags]
 ```
 
 **Flags:**
@@ -51,14 +51,14 @@ ai-dep-manager configure init [flags]
 
 **Example:**
 ```bash
-ai-dep-manager configure init --interactive
+superint-dep-manager configure init --interactive
 ```
 
 ##### `configure show`
 Display current configuration.
 
 ```bash
-ai-dep-manager configure show [flags]
+superint-dep-manager configure show [flags]
 ```
 
 **Flags:**
@@ -67,14 +67,14 @@ ai-dep-manager configure show [flags]
 
 **Example:**
 ```bash
-ai-dep-manager configure show --format json --section database
+superint-dep-manager configure show --format json --section database
 ```
 
 ##### `configure set`
 Set configuration values.
 
 ```bash
-ai-dep-manager configure set <key> <value> [flags]
+superint-dep-manager configure set <key> <value> [flags]
 ```
 
 **Flags:**
@@ -82,28 +82,28 @@ ai-dep-manager configure set <key> <value> [flags]
 
 **Examples:**
 ```bash
-ai-dep-manager configure set logging.level debug
-ai-dep-manager configure set agent.enabled true --type bool
-ai-dep-manager configure set agent.schedule "0 2 * * *"
+superint-dep-manager configure set logging.level debug
+superint-dep-manager configure set agent.enabled true --type bool
+superint-dep-manager configure set agent.schedule "0 2 * * *"
 ```
 
 ##### `configure get`
 Get configuration values.
 
 ```bash
-ai-dep-manager configure get <key> [flags]
+superint-dep-manager configure get <key> [flags]
 ```
 
 **Example:**
 ```bash
-ai-dep-manager configure get logging.level
+superint-dep-manager configure get logging.level
 ```
 
 ##### `configure validate`
 Validate configuration file.
 
 ```bash
-ai-dep-manager configure validate [flags]
+superint-dep-manager configure validate [flags]
 ```
 
 **Flags:**
@@ -113,7 +113,7 @@ ai-dep-manager configure validate [flags]
 Reset configuration to defaults.
 
 ```bash
-ai-dep-manager configure reset [flags]
+superint-dep-manager configure reset [flags]
 ```
 
 **Flags:**
@@ -121,11 +121,11 @@ ai-dep-manager configure reset [flags]
 
 ## Project Management
 
-### `ai-dep-manager configure add-project`
+### `superint-dep-manager configure add-project`
 Add a project to be managed.
 
 ```bash
-ai-dep-manager configure add-project <path> [flags]
+superint-dep-manager configure add-project <path> [flags]
 ```
 
 **Flags:**
@@ -136,35 +136,35 @@ ai-dep-manager configure add-project <path> [flags]
 
 **Example:**
 ```bash
-ai-dep-manager configure add-project /path/to/project --name "My App" --type npm
+superint-dep-manager configure add-project /path/to/project --name "My App" --type npm
 ```
 
-### `ai-dep-manager configure list-projects`
+### `superint-dep-manager configure list-projects`
 List all configured projects.
 
 ```bash
-ai-dep-manager configure list-projects [flags]
+superint-dep-manager configure list-projects [flags]
 ```
 
 **Flags:**
 - `--format string`: Output format (table, json, yaml) (default: table)
 - `--filter string`: Filter projects by name or type
 
-### `ai-dep-manager configure show-project`
+### `superint-dep-manager configure show-project`
 Show detailed project information.
 
 ```bash
-ai-dep-manager configure show-project <id> [flags]
+superint-dep-manager configure show-project <id> [flags]
 ```
 
 **Flags:**
 - `--format string`: Output format (table, json, yaml) (default: table)
 
-### `ai-dep-manager configure update-project`
+### `superint-dep-manager configure update-project`
 Update project configuration.
 
 ```bash
-ai-dep-manager configure update-project <id> [flags]
+superint-dep-manager configure update-project <id> [flags]
 ```
 
 **Flags:**
@@ -172,11 +172,11 @@ ai-dep-manager configure update-project <id> [flags]
 - `--auto-update`: Enable/disable automatic updates
 - `--priority string`: Update priority level
 
-### `ai-dep-manager configure remove-project`
+### `superint-dep-manager configure remove-project`
 Remove a project from management.
 
 ```bash
-ai-dep-manager configure remove-project <id> [flags]
+superint-dep-manager configure remove-project <id> [flags]
 ```
 
 **Flags:**
@@ -184,11 +184,11 @@ ai-dep-manager configure remove-project <id> [flags]
 
 ## Scanning Commands
 
-### `ai-dep-manager scan`
+### `superint-dep-manager scan`
 Scan projects for dependency information.
 
 ```bash
-ai-dep-manager scan [flags]
+superint-dep-manager scan [flags]
 ```
 
 **Flags:**
@@ -203,16 +203,16 @@ ai-dep-manager scan [flags]
 
 **Examples:**
 ```bash
-ai-dep-manager scan --all
-ai-dep-manager scan --project-id 1 --force
-ai-dep-manager scan --project-name "My App" --include-dev
+superint-dep-manager scan --all
+superint-dep-manager scan --project-id 1 --force
+superint-dep-manager scan --project-name "My App" --include-dev
 ```
 
-### `ai-dep-manager scan history`
+### `superint-dep-manager scan history`
 Show scan history for projects.
 
 ```bash
-ai-dep-manager scan history [flags]
+superint-dep-manager scan history [flags]
 ```
 
 **Flags:**
@@ -220,11 +220,11 @@ ai-dep-manager scan history [flags]
 - `--limit int`: Limit number of results (default: 10)
 - `--format string`: Output format (table, json, yaml) (default: table)
 
-### `ai-dep-manager scan results`
+### `superint-dep-manager scan results`
 Show latest scan results.
 
 ```bash
-ai-dep-manager scan results [flags]
+superint-dep-manager scan results [flags]
 ```
 
 **Flags:**
@@ -234,11 +234,11 @@ ai-dep-manager scan results [flags]
 
 ## Update Commands
 
-### `ai-dep-manager check`
+### `superint-dep-manager check`
 Check for available updates.
 
 ```bash
-ai-dep-manager check [flags]
+superint-dep-manager check [flags]
 ```
 
 **Flags:**
@@ -247,11 +247,11 @@ ai-dep-manager check [flags]
 - `--detailed`: Show detailed update information
 - `--format string`: Output format (table, json, yaml) (default: table)
 
-### `ai-dep-manager update`
+### `superint-dep-manager update`
 Apply dependency updates.
 
 ```bash
-ai-dep-manager update [flags]
+superint-dep-manager update [flags]
 ```
 
 **Flags:**
@@ -270,16 +270,16 @@ ai-dep-manager update [flags]
 
 **Examples:**
 ```bash
-ai-dep-manager update --all --strategy conservative --preview
-ai-dep-manager update --project-id 1 --interactive
-ai-dep-manager update --project-id 1 --packages "express,lodash" --confirm
+superint-dep-manager update --all --strategy conservative --preview
+superint-dep-manager update --project-id 1 --interactive
+superint-dep-manager update --project-id 1 --packages "express,lodash" --confirm
 ```
 
-### `ai-dep-manager rollback`
+### `superint-dep-manager rollback`
 Manage and execute rollback operations.
 
 ```bash
-ai-dep-manager rollback [command] [flags]
+superint-dep-manager rollback [command] [flags]
 ```
 
 #### Subcommands
@@ -288,7 +288,7 @@ ai-dep-manager rollback [command] [flags]
 List available rollback plans.
 
 ```bash
-ai-dep-manager rollback list [flags]
+superint-dep-manager rollback list [flags]
 ```
 
 **Flags:**
@@ -299,14 +299,14 @@ ai-dep-manager rollback list [flags]
 Show rollback plan details.
 
 ```bash
-ai-dep-manager rollback show <id> [flags]
+superint-dep-manager rollback show <id> [flags]
 ```
 
 ##### `rollback execute`
 Execute a rollback plan.
 
 ```bash
-ai-dep-manager rollback execute <id> [flags]
+superint-dep-manager rollback execute <id> [flags]
 ```
 
 **Flags:**
@@ -315,7 +315,7 @@ ai-dep-manager rollback execute <id> [flags]
 
 ## Security Commands
 
-### `ai-dep-manager security`
+### `superint-dep-manager security`
 Security-related operations.
 
 #### Subcommands
@@ -324,7 +324,7 @@ Security-related operations.
 Scan for security vulnerabilities.
 
 ```bash
-ai-dep-manager security scan [flags]
+superint-dep-manager security scan [flags]
 ```
 
 **Flags:**
@@ -337,7 +337,7 @@ ai-dep-manager security scan [flags]
 List known vulnerabilities.
 
 ```bash
-ai-dep-manager security vulnerabilities [flags]
+superint-dep-manager security vulnerabilities [flags]
 ```
 
 **Flags:**
@@ -349,7 +349,7 @@ ai-dep-manager security vulnerabilities [flags]
 Verify package integrity.
 
 ```bash
-ai-dep-manager security verify [flags]
+superint-dep-manager security verify [flags]
 ```
 
 **Flags:**
@@ -361,7 +361,7 @@ ai-dep-manager security verify [flags]
 Manage security rules (whitelist/blacklist).
 
 ```bash
-ai-dep-manager security rules [command] [flags]
+superint-dep-manager security rules [command] [flags]
 ```
 
 **Subcommands:**
@@ -374,7 +374,7 @@ ai-dep-manager security rules [command] [flags]
 Manage registry credentials.
 
 ```bash
-ai-dep-manager security credentials [command] [flags]
+superint-dep-manager security credentials [command] [flags]
 ```
 
 **Subcommands:**
@@ -385,7 +385,7 @@ ai-dep-manager security credentials [command] [flags]
 
 ## Agent Commands
 
-### `ai-dep-manager agent`
+### `superint-dep-manager agent`
 Background agent management.
 
 #### Subcommands
@@ -394,7 +394,7 @@ Background agent management.
 Start the background agent.
 
 ```bash
-ai-dep-manager agent start [flags]
+superint-dep-manager agent start [flags]
 ```
 
 **Flags:**
@@ -405,21 +405,21 @@ ai-dep-manager agent start [flags]
 Stop the background agent.
 
 ```bash
-ai-dep-manager agent stop [flags]
+superint-dep-manager agent stop [flags]
 ```
 
 ##### `agent restart`
 Restart the background agent.
 
 ```bash
-ai-dep-manager agent restart [flags]
+superint-dep-manager agent restart [flags]
 ```
 
 ##### `agent status`
 Show agent status and statistics.
 
 ```bash
-ai-dep-manager agent status [flags]
+superint-dep-manager agent status [flags]
 ```
 
 **Flags:**
@@ -430,7 +430,7 @@ ai-dep-manager agent status [flags]
 Show agent logs.
 
 ```bash
-ai-dep-manager agent logs [flags]
+superint-dep-manager agent logs [flags]
 ```
 
 **Flags:**
@@ -440,7 +440,7 @@ ai-dep-manager agent logs [flags]
 
 ## Policy Commands
 
-### `ai-dep-manager policy`
+### `superint-dep-manager policy`
 Custom update policy management.
 
 #### Subcommands
@@ -449,21 +449,21 @@ Custom update policy management.
 List all policies.
 
 ```bash
-ai-dep-manager policy list [flags]
+superint-dep-manager policy list [flags]
 ```
 
 ##### `policy show`
 Show policy details.
 
 ```bash
-ai-dep-manager policy show <name> [flags]
+superint-dep-manager policy show <name> [flags]
 ```
 
 ##### `policy create`
 Create new policy.
 
 ```bash
-ai-dep-manager policy create [flags]
+superint-dep-manager policy create [flags]
 ```
 
 **Flags:**
@@ -476,21 +476,21 @@ ai-dep-manager policy create [flags]
 Update existing policy.
 
 ```bash
-ai-dep-manager policy update <name> [flags]
+superint-dep-manager policy update <name> [flags]
 ```
 
 ##### `policy delete`
 Delete policy.
 
 ```bash
-ai-dep-manager policy delete <name> [flags]
+superint-dep-manager policy delete <name> [flags]
 ```
 
 ##### `policy test`
 Test policy against project.
 
 ```bash
-ai-dep-manager policy test <name> [flags]
+superint-dep-manager policy test <name> [flags]
 ```
 
 **Flags:**
@@ -500,12 +500,12 @@ ai-dep-manager policy test <name> [flags]
 List available policy templates.
 
 ```bash
-ai-dep-manager policy templates [flags]
+superint-dep-manager policy templates [flags]
 ```
 
 ## Reporting Commands
 
-### `ai-dep-manager report`
+### `superint-dep-manager report`
 Generate reports and analytics.
 
 #### Subcommands
@@ -514,7 +514,7 @@ Generate reports and analytics.
 Generate various types of reports.
 
 ```bash
-ai-dep-manager report generate <type> [flags]
+superint-dep-manager report generate <type> [flags]
 ```
 
 **Report Types:**
@@ -537,7 +537,7 @@ ai-dep-manager report generate <type> [flags]
 Show analytics and insights.
 
 ```bash
-ai-dep-manager report analytics [command] [flags]
+superint-dep-manager report analytics [command] [flags]
 ```
 
 **Subcommands:**
@@ -547,7 +547,7 @@ ai-dep-manager report analytics [command] [flags]
 
 ## Notification Commands
 
-### `ai-dep-manager notify`
+### `superint-dep-manager notify`
 Notification system management.
 
 #### Subcommands
@@ -556,7 +556,7 @@ Notification system management.
 Configure notification channels.
 
 ```bash
-ai-dep-manager notify configure <channel> [flags]
+superint-dep-manager notify configure <channel> [flags]
 ```
 
 **Channels:**
@@ -568,7 +568,7 @@ ai-dep-manager notify configure <channel> [flags]
 Test notification channels.
 
 ```bash
-ai-dep-manager notify test <channel> [flags]
+superint-dep-manager notify test <channel> [flags]
 ```
 
 **Flags:**
@@ -580,7 +580,7 @@ ai-dep-manager notify test <channel> [flags]
 Send manual notification.
 
 ```bash
-ai-dep-manager notify send <message> [flags]
+superint-dep-manager notify send <message> [flags]
 ```
 
 **Flags:**
@@ -591,16 +591,16 @@ ai-dep-manager notify send <message> [flags]
 List configured notification channels.
 
 ```bash
-ai-dep-manager notify list [flags]
+superint-dep-manager notify list [flags]
 ```
 
 ## Utility Commands
 
-### `ai-dep-manager status`
+### `superint-dep-manager status`
 Show system status and health.
 
 ```bash
-ai-dep-manager status [flags]
+superint-dep-manager status [flags]
 ```
 
 **Flags:**
@@ -608,17 +608,17 @@ ai-dep-manager status [flags]
 - `--check-tools`: Check availability of package manager tools
 - `--format string`: Output format (table, json, yaml) (default: table)
 
-### `ai-dep-manager version`
+### `superint-dep-manager version`
 Show version information.
 
 ```bash
-ai-dep-manager version [flags]
+superint-dep-manager version [flags]
 ```
 
 **Flags:**
 - `--verbose`: Show detailed build information
 
-### `ai-dep-manager lag`
+### `superint-dep-manager lag`
 Dependency lag analysis and resolution.
 
 #### Subcommands
@@ -627,14 +627,14 @@ Dependency lag analysis and resolution.
 Analyze dependency lag for projects.
 
 ```bash
-ai-dep-manager lag analyze <project-id> [flags]
+superint-dep-manager lag analyze <project-id> [flags]
 ```
 
 ##### `lag plan`
 Create lag resolution plan.
 
 ```bash
-ai-dep-manager lag plan <project-id> [flags]
+superint-dep-manager lag plan <project-id> [flags]
 ```
 
 **Flags:**
@@ -644,18 +644,18 @@ ai-dep-manager lag plan <project-id> [flags]
 Execute lag resolution plan.
 
 ```bash
-ai-dep-manager lag execute <project-id> [flags]
+superint-dep-manager lag execute <project-id> [flags]
 ```
 
 **Flags:**
 - `--plan-id int`: Specific plan to execute
 - `--dry-run`: Simulate execution
 
-### `ai-dep-manager logs`
+### `superint-dep-manager logs`
 Show application logs.
 
 ```bash
-ai-dep-manager logs [flags]
+superint-dep-manager logs [flags]
 ```
 
 **Flags:**
@@ -666,7 +666,7 @@ ai-dep-manager logs [flags]
 
 ## Exit Codes
 
-The AI Dependency Manager uses the following exit codes:
+The Superintelligence Dependency Manager uses the following exit codes:
 
 - `0`: Success
 - `1`: General error
@@ -696,7 +696,7 @@ The configuration file uses YAML format. Here's a complete example:
 ```yaml
 # Database configuration
 database:
-  path: "~/.ai-dep-manager/data.db"
+  path: "~/.superint-dep-manager/data.db"
   max_connections: 10
   connection_timeout: "30s"
 
@@ -704,7 +704,7 @@ database:
 logging:
   level: "info"
   format: "json"
-  file: "~/.ai-dep-manager/logs/app.log"
+  file: "~/.superint-dep-manager/logs/app.log"
   max_size: "100MB"
   max_backups: 5
 

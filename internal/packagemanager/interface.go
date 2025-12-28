@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 )
 
 // PackageManager is an alias to the types.PackageManager interface

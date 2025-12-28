@@ -74,8 +74,8 @@ func Load() (*Config, error) {
 	}
 	
 	viper.AddConfigPath(".")
-	viper.AddConfigPath(filepath.Join(homeDir, ".ai-dep-manager"))
-	viper.AddConfigPath("/etc/ai-dep-manager")
+	viper.AddConfigPath(filepath.Join(homeDir, ".superint-dep-manager"))
+	viper.AddConfigPath("/etc/superint-dep-manager")
 	
 	// Enable environment variable support
 	viper.SetEnvPrefix("AIDM")
@@ -97,7 +97,7 @@ func Load() (*Config, error) {
 	
 	// Set data directory if not specified
 	if config.DataDir == "" {
-		config.DataDir = filepath.Join(homeDir, ".ai-dep-manager")
+		config.DataDir = filepath.Join(homeDir, ".superint-dep-manager")
 	}
 	
 	// Ensure data directory exists
@@ -107,7 +107,7 @@ func Load() (*Config, error) {
 	
 	// Set database path if using SQLite
 	if config.Database.Type == "sqlite" && config.Database.Path == "" {
-		config.Database.Path = filepath.Join(config.DataDir, "ai-dep-manager.db")
+		config.Database.Path = filepath.Join(config.DataDir, "superint-dep-manager.db")
 	}
 	
 	return &config, nil
@@ -145,10 +145,10 @@ func GetConfig() *Config {
 			return &Config{
 				LogLevel:  "info",
 				LogFormat: "text",
-				DataDir:   filepath.Join(os.Getenv("HOME"), ".ai-dep-manager"),
+				DataDir:   filepath.Join(os.Getenv("HOME"), ".superint-dep-manager"),
 				Database: DatabaseConfig{
 					Type: "sqlite",
-					Path: filepath.Join(os.Getenv("HOME"), ".ai-dep-manager", "ai-dep-manager.db"),
+					Path: filepath.Join(os.Getenv("HOME"), ".superint-dep-manager", "superint-dep-manager.db"),
 				},
 				Agent: AgentConfig{
 					Enabled:          true,

@@ -202,16 +202,16 @@ jobs:
       run: |
         make build
         if [ "${{ matrix.os }}" = "windows" ]; then
-          mv bin/ai-dep-manager bin/ai-dep-manager-${{ matrix.os }}-${{ matrix.arch }}.exe
+          mv bin/superint-dep-manager bin/superint-dep-manager-${{ matrix.os }}-${{ matrix.arch }}.exe
         else
-          mv bin/ai-dep-manager bin/ai-dep-manager-${{ matrix.os }}-${{ matrix.arch }}
+          mv bin/superint-dep-manager bin/superint-dep-manager-${{ matrix.os }}-${{ matrix.arch }}
         fi
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: ai-dep-manager-${{ matrix.os }}-${{ matrix.arch }}
-        path: bin/ai-dep-manager-*
+        name: superint-dep-manager-${{ matrix.os }}-${{ matrix.arch }}
+        path: bin/superint-dep-manager-*
 
   docker:
     name: Docker
@@ -235,7 +235,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ai-dep-manager
+        images: superint-dep-manager
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -271,7 +271,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          ai-dep-manager-*/ai-dep-manager-*
+          superint-dep-manager-*/superint-dep-manager-*
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

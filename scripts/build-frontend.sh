@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 Building AI Dependency Manager Frontend..."
+echo "🚀 Building Superintelligence Dependency Manager Frontend..."
 
 # Change to the web directory
 cd "$(dirname "$0")/../web"
@@ -64,5 +64,5 @@ echo "   - Ready for unified deployment"
 echo ""
 echo "🚀 Next steps:"
 echo "   - Run 'make build' to build the complete application"
-echo "   - Run './ai-dep-manager' to start the unified server"
+echo "   - Run './superint-dep-manager' to start the unified server"
 echo ""

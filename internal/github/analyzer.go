@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // AnalysisService handles code analysis and breaking change detection
@@ -90,7 +90,7 @@ func (a *AnalysisService) AnalyzeDependencyUpdate(ctx context.Context, dependenc
 	return analysis, nil
 }
 
-// performAIAnalysis performs AI-powered breaking change analysis
+// performAIAnalysis performs Superintelligence-powered breaking change analysis
 func (a *AnalysisService) performAIAnalysis(ctx context.Context, dependency *DependencyUpdate) (*BreakingChangeAnalysis, error) {
 	// Get AI analysis
 	result, err := a.aiManager.AnalyzeDependencyUpdate(ctx, dependency)

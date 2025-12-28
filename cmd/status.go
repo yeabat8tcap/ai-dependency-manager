@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ import (
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show system status and project overview",
-	Long: `Display the current status of AI Dependency Manager including:
+	Long: `Display the current status of Superintelligence Dependency Manager including:
 - Database connectivity
 - Monitored projects
 - Recent scan results
@@ -24,7 +24,7 @@ var statusCmd = &cobra.Command{
 }
 
 func runStatus() error {
-	fmt.Println("AI Dependency Manager Status")
+	fmt.Println("Superintelligence Dependency Manager Status")
 	fmt.Println("============================")
 	
 	// Check database health

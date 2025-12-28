@@ -1,6 +1,6 @@
-# Contributing to AI Dependency Manager
+# Contributing to Superintelligence Dependency Manager
 
-We love your input! We want to make contributing to the AI Dependency Manager as easy and transparent as possible, whether it's:
+We love your input! We want to make contributing to the Superintelligence Dependency Manager as easy and transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
@@ -41,9 +41,9 @@ Pull requests are the best way to propose changes to the codebase. We actively w
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
 
-## Report bugs using GitHub's [issue tracker](https://github.com/8tcapital/ai-dep-manager/issues)
+## Report bugs using GitHub's [issue tracker](https://github.com/8tcapital/superint-dep-manager/issues)
 
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/8tcapital/ai-dep-manager/issues/new).
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/8tcapital/superint-dep-manager/issues/new).
 
 ### Write bug reports with detail, background, and sample code
 
@@ -59,7 +59,7 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 
 ## Feature Requests
 
-We welcome feature requests! Please use the [feature request template](https://github.com/8tcapital/ai-dep-manager/issues/new?template=feature_request.md) when submitting new ideas.
+We welcome feature requests! Please use the [feature request template](https://github.com/8tcapital/superint-dep-manager/issues/new?template=feature_request.md) when submitting new ideas.
 
 ## License
 

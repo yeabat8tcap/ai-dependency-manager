@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 )
 
 // Shared types for GitHub integration to resolve redeclaration conflicts
@@ -181,7 +181,7 @@ type PatchValidator interface {
 	ValidateChanges(changes []*Change) error
 }
 
-// AIManager interface for AI-powered analysis
+// AIManager interface for Superintelligence-powered analysis
 type AIManager interface {
 	AnalyzeDependencyUpdate(ctx context.Context, dependency *DependencyUpdate) (*BreakingChangeAnalysis, error)
 	GeneratePatchSuggestions(ctx context.Context, dependency *DependencyUpdate, breakingChanges []BreakingChange) ([]PatchSuggestion, error)

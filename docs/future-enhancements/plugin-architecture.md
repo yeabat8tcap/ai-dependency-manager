@@ -1,6 +1,6 @@
 # Plugin Architecture Design
 
-This document outlines the plugin architecture for the AI Dependency Manager, enabling extensibility and customization through a modular plugin system.
+This document outlines the plugin architecture for the Superintelligence Dependency Manager, enabling extensibility and customization through a modular plugin system.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This document outlines the plugin architecture for the AI Dependency Manager, en
 
 ## Overview
 
-The plugin architecture enables third-party developers and organizations to extend the AI Dependency Manager with custom functionality, integrations, and specialized analysis capabilities.
+The plugin architecture enables third-party developers and organizations to extend the Superintelligence Dependency Manager with custom functionality, integrations, and specialized analysis capabilities.
 
 ### Key Benefits
 
@@ -33,7 +33,7 @@ The plugin architecture enables third-party developers and organizations to exte
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    AI Dependency Manager Core                   │
+│                    Superintelligence Dependency Manager Core                   │
 ├─────────────────────────────────────────────────────────────────┤
 │                      Plugin Manager                             │
 ├─────────────────┬─────────────────┬─────────────────┬───────────┤
@@ -748,16 +748,16 @@ plugins:
   enabled: true
   auto_discovery: true
   search_paths:
-    - "/usr/local/lib/ai-dep-manager/plugins"
-    - "~/.ai-dep-manager/plugins"
+    - "/usr/local/lib/superint-dep-manager/plugins"
+    - "~/.superint-dep-manager/plugins"
     - "./plugins"
   
   repositories:
     - name: "official"
-      url: "https://plugins.ai-dep-manager.com"
+      url: "https://plugins.superint-dep-manager.com"
       trusted: true
     - name: "community"
-      url: "https://community-plugins.ai-dep-manager.com"
+      url: "https://community-plugins.superint-dep-manager.com"
       trusted: false
   
   security:
@@ -765,7 +765,7 @@ plugins:
     signature_verification: true
     trusted_publishers:
       - "8tcapital"
-      - "ai-dep-manager-official"
+      - "superint-dep-manager-official"
     
     default_permissions:
       - "file:read"
@@ -853,4 +853,4 @@ plugins:
 - [ ] Build plugin testing framework
 - [ ] Add comprehensive documentation
 
-This plugin architecture provides a robust, secure, and extensible foundation for extending the AI Dependency Manager with custom functionality and integrations.
+This plugin architecture provides a robust, secure, and extensible foundation for extending the Superintelligence Dependency Manager with custom functionality and integrations.

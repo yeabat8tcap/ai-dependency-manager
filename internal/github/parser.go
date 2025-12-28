@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // ParsingService handles code parsing for different project types

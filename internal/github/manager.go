@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // Manager represents the GitHub integration manager

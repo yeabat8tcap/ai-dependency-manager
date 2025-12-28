@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/security"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/security"
 	"github.com/spf13/cobra"
 )
 
@@ -22,9 +22,9 @@ var securityCmd = &cobra.Command{
 - Credential storage for private registries
 
 Examples:
-  ai-dep-manager security scan                      # Scan for vulnerabilities
-  ai-dep-manager security whitelist add react      # Add package to whitelist
-  ai-dep-manager security credential add npm-token # Add registry credential`,
+  superint-dep-manager security scan                      # Scan for vulnerabilities
+  superint-dep-manager security whitelist add react      # Add package to whitelist
+  superint-dep-manager security credential add npm-token # Add registry credential`,
 }
 
 // Security scan command

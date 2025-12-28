@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 	"github.com/spf13/viper"
 )
 
@@ -17,10 +17,10 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ai-dep-manager",
-	Short: "AI-powered dependency management tool",
-	Long: `AI Dependency Manager (AutoUpdateAgent) is an intelligent CLI tool that helps you
-manage software dependencies across multiple package managers using AI-powered analysis.
+	Use:   "superint-dep-manager",
+	Short: "Superintelligence-powered dependency management tool",
+	Long: `Superintelligence Dependency Manager (AutoUpdateAgent) is an intelligent CLI tool that helps you
+manage software dependencies across multiple package managers using Superintelligence-powered analysis.
 
 It can:
 - Scan your projects for outdated dependencies
@@ -63,7 +63,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Global flags
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ai-dep-manager/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.superint-dep-manager/config.yaml)")
 	rootCmd.PersistentFlags().String("log-level", "info", "log level (debug, info, warn, error, fatal)")
 	rootCmd.PersistentFlags().String("log-format", "text", "log format (text, json)")
 	rootCmd.PersistentFlags().Bool("verbose", false, "enable verbose output")

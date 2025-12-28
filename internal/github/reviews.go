@@ -293,7 +293,7 @@ func (rm *ReviewManager) generateTeamReviewMessage(suggestion *TeamSuggestion) s
 	return fmt.Sprintf("Team review requested: %s", suggestion.Reason)
 }
 
-// getAIReviewAnalysis gets AI-powered review analysis
+// getAIReviewAnalysis gets Superintelligence-powered review analysis
 func (rm *ReviewManager) getAIReviewAnalysis(ctx context.Context, pr *PullRequest) (*ReviewAnalysis, error) {
 	prompt := fmt.Sprintf(`
 Analyze this pull request for reviewer assignment:

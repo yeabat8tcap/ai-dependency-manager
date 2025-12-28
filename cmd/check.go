@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +23,9 @@ var checkCmd = &cobra.Command{
 - Provides update recommendations
 
 Examples:
-  ai-dep-manager check                    # Check all projects
-  ai-dep-manager check --project my-app   # Check specific project
-  ai-dep-manager check --outdated-only    # Show only outdated dependencies`,
+  superint-dep-manager check                    # Check all projects
+  superint-dep-manager check --project my-app   # Check specific project
+  superint-dep-manager check --outdated-only    # Show only outdated dependencies`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runCheck(cmd, args)
 	},
@@ -89,7 +89,7 @@ func runCheckAllProjects(cmd *cobra.Command, projectService *services.ProjectSer
 	}
 	
 	if len(projects) == 0 {
-		fmt.Println("❌ No projects configured. Run 'ai-dep-manager configure' to add projects.")
+		fmt.Println("❌ No projects configured. Run 'superint-dep-manager configure' to add projects.")
 		return nil
 	}
 	
@@ -173,7 +173,7 @@ func runCheckAllProjects(cmd *cobra.Command, projectService *services.ProjectSer
 		if project.LastScan != nil {
 			fmt.Printf("   Last scan: %s\n", project.LastScan.Format("2006-01-02 15:04:05"))
 		} else {
-			fmt.Printf("   Last scan: Never (run 'ai-dep-manager scan --project %s')\n", project.Name)
+			fmt.Printf("   Last scan: Never (run 'superint-dep-manager scan --project %s')\n", project.Name)
 		}
 		fmt.Println()
 	}
@@ -187,8 +187,8 @@ func runCheckAllProjects(cmd *cobra.Command, projectService *services.ProjectSer
 	}
 	
 	if totalOutdated > 0 {
-		fmt.Printf("\n💡 Run 'ai-dep-manager check --project <name>' for detailed information\n")
-		fmt.Printf("💡 Run 'ai-dep-manager update --preview' to see what would be updated\n")
+		fmt.Printf("\n💡 Run 'superint-dep-manager check --project <name>' for detailed information\n")
+		fmt.Printf("💡 Run 'superint-dep-manager update --preview' to see what would be updated\n")
 	}
 	
 	return nil
@@ -204,7 +204,7 @@ func displayProjectStatus(project *models.Project) error {
 		fmt.Printf("Last scan: %s\n", project.LastScan.Format("2006-01-02 15:04:05"))
 	} else {
 		fmt.Printf("Last scan: Never\n")
-		fmt.Printf("💡 Run 'ai-dep-manager scan --project %s' to scan for updates\n", project.Name)
+		fmt.Printf("💡 Run 'superint-dep-manager scan --project %s' to scan for updates\n", project.Name)
 		return nil
 	}
 	
@@ -338,7 +338,7 @@ func displayProjectStatus(project *models.Project) error {
 	}
 	
 	if outdatedCount > 0 || securityCount > 0 {
-		fmt.Printf("\n💡 Run 'ai-dep-manager update --project %s --preview' to see update details\n", project.Name)
+		fmt.Printf("\n💡 Run 'superint-dep-manager update --project %s --preview' to see update details\n", project.Name)
 	}
 	
 	return nil
@@ -417,7 +417,7 @@ func init() {
 	checkCmd.Flags().BoolVar(&securityOnly, "security-only", false, "Show only dependencies with security updates")
 	checkCmd.Flags().BoolVar(&showDetails, "details", false, "Show detailed information")
 	checkCmd.Flags().StringVar(&sortBy, "sort", "name", "Sort by: name, status, updated")
-	checkCmd.Flags().BoolVar(&aiInsights, "ai-insights", false, "Enable AI-powered dependency insights and recommendations")
+	checkCmd.Flags().BoolVar(&aiInsights, "ai-insights", false, "Enable Superintelligence-powered dependency insights and recommendations")
 	
 	// Add validation and argument parsing
 	checkCmd.PreRunE = func(cmd *cobra.Command, args []string) error {

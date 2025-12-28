@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/github"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/github"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ var githubCmd = &cobra.Command{
 	Short: "GitHub integration for automated dependency patching",
 	Long: `GitHub integration commands for managing automated dependency patching.
 This includes setting up webhooks, creating patch pull requests, and managing
-GitHub repository integration for the AI Dependency Manager.`,
+GitHub repository integration for the Superintelligence Dependency Manager.`,
 }
 
 var githubSetupCmd = &cobra.Command{
@@ -790,7 +790,7 @@ func runGitHubPatchCreate(cmd *cobra.Command, args []string) error {
 	}
 
 	if githubPRDescription == "" {
-		githubPRDescription = fmt.Sprintf("Automated dependency update created by AI Dependency Manager.\n\nDependencies updated:\n")
+		githubPRDescription = fmt.Sprintf("Automated dependency update created by Superintelligence Dependency Manager.\n\nDependencies updated:\n")
 		for _, dep := range dependencies {
 			githubPRDescription += fmt.Sprintf("- %s: %s\n", dep.Name, dep.LatestVersion)
 		}

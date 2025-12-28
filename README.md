@@ -1,4 +1,4 @@
-# AI Dependency Manager (AutoUpdateAgent)
+# Superintelligence Dependency Manager (AutoUpdateAgent)
 
 [![CI](https://github.com/yeabat8tcap/ai-dependency-manager/workflows/CI/badge.svg)](https://github.com/yeabat8tcap/ai-dependency-manager/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yeabat8tcap/ai-dependency-manager)](https://goreportcard.com/report/github.com/yeabat8tcap/ai-dependency-manager)
@@ -7,7 +7,7 @@
 [![GitHub Release](https://img.shields.io/github/release/yeabat8tcap/ai-dependency-manager.svg)](https://github.com/yeabat8tcap/ai-dependency-manager/releases)
 [![Docker](https://img.shields.io/badge/docker-available-blue.svg)](https://github.com/yeabat8tcap/ai-dependency-manager)
 
-An autonomous AI-powered CLI agent that intelligently manages software dependencies across multiple package managers with advanced security, risk assessment, and automated update capabilities.
+An autonomous Superintelligence-powered CLI agent that intelligently manages software dependencies across multiple package managers with advanced security, risk assessment, and automated update capabilities.
 
 ## 🚀 Features
 
@@ -39,11 +39,11 @@ An autonomous AI-powered CLI agent that intelligently manages software dependenc
 
 ```bash
 # Using Go install
-go install github.com/8tcapital/ai-dep-manager@latest
+go install github.com/8tcapital/superint-dep-manager@latest
 
 # Or build from source
-git clone https://github.com/8tcapital/ai-dep-manager.git
-cd ai-dep-manager
+git clone https://github.com/8tcapital/superint-dep-manager.git
+cd superint-dep-manager
 make build
 sudo make install
 ```
@@ -52,7 +52,7 @@ sudo make install
 
 ```bash
 # Pull the image
-docker pull ai-dep-manager:latest
+docker pull superint-dep-manager:latest
 
 # Run with Docker Compose
 docker-compose up -d
@@ -64,45 +64,45 @@ docker-compose up -d
 
 ```bash
 # Initialize the system
-ai-dep-manager configure
+superint-dep-manager configure
 
 # Add a project
-ai-dep-manager configure add-project /path/to/your/project
+superint-dep-manager configure add-project /path/to/your/project
 
 # Set up security preferences
-ai-dep-manager security configure
+superint-dep-manager security configure
 ```
 
 ### 2. Basic Operations
 
 ```bash
 # Check system status
-ai-dep-manager status
+superint-dep-manager status
 
 # Scan for updates
-ai-dep-manager scan --all
+superint-dep-manager scan --all
 
 # Preview available updates
-ai-dep-manager update --preview
+superint-dep-manager update --preview
 
 # Apply safe updates
-ai-dep-manager update --strategy conservative
+superint-dep-manager update --strategy conservative
 
 # Check security vulnerabilities
-ai-dep-manager security scan --all
+superint-dep-manager security scan --all
 ```
 
 ### 3. Background Agent
 
 ```bash
 # Start the background agent
-ai-dep-manager agent start
+superint-dep-manager agent start
 
 # Check agent status
-ai-dep-manager agent status
+superint-dep-manager agent status
 
 # Configure scheduling
-ai-dep-manager configure set agent.schedule "0 2 * * *"  # Daily at 2 AM
+superint-dep-manager configure set agent.schedule "0 2 * * *"  # Daily at 2 AM
 ```
 
 ## 📚 Documentation
@@ -119,11 +119,11 @@ ai-dep-manager configure set agent.schedule "0 2 * * *"  # Daily at 2 AM
 Copy the example configuration file and customize it:
 
 ```bash
-mkdir -p ~/.ai-dep-manager
-cp config.yaml.example ~/.ai-dep-manager/config.yaml
+mkdir -p ~/.superint-dep-manager
+cp config.yaml.example ~/.superint-dep-manager/config.yaml
 ```
 
-Edit `~/.ai-dep-manager/config.yaml` to configure:
+Edit `~/.superint-dep-manager/config.yaml` to configure:
 - Log levels and formats
 - Database settings
 - Background agent behavior
@@ -132,7 +132,7 @@ Edit `~/.ai-dep-manager/config.yaml` to configure:
 
 ## 🏗️ Architecture
 
-The AI Dependency Manager is built with a modular, production-ready architecture:
+The Superintelligence Dependency Manager is built with a modular, production-ready architecture:
 
 ```
 ├── cmd/                    # CLI commands and main entry point
@@ -168,8 +168,8 @@ The AI Dependency Manager is built with a modular, production-ready architecture
 ### Setup
 ```bash
 # Clone and setup
-git clone https://github.com/8tcapital/ai-dep-manager.git
-cd ai-dep-manager
+git clone https://github.com/8tcapital/superint-dep-manager.git
+cd superint-dep-manager
 
 # Install dependencies
 make deps
@@ -207,8 +207,8 @@ make test-all
 sudo ./scripts/deploy.sh install
 
 # Start the service
-sudo systemctl start ai-dep-manager
-sudo systemctl enable ai-dep-manager
+sudo systemctl start superint-dep-manager
+sudo systemctl enable superint-dep-manager
 ```
 
 ### Docker Deployment
@@ -220,7 +220,7 @@ docker-compose up -d
 docker run -d \
   -v /path/to/config:/app/config \
   -v /path/to/data:/app/data \
-  ai-dep-manager:latest
+  superint-dep-manager:latest
 ```
 
 ## 📊 Monitoring and Observability
@@ -263,8 +263,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 - 📖 [Documentation](docs/)
-- 🐛 [Issue Tracker](https://github.com/8tcapital/ai-dep-manager/issues)
-- 💬 [Discussions](https://github.com/8tcapital/ai-dep-manager/discussions)
+- 🐛 [Issue Tracker](https://github.com/8tcapital/superint-dep-manager/issues)
+- 💬 [Discussions](https://github.com/8tcapital/superint-dep-manager/discussions)
 - 📧 Email: support@8tcapital.com
 
 ---
@@ -321,4 +321,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/8tcapital/ai-dep-manager).
+For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/8tcapital/superint-dep-manager).

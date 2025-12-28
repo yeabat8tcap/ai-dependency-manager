@@ -1,6 +1,6 @@
-# AI Dependency Manager - Configuration Guide
+# Superintelligence Dependency Manager - Configuration Guide
 
-This guide provides detailed information about configuring the AI Dependency Manager for various use cases and environments.
+This guide provides detailed information about configuring the Superintelligence Dependency Manager for various use cases and environments.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This guide provides detailed information about configuring the AI Dependency Man
 
 ## Configuration Overview
 
-The AI Dependency Manager uses a YAML configuration file located at `~/.ai-dep-manager/config.yaml` by default. Configuration can be overridden using environment variables or command-line flags.
+The Superintelligence Dependency Manager uses a YAML configuration file located at `~/.superint-dep-manager/config.yaml` by default. Configuration can be overridden using environment variables or command-line flags.
 
 ### Configuration Precedence
 
@@ -32,15 +32,15 @@ The configuration file is searched in the following order:
 
 1. Path specified by `--config` flag
 2. `AI_DEP_MANAGER_CONFIG_FILE` environment variable
-3. `~/.ai-dep-manager/config.yaml`
-4. `/etc/ai-dep-manager/config.yaml`
+3. `~/.superint-dep-manager/config.yaml`
+4. `/etc/superint-dep-manager/config.yaml`
 
 ## Configuration File Structure
 
 ```yaml
 # Complete configuration example
 database:
-  path: "~/.ai-dep-manager/data.db"
+  path: "~/.superint-dep-manager/data.db"
   max_connections: 10
   connection_timeout: "30s"
   query_timeout: "60s"
@@ -48,7 +48,7 @@ database:
 logging:
   level: "info"
   format: "json"
-  file: "~/.ai-dep-manager/logs/app.log"
+  file: "~/.superint-dep-manager/logs/app.log"
   max_size: "100MB"
   max_backups: 5
   max_age: 30
@@ -140,7 +140,7 @@ network:
 
 ```yaml
 database:
-  path: "~/.ai-dep-manager/data.db"
+  path: "~/.superint-dep-manager/data.db"
   max_connections: 10
   connection_timeout: "30s"
   query_timeout: "60s"
@@ -214,7 +214,7 @@ export AI_DEP_MANAGER_DATABASE_PASSWORD="secure_password"
 logging:
   level: "info"
   format: "json"
-  file: "~/.ai-dep-manager/logs/app.log"
+  file: "~/.superint-dep-manager/logs/app.log"
   max_size: "100MB"      # Maximum file size before rotation
   max_backups: 5         # Number of backup files to keep
   max_age: 30           # Maximum age in days
@@ -242,7 +242,7 @@ logging:
     network: "udp"
     address: "localhost:514"
     facility: "daemon"
-    tag: "ai-dep-manager"
+    tag: "superint-dep-manager"
 ```
 
 ## Agent Configuration
@@ -312,7 +312,7 @@ security:
     - "sha256"
     - "sha512"
   verify_signatures: true
-  trust_store_path: "~/.ai-dep-manager/trust"
+  trust_store_path: "~/.superint-dep-manager/trust"
 ```
 
 ### Access Control
@@ -472,10 +472,10 @@ notifications:
     headers:
       Authorization: "Bearer ${WEBHOOK_TOKEN}"
       Content-Type: "application/json"
-      X-Source: "ai-dep-manager"
+      X-Source: "superint-dep-manager"
     payload_template: |
       {
-        "source": "ai-dep-manager",
+        "source": "superint-dep-manager",
         "timestamp": "{{.Timestamp}}",
         "event": "{{.Event}}",
         "project": "{{.Project}}",
@@ -504,7 +504,7 @@ performance:
   cache_cleanup_interval: "10m" # Cache cleanup frequency
   disk_cache:
     enabled: true
-    path: "~/.ai-dep-manager/cache"
+    path: "~/.superint-dep-manager/cache"
     max_size: "1GB"
     ttl: "24h"
 ```
@@ -560,7 +560,7 @@ database:
 logging:
   level: "info"
   format: "json"
-  file: "/var/log/ai-dep-manager/staging.log"
+  file: "/var/log/superint-dep-manager/staging.log"
 
 agent:
   enabled: true
@@ -590,7 +590,7 @@ database:
 logging:
   level: "warn"
   format: "json"
-  file: "/var/log/ai-dep-manager/production.log"
+  file: "/var/log/superint-dep-manager/production.log"
   max_size: "500MB"
   max_backups: 10
 
@@ -626,13 +626,13 @@ performance:
 
 ```bash
 # Validate configuration file
-ai-dep-manager configure validate
+superint-dep-manager configure validate
 
 # Validate specific configuration
-ai-dep-manager configure validate --config /path/to/config.yaml
+superint-dep-manager configure validate --config /path/to/config.yaml
 
 # Show validation errors in detail
-ai-dep-manager configure validate --verbose
+superint-dep-manager configure validate --verbose
 ```
 
 ### Custom Validation Rules
@@ -663,7 +663,7 @@ rules:
 ```yaml
 # minimal-config.yaml
 database:
-  path: "~/.ai-dep-manager/data.db"
+  path: "~/.superint-dep-manager/data.db"
 
 logging:
   level: "info"
@@ -749,15 +749,15 @@ logging:
 
 ```bash
 # In CI/CD pipeline
-ai-dep-manager configure validate --config config/production.yaml
-ai-dep-manager configure test --config config/production.yaml
+superint-dep-manager configure validate --config config/production.yaml
+superint-dep-manager configure test --config config/production.yaml
 ```
 
 ### 4. Configuration Backup
 
 ```bash
 # Backup configuration
-cp ~/.ai-dep-manager/config.yaml ~/.ai-dep-manager/config.yaml.backup
+cp ~/.superint-dep-manager/config.yaml ~/.superint-dep-manager/config.yaml.backup
 
 # Version control configuration (excluding secrets)
 git add config/base-config.yaml

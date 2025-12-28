@@ -1,4 +1,4 @@
-describe('AI Dependency Manager - Dependency Table E2E Tests', () => {
+describe('Superintelligence Dependency Manager - Dependency Table E2E Tests', () => {
   beforeEach(() => {
     // Visit the dependencies page
     cy.visit('/dependencies');

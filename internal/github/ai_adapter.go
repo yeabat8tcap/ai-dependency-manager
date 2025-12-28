@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 )
 
 // AIAdapter adapts the internal/ai package to the GitHub package's AIManager interface
 type AIAdapter struct {
-	manager *ai.AIManager
+	manager *superint.AIManager
 }
 
 // NewAIAdapter creates a new AI adapter
-func NewAIAdapter(manager *ai.AIManager) *AIAdapter {
+func NewAIAdapter(manager *superint.AIManager) *AIAdapter {
 	return &AIAdapter{
 		manager: manager,
 	}
@@ -92,7 +92,7 @@ func (a *AIAdapter) GeneratePatches(ctx context.Context, request *models.PatchGe
 	// internal/ai/manager.go has AnalyzeChangelog, etc.
 
 	// It seems internal/github/patchgen.go expects aiManager to have GeneratePatches.
-	// But ai.AIManager doesn't have it.
+	// But superint.AIManager doesn't have it.
 
 	// We will implement a stub here.
 	return []*models.GeneratedPatch{}, nil

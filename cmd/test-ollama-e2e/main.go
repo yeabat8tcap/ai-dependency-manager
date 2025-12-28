@@ -6,10 +6,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	"github.com/8tcapital/ai-dep-manager/internal/ai/ollama"
-	"github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/ollama"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 func main() {
@@ -206,12 +206,12 @@ func testModelSwitching() error {
 
 func testAIAnalysis() error {
 	// Initialize AI system
-	if err := ai.Initialize(); err != nil {
+	if err := superint.Initialize(); err != nil {
 		return fmt.Errorf("failed to initialize AI system: %w", err)
 	}
 
 	// Get Ollama provider
-	provider, exists := ai.GetProvider("ollama")
+	provider, exists := superint.GetProvider("ollama")
 	if !exists {
 		return fmt.Errorf("ollama provider not found")
 	}
@@ -267,7 +267,7 @@ func testAIAnalysis() error {
 }
 
 func testPerformanceReliability() error {
-	provider, exists := ai.GetProvider("ollama")
+	provider, exists := superint.GetProvider("ollama")
 	if !exists {
 		return fmt.Errorf("ollama provider not found")
 	}
@@ -323,7 +323,7 @@ func testPerformanceReliability() error {
 
 func testFallbackMechanisms() error {
 	// Initialize AI system
-	if err := ai.Initialize(); err != nil {
+	if err := superint.Initialize(); err != nil {
 		return err
 	}
 
@@ -342,7 +342,7 @@ func testFallbackMechanisms() error {
 	defer cancel()
 
 	// This should use the AI system's fallback mechanism
-	response, err := ai.AnalyzeChangelog(ctx, request)
+	response, err := superint.AnalyzeChangelog(ctx, request)
 	if err != nil {
 		return fmt.Errorf("fallback mechanism failed: %w", err)
 	}

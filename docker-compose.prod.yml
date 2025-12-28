@@ -3,9 +3,9 @@
 version: '3.8'
 
 services:
-  ai-dep-manager:
+  superint-dep-manager:
     # Production-specific configuration
-    image: ai-dep-manager:latest
+    image: superint-dep-manager:latest
     restart: always
     
     # Production environment variables
@@ -16,7 +16,7 @@ services:
       - GIN_MODE=release
       
       # Production database
-      - AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager-prod.db
+      - AI_DEP_MANAGER_DB_PATH=/data/superint-dep-manager-prod.db
       
       # Performance tuning
       - GOMAXPROCS=4
@@ -50,16 +50,16 @@ services:
       options:
         max-size: "100m"
         max-file: "10"
-        labels: "service=ai-dep-manager,environment=production"
+        labels: "service=superint-dep-manager,environment=production"
     
     # Production labels for monitoring
     labels:
-      - "com.ai-dep-manager.environment=production"
-      - "com.ai-dep-manager.service=main"
+      - "com.superint-dep-manager.environment=production"
+      - "com.superint-dep-manager.service=main"
       - "traefik.enable=true"
-      - "traefik.http.routers.ai-dep-manager-prod.rule=Host(`ai-dep-manager.yourdomain.com`)"
-      - "traefik.http.routers.ai-dep-manager-prod.tls=true"
-      - "traefik.http.routers.ai-dep-manager-prod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.superint-dep-manager-prod.rule=Host(`superint-dep-manager.yourdomain.com`)"
+      - "traefik.http.routers.superint-dep-manager-prod.tls=true"
+      - "traefik.http.routers.superint-dep-manager-prod.tls.certresolver=letsencrypt"
 
   # Enable monitoring in production
   log-aggregator:

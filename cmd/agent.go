@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/agent"
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/agent"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -18,22 +18,22 @@ import (
 var agentCmd = &cobra.Command{
 	Use:   "agent",
 	Short: "Manage the background dependency agent",
-	Long: `Manage the AI Dependency Manager background agent that automatically
+	Long: `Manage the Superintelligence Dependency Manager background agent that automatically
 monitors and updates dependencies. The agent runs continuously in the background,
 performing scheduled scans and applying safe updates based on your configuration.
 
 Examples:
-  ai-dep-manager agent start                    # Start the background agent
-  ai-dep-manager agent stop                     # Stop the background agent
-  ai-dep-manager agent status                   # Show agent status
-  ai-dep-manager agent restart                  # Restart the agent`,
+  superint-dep-manager agent start                    # Start the background agent
+  superint-dep-manager agent stop                     # Stop the background agent
+  superint-dep-manager agent status                   # Show agent status
+  superint-dep-manager agent restart                  # Restart the agent`,
 }
 
 // agentStartCmd starts the background agent
 var agentStartCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start the background agent",
-	Long: `Start the AI Dependency Manager background agent. The agent will run
+	Long: `Start the Superintelligence Dependency Manager background agent. The agent will run
 continuously, performing scheduled dependency scans and applying updates
 based on your configuration.
 
@@ -51,7 +51,7 @@ The agent will:
 var agentStopCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stop the background agent",
-	Long: `Stop the AI Dependency Manager background agent gracefully.
+	Long: `Stop the Superintelligence Dependency Manager background agent gracefully.
 This will stop all scheduled operations and shut down the agent cleanly.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runAgentStop(cmd, args)
@@ -62,7 +62,7 @@ This will stop all scheduled operations and shut down the agent cleanly.`,
 var agentStatusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show agent status and statistics",
-	Long: `Display the current status of the AI Dependency Manager background agent,
+	Long: `Display the current status of the Superintelligence Dependency Manager background agent,
 including runtime statistics, recent activity, and configuration details.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runAgentStatus(cmd, args)
@@ -73,7 +73,7 @@ including runtime statistics, recent activity, and configuration details.`,
 var agentRestartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Restart the background agent",
-	Long: `Restart the AI Dependency Manager background agent. This will stop
+	Long: `Restart the Superintelligence Dependency Manager background agent. This will stop
 the current agent instance and start a new one with the current configuration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runAgentRestart(cmd, args)
@@ -91,7 +91,7 @@ func runAgentStart(cmd *cobra.Command, args []string) error {
 	// Create and start the agent
 	agentInstance := agent.NewAgent(cfg)
 	
-	fmt.Println("🚀 Starting AI Dependency Manager Agent...")
+	fmt.Println("🚀 Starting Superintelligence Dependency Manager Agent...")
 	
 	if err := agentInstance.Start(); err != nil {
 		return fmt.Errorf("failed to start agent: %w", err)
@@ -143,7 +143,7 @@ func runAgentStop(cmd *cobra.Command, args []string) error {
 	// In a real implementation, this would connect to a running daemon
 	// For now, we'll show what the stop command would do
 	
-	fmt.Println("🛑 Stopping AI Dependency Manager Agent...")
+	fmt.Println("🛑 Stopping Superintelligence Dependency Manager Agent...")
 	
 	// TODO: Implement daemon communication to stop running agent
 	// This would typically involve:
@@ -163,7 +163,7 @@ func runAgentStatus(cmd *cobra.Command, args []string) error {
 	// Create agent instance to check status
 	agentInstance := agent.NewAgent(cfg)
 	
-	fmt.Println("📊 AI Dependency Manager Agent Status")
+	fmt.Println("📊 Superintelligence Dependency Manager Agent Status")
 	fmt.Println(strings.Repeat("=", 50))
 	
 	if agentInstance.IsRunning() {
@@ -171,7 +171,7 @@ func runAgentStatus(cmd *cobra.Command, args []string) error {
 		displayAgentStatus(agentInstance)
 	} else {
 		fmt.Println("🔴 Status: Stopped")
-		fmt.Println("💡 Use 'ai-dep-manager agent start' to start the agent")
+		fmt.Println("💡 Use 'superint-dep-manager agent start' to start the agent")
 	}
 	
 	// Show configuration
@@ -188,7 +188,7 @@ func runAgentRestart(cmd *cobra.Command, args []string) error {
 	cfg := config.GetConfig()
 	agentInstance := agent.NewAgent(cfg)
 	
-	fmt.Println("🔄 Restarting AI Dependency Manager Agent...")
+	fmt.Println("🔄 Restarting Superintelligence Dependency Manager Agent...")
 	
 	if err := agentInstance.Restart(); err != nil {
 		return fmt.Errorf("failed to restart agent: %w", err)

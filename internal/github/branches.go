@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // BranchesService handles branch-related GitHub API operations
@@ -311,7 +311,7 @@ func (b *BranchesService) GetDefaultBranch(ctx context.Context, owner, repo stri
 	return repoInfo.DefaultBranch, nil
 }
 
-// ListPatchBranches lists all patch branches created by the AI Dependency Manager
+// ListPatchBranches lists all patch branches created by the Superintelligence Dependency Manager
 func (b *BranchesService) ListPatchBranches(ctx context.Context, owner, repo string, prefix string) ([]*Branch, error) {
 	if prefix == "" {
 		prefix = "patch"

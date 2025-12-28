@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai/ollama"
-	"github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/ollama"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 func main() {
@@ -212,7 +212,7 @@ func main() {
 	fmt.Printf("🦙 Model: %s\n", config.Model)
 	fmt.Printf("🌐 Endpoint: %s\n", config.BaseURL)
 	fmt.Println()
-	fmt.Println("Your Ollama provider is ready for use in the AI Dependency Manager!")
+	fmt.Println("Your Ollama provider is ready for use in the Superintelligence Dependency Manager!")
 	fmt.Println()
 	fmt.Println("Environment Variables:")
 	fmt.Println("  OLLAMA_BASE_URL - Ollama server endpoint")

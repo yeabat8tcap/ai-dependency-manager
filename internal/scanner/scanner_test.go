@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	testingPkg "github.com/8tcapital/ai-dep-manager/internal/testing"
+	testingPkg "github.com/8tcapital/superint-dep-manager/internal/testing"
 )
 
 func TestScannerService_ScanProject(t *testing.T) {

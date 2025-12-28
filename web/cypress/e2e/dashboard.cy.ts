@@ -1,4 +1,4 @@
-describe('AI Dependency Manager - Dashboard E2E Tests', () => {
+describe('Superintelligence Dependency Manager - Dashboard E2E Tests', () => {
   beforeEach(() => {
     // Visit the dashboard page
     cy.visit('/dashboard');

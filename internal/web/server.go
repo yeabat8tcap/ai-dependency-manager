@@ -72,7 +72,7 @@ func (s *Server) serveFrontend(w http.ResponseWriter, r *http.Request) {
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AI Dependency Manager</title>
+    <title>Superintelligence Dependency Manager</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 40px; background: #f5f5f5; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -85,7 +85,7 @@ func (s *Server) serveFrontend(w http.ResponseWriter, r *http.Request) {
 </head>
 <body>
     <div class="container">
-        <h1>🚀 AI Dependency Manager</h1>
+        <h1>🚀 Superintelligence Dependency Manager</h1>
         <div class="status">
             <h2>✅ Unified Full-Stack Application Running!</h2>
             <p>The Angular frontend and Go backend are successfully integrated and running as a single application.</p>

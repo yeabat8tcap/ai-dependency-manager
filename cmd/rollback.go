@@ -8,7 +8,7 @@ import (
 	"time"
 
 
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
@@ -20,9 +20,9 @@ var rollbackCmd = &cobra.Command{
 This command helps you safely revert changes if updates cause issues.
 
 Examples:
-  ai-dep-manager rollback --project my-app        # Rollback latest updates for project
-  ai-dep-manager rollback --list                  # List available rollback plans
-  ai-dep-manager rollback --plan-id 123           # Execute specific rollback plan`,
+  superint-dep-manager rollback --project my-app        # Rollback latest updates for project
+  superint-dep-manager rollback --list                  # List available rollback plans
+  superint-dep-manager rollback --plan-id 123           # Execute specific rollback plan`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runRollback(cmd, args)
 	},

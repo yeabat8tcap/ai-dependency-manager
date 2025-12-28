@@ -1,6 +1,6 @@
-# AI Dependency Manager - Deployment Guide
+# Superintelligence Dependency Manager - Deployment Guide
 
-This guide covers various deployment scenarios for the AI Dependency Manager in production environments.
+This guide covers various deployment scenarios for the Superintelligence Dependency Manager in production environments.
 
 ## Table of Contents
 
@@ -42,25 +42,25 @@ This guide covers various deployment scenarios for the AI Dependency Manager in 
 
 ```bash
 # Download latest release
-curl -L https://github.com/8tcapital/ai-dep-manager/releases/latest/download/ai-dep-manager-linux-amd64 -o ai-dep-manager
-chmod +x ai-dep-manager
-sudo mv ai-dep-manager /usr/local/bin/
+curl -L https://github.com/8tcapital/superint-dep-manager/releases/latest/download/superint-dep-manager-linux-amd64 -o superint-dep-manager
+chmod +x superint-dep-manager
+sudo mv superint-dep-manager /usr/local/bin/
 
 # Verify installation
-ai-dep-manager version
+superint-dep-manager version
 ```
 
 ### 2. Go Install
 
 ```bash
-go install github.com/8tcapital/ai-dep-manager@latest
+go install github.com/8tcapital/superint-dep-manager@latest
 ```
 
 ### 3. Build from Source
 
 ```bash
-git clone https://github.com/8tcapital/ai-dep-manager.git
-cd ai-dep-manager
+git clone https://github.com/8tcapital/superint-dep-manager.git
+cd superint-dep-manager
 make build
 sudo make install
 ```
@@ -69,17 +69,17 @@ sudo make install
 
 ```bash
 # Homebrew (macOS)
-brew install ai-dep-manager
+brew install superint-dep-manager
 
 # APT (Ubuntu/Debian)
 curl -fsSL https://packages.8tcapital.com/gpg.key | sudo apt-key add -
-echo "deb https://packages.8tcapital.com/apt stable main" | sudo tee /etc/apt/sources.list.d/ai-dep-manager.list
+echo "deb https://packages.8tcapital.com/apt stable main" | sudo tee /etc/apt/sources.list.d/superint-dep-manager.list
 sudo apt update
-sudo apt install ai-dep-manager
+sudo apt install superint-dep-manager
 
 # YUM (CentOS/RHEL)
-sudo yum-config-manager --add-repo https://packages.8tcapital.com/yum/ai-dep-manager.repo
-sudo yum install ai-dep-manager
+sudo yum-config-manager --add-repo https://packages.8tcapital.com/yum/superint-dep-manager.repo
+sudo yum install superint-dep-manager
 ```
 
 ## System Service Deployment
@@ -88,10 +88,10 @@ sudo yum install ai-dep-manager
 
 ```bash
 # Download and run deployment script
-curl -fsSL https://raw.githubusercontent.com/8tcapital/ai-dep-manager/main/scripts/deploy.sh | sudo bash -s -- install
+curl -fsSL https://raw.githubusercontent.com/8tcapital/superint-dep-manager/main/scripts/deploy.sh | sudo bash -s -- install
 
 # Or download and inspect first
-curl -fsSL https://raw.githubusercontent.com/8tcapital/ai-dep-manager/main/scripts/deploy.sh -o deploy.sh
+curl -fsSL https://raw.githubusercontent.com/8tcapital/superint-dep-manager/main/scripts/deploy.sh -o deploy.sh
 chmod +x deploy.sh
 sudo ./deploy.sh install
 ```
@@ -100,38 +100,38 @@ sudo ./deploy.sh install
 
 1. **Create service user:**
 ```bash
-sudo useradd --system --shell /bin/false --home-dir /var/lib/ai-dep-manager ai-dep-manager
-sudo mkdir -p /var/lib/ai-dep-manager
-sudo chown ai-dep-manager:ai-dep-manager /var/lib/ai-dep-manager
+sudo useradd --system --shell /bin/false --home-dir /var/lib/superint-dep-manager superint-dep-manager
+sudo mkdir -p /var/lib/superint-dep-manager
+sudo chown superint-dep-manager:superint-dep-manager /var/lib/superint-dep-manager
 ```
 
 2. **Create systemd service file:**
 ```bash
-sudo tee /etc/systemd/system/ai-dep-manager.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/superint-dep-manager.service > /dev/null <<EOF
 [Unit]
-Description=AI Dependency Manager
+Description=Superintelligence Dependency Manager
 After=network.target
 Wants=network.target
 
 [Service]
 Type=simple
-User=ai-dep-manager
-Group=ai-dep-manager
-ExecStart=/usr/local/bin/ai-dep-manager agent start --foreground
+User=superint-dep-manager
+Group=superint-dep-manager
+ExecStart=/usr/local/bin/superint-dep-manager agent start --foreground
 ExecReload=/bin/kill -HUP \$MAINPID
 KillMode=mixed
 Restart=always
 RestartSec=5
 TimeoutStopSec=30
-Environment=AI_DEP_MANAGER_DATA_DIR=/var/lib/ai-dep-manager
-Environment=AI_DEP_MANAGER_CONFIG_FILE=/etc/ai-dep-manager/config.yaml
+Environment=AI_DEP_MANAGER_DATA_DIR=/var/lib/superint-dep-manager
+Environment=AI_DEP_MANAGER_CONFIG_FILE=/etc/superint-dep-manager/config.yaml
 
 # Security settings
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/ai-dep-manager
+ReadWritePaths=/var/lib/superint-dep-manager
 CapabilityBoundingSet=
 AmbientCapabilities=
 SystemCallFilter=@system-service
@@ -144,39 +144,39 @@ EOF
 
 3. **Create configuration directory:**
 ```bash
-sudo mkdir -p /etc/ai-dep-manager
-sudo cp config.yaml.example /etc/ai-dep-manager/config.yaml
-sudo chown -R ai-dep-manager:ai-dep-manager /etc/ai-dep-manager
+sudo mkdir -p /etc/superint-dep-manager
+sudo cp config.yaml.example /etc/superint-dep-manager/config.yaml
+sudo chown -R superint-dep-manager:superint-dep-manager /etc/superint-dep-manager
 ```
 
 4. **Enable and start service:**
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable ai-dep-manager
-sudo systemctl start ai-dep-manager
-sudo systemctl status ai-dep-manager
+sudo systemctl enable superint-dep-manager
+sudo systemctl start superint-dep-manager
+sudo systemctl status superint-dep-manager
 ```
 
 ### Service Management
 
 ```bash
 # Start service
-sudo systemctl start ai-dep-manager
+sudo systemctl start superint-dep-manager
 
 # Stop service
-sudo systemctl stop ai-dep-manager
+sudo systemctl stop superint-dep-manager
 
 # Restart service
-sudo systemctl restart ai-dep-manager
+sudo systemctl restart superint-dep-manager
 
 # Check status
-sudo systemctl status ai-dep-manager
+sudo systemctl status superint-dep-manager
 
 # View logs
-sudo journalctl -u ai-dep-manager -f
+sudo journalctl -u superint-dep-manager -f
 
 # Enable auto-start
-sudo systemctl enable ai-dep-manager
+sudo systemctl enable superint-dep-manager
 ```
 
 ## Docker Deployment
@@ -185,17 +185,17 @@ sudo systemctl enable ai-dep-manager
 
 ```bash
 # Pull image
-docker pull ai-dep-manager:latest
+docker pull superint-dep-manager:latest
 
 # Run container
 docker run -d \
-  --name ai-dep-manager \
+  --name superint-dep-manager \
   --restart unless-stopped \
   -v /path/to/config:/app/config:ro \
   -v /path/to/data:/app/data \
   -v /path/to/projects:/app/projects:ro \
   -p 8080:8080 \
-  ai-dep-manager:latest
+  superint-dep-manager:latest
 ```
 
 ### Docker Compose
@@ -206,9 +206,9 @@ Create `docker-compose.yml`:
 version: '3.8'
 
 services:
-  ai-dep-manager:
-    image: ai-dep-manager:latest
-    container_name: ai-dep-manager
+  superint-dep-manager:
+    image: superint-dep-manager:latest
+    container_name: superint-dep-manager
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -222,7 +222,7 @@ services:
       - AI_DEP_MANAGER_DATA_DIR=/app/data
       - AI_DEP_MANAGER_LOG_LEVEL=info
     healthcheck:
-      test: ["CMD", "ai-dep-manager", "status"]
+      test: ["CMD", "superint-dep-manager", "status"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -231,7 +231,7 @@ services:
   # Optional: Database (if using PostgreSQL)
   postgres:
     image: postgres:13
-    container_name: ai-dep-manager-db
+    container_name: superint-dep-manager-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ai_dep_manager
@@ -264,7 +264,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ai-dep-manager .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o superint-dep-manager .
 
 # Runtime stage
 FROM alpine:latest
@@ -272,11 +272,11 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates nodejs npm python3 py3-pip openjdk11 maven
 WORKDIR /root/
 
-COPY --from=builder /app/ai-dep-manager .
+COPY --from=builder /app/superint-dep-manager .
 COPY config.yaml.example /app/config/config.yaml
 
 EXPOSE 8080
-CMD ["./ai-dep-manager", "agent", "start", "--foreground"]
+CMD ["./superint-dep-manager", "agent", "start", "--foreground"]
 ```
 
 ## Kubernetes Deployment
@@ -288,19 +288,19 @@ CMD ["./ai-dep-manager", "agent", "start", "--foreground"]
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ai-dep-manager
+  name: superint-dep-manager
 
 ---
 # configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ai-dep-manager-config
-  namespace: ai-dep-manager
+  name: superint-dep-manager-config
+  namespace: superint-dep-manager
 data:
   config.yaml: |
     database:
-      path: "/data/ai-dep-manager.db"
+      path: "/data/superint-dep-manager.db"
     logging:
       level: "info"
       format: "json"
@@ -318,21 +318,21 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ai-dep-manager
-  namespace: ai-dep-manager
+  name: superint-dep-manager
+  namespace: superint-dep-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ai-dep-manager
+      app: superint-dep-manager
   template:
     metadata:
       labels:
-        app: ai-dep-manager
+        app: superint-dep-manager
     spec:
       containers:
-      - name: ai-dep-manager
-        image: ai-dep-manager:latest
+      - name: superint-dep-manager
+        image: superint-dep-manager:latest
         ports:
         - containerPort: 8080
         env:
@@ -348,35 +348,35 @@ spec:
         livenessProbe:
           exec:
             command:
-            - ai-dep-manager
+            - superint-dep-manager
             - status
           initialDelaySeconds: 30
           periodSeconds: 30
         readinessProbe:
           exec:
             command:
-            - ai-dep-manager
+            - superint-dep-manager
             - status
           initialDelaySeconds: 5
           periodSeconds: 10
       volumes:
       - name: config
         configMap:
-          name: ai-dep-manager-config
+          name: superint-dep-manager-config
       - name: data
         persistentVolumeClaim:
-          claimName: ai-dep-manager-data
+          claimName: superint-dep-manager-data
 
 ---
 # service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: ai-dep-manager-service
-  namespace: ai-dep-manager
+  name: superint-dep-manager-service
+  namespace: superint-dep-manager
 spec:
   selector:
-    app: ai-dep-manager
+    app: superint-dep-manager
   ports:
   - protocol: TCP
     port: 80
@@ -388,8 +388,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ai-dep-manager-data
-  namespace: ai-dep-manager
+  name: superint-dep-manager-data
+  namespace: superint-dep-manager
 spec:
   accessModes:
   - ReadWriteOnce
@@ -412,25 +412,25 @@ kubectl apply -f deployment.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ai-dep-manager-ingress
-  namespace: ai-dep-manager
+  name: superint-dep-manager-ingress
+  namespace: superint-dep-manager
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
   - hosts:
-    - ai-dep-manager.yourdomain.com
-    secretName: ai-dep-manager-tls
+    - superint-dep-manager.yourdomain.com
+    secretName: superint-dep-manager-tls
   rules:
-  - host: ai-dep-manager.yourdomain.com
+  - host: superint-dep-manager.yourdomain.com
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: ai-dep-manager-service
+            name: superint-dep-manager-service
             port:
               number: 80
 ```
@@ -492,13 +492,13 @@ notifications:
 
 ```bash
 # Validate configuration
-ai-dep-manager configure validate
+superint-dep-manager configure validate
 
 # Test configuration
-ai-dep-manager configure test
+superint-dep-manager configure test
 
 # Show effective configuration
-ai-dep-manager configure show --effective
+superint-dep-manager configure show --effective
 ```
 
 ## Monitoring and Logging
@@ -523,7 +523,7 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'ai-dep-manager'
+  - job_name: 'superint-dep-manager'
     static_configs:
       - targets: ['localhost:8080']
     metrics_path: '/metrics'
@@ -539,9 +539,9 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - /var/log/ai-dep-manager/*.log
+    - /var/log/superint-dep-manager/*.log
   fields:
-    service: ai-dep-manager
+    service: superint-dep-manager
   fields_under_root: true
 
 output.elasticsearch:
@@ -554,17 +554,17 @@ setup.kibana:
 #### Log Rotation
 
 ```bash
-# /etc/logrotate.d/ai-dep-manager
-/var/log/ai-dep-manager/*.log {
+# /etc/logrotate.d/superint-dep-manager
+/var/log/superint-dep-manager/*.log {
     daily
     missingok
     rotate 30
     compress
     delaycompress
     notifempty
-    create 644 ai-dep-manager ai-dep-manager
+    create 644 superint-dep-manager superint-dep-manager
     postrotate
-        systemctl reload ai-dep-manager
+        systemctl reload superint-dep-manager
     endscript
 }
 ```
@@ -587,8 +587,8 @@ sudo ufw enable
 server:
   tls:
     enabled: true
-    cert_file: "/etc/ssl/certs/ai-dep-manager.crt"
-    key_file: "/etc/ssl/private/ai-dep-manager.key"
+    cert_file: "/etc/ssl/certs/superint-dep-manager.crt"
+    key_file: "/etc/ssl/private/superint-dep-manager.key"
 ```
 
 ### Access Control
@@ -596,14 +596,14 @@ server:
 1. **Service Account:**
 ```bash
 # Create dedicated user
-sudo useradd --system --shell /bin/false ai-dep-manager
+sudo useradd --system --shell /bin/false superint-dep-manager
 ```
 
 2. **File Permissions:**
 ```bash
 # Secure configuration files
-chmod 600 /etc/ai-dep-manager/config.yaml
-chown ai-dep-manager:ai-dep-manager /etc/ai-dep-manager/config.yaml
+chmod 600 /etc/superint-dep-manager/config.yaml
+chown superint-dep-manager:superint-dep-manager /etc/superint-dep-manager/config.yaml
 ```
 
 ### Credential Management
@@ -623,7 +623,7 @@ security:
     vault:
       enabled: true
       address: "https://vault.company.com"
-      token_file: "/var/lib/ai-dep-manager/vault-token"
+      token_file: "/var/lib/superint-dep-manager/vault-token"
 ```
 
 ## Backup and Recovery
@@ -634,9 +634,9 @@ security:
 #!/bin/bash
 # backup-db.sh
 
-BACKUP_DIR="/var/backups/ai-dep-manager"
+BACKUP_DIR="/var/backups/superint-dep-manager"
 DATE=$(date +%Y%m%d_%H%M%S)
-DB_PATH="/var/lib/ai-dep-manager/ai-dep-manager.db"
+DB_PATH="/var/lib/superint-dep-manager/superint-dep-manager.db"
 
 mkdir -p "$BACKUP_DIR"
 
@@ -656,13 +656,13 @@ find "$BACKUP_DIR" -name "backup_*.db.gz" -mtime +30 -delete
 #!/bin/bash
 # backup-config.sh
 
-BACKUP_DIR="/var/backups/ai-dep-manager"
+BACKUP_DIR="/var/backups/superint-dep-manager"
 DATE=$(date +%Y%m%d_%H%M%S)
 
 mkdir -p "$BACKUP_DIR"
 
 # Backup configuration
-tar -czf "$BACKUP_DIR/config_$DATE.tar.gz" /etc/ai-dep-manager/
+tar -czf "$BACKUP_DIR/config_$DATE.tar.gz" /etc/superint-dep-manager/
 
 # Remove old backups
 find "$BACKUP_DIR" -name "config_*.tar.gz" -mtime +30 -delete
@@ -681,25 +681,25 @@ find "$BACKUP_DIR" -name "config_*.tar.gz" -mtime +30 -delete
 1. **Database Recovery:**
 ```bash
 # Stop service
-sudo systemctl stop ai-dep-manager
+sudo systemctl stop superint-dep-manager
 
 # Restore database
-gunzip -c /var/backups/ai-dep-manager/backup_20240101_020000.db.gz > /var/lib/ai-dep-manager/ai-dep-manager.db
+gunzip -c /var/backups/superint-dep-manager/backup_20240101_020000.db.gz > /var/lib/superint-dep-manager/superint-dep-manager.db
 
 # Fix permissions
-chown ai-dep-manager:ai-dep-manager /var/lib/ai-dep-manager/ai-dep-manager.db
+chown superint-dep-manager:superint-dep-manager /var/lib/superint-dep-manager/superint-dep-manager.db
 
 # Start service
-sudo systemctl start ai-dep-manager
+sudo systemctl start superint-dep-manager
 ```
 
 2. **Configuration Recovery:**
 ```bash
 # Extract configuration backup
-tar -xzf /var/backups/ai-dep-manager/config_20240101_030000.tar.gz -C /
+tar -xzf /var/backups/superint-dep-manager/config_20240101_030000.tar.gz -C /
 
 # Restart service
-sudo systemctl restart ai-dep-manager
+sudo systemctl restart superint-dep-manager
 ```
 
 ## Troubleshooting
@@ -710,32 +710,32 @@ sudo systemctl restart ai-dep-manager
 
 ```bash
 # Check service status
-sudo systemctl status ai-dep-manager
+sudo systemctl status superint-dep-manager
 
 # Check logs
-sudo journalctl -u ai-dep-manager -f
+sudo journalctl -u superint-dep-manager -f
 
 # Verify binary
-which ai-dep-manager
-ai-dep-manager version
+which superint-dep-manager
+superint-dep-manager version
 
 # Check permissions
-ls -la /usr/local/bin/ai-dep-manager
+ls -la /usr/local/bin/superint-dep-manager
 ```
 
 #### 2. Database Connection Issues
 
 ```bash
 # Check database file
-ls -la /var/lib/ai-dep-manager/ai-dep-manager.db
+ls -la /var/lib/superint-dep-manager/superint-dep-manager.db
 
 # Test database connection
-sqlite3 /var/lib/ai-dep-manager/ai-dep-manager.db ".tables"
+sqlite3 /var/lib/superint-dep-manager/superint-dep-manager.db ".tables"
 
 # Reset database if corrupted
-sudo systemctl stop ai-dep-manager
-sudo -u ai-dep-manager ai-dep-manager configure migrate-db
-sudo systemctl start ai-dep-manager
+sudo systemctl stop superint-dep-manager
+sudo -u superint-dep-manager superint-dep-manager configure migrate-db
+sudo systemctl start superint-dep-manager
 ```
 
 #### 3. Network Connectivity Issues
@@ -756,11 +756,11 @@ nslookup registry.npmjs.org
 
 ```bash
 # Check service user permissions
-sudo -u ai-dep-manager ls -la /var/lib/ai-dep-manager/
+sudo -u superint-dep-manager ls -la /var/lib/superint-dep-manager/
 
 # Fix permissions
-sudo chown -R ai-dep-manager:ai-dep-manager /var/lib/ai-dep-manager/
-sudo chmod 755 /var/lib/ai-dep-manager/
+sudo chown -R superint-dep-manager:superint-dep-manager /var/lib/superint-dep-manager/
+sudo chmod 755 /var/lib/superint-dep-manager/
 ```
 
 ### Performance Tuning
@@ -798,12 +798,12 @@ iostat -x 1
 df -h
 
 # Application metrics
-ai-dep-manager status --verbose
-ai-dep-manager agent stats
+superint-dep-manager status --verbose
+superint-dep-manager agent stats
 
 # Log analysis
-tail -f /var/log/ai-dep-manager/app.log | grep ERROR
-journalctl -u ai-dep-manager --since "1 hour ago"
+tail -f /var/log/superint-dep-manager/app.log | grep ERROR
+journalctl -u superint-dep-manager --since "1 hour ago"
 ```
 
 ---

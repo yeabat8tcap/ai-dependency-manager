@@ -8,29 +8,29 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	aitypes "github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	aitypes "github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Update dependencies with AI-powered recommendations",
+	Short: "Update dependencies with Superintelligence-powered recommendations",
 	Long: `Update project dependencies with intelligent analysis and safety checks. This command:
 - Generates update plans with risk assessment
-- Provides AI-powered recommendations
+- Provides Superintelligence-powered recommendations
 - Supports interactive and batch update modes
 - Creates rollback plans for safety
 - Handles breaking changes with user confirmation
 
 Examples:
-  ai-dep-manager update --preview                    # Preview all updates
-  ai-dep-manager update --project my-app             # Update specific project
-  ai-dep-manager update --security-only              # Apply only security updates
-  ai-dep-manager update --interactive                # Interactive update mode`,
+  superint-dep-manager update --preview                    # Preview all updates
+  superint-dep-manager update --project my-app             # Update specific project
+  superint-dep-manager update --security-only              # Apply only security updates
+  superint-dep-manager update --interactive                # Interactive update mode`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runUpdate(cmd, args)
 	},
@@ -311,7 +311,7 @@ func displayUpdateResult(result *services.UpdateResult) {
 		fmt.Println("\n🔄 Rollback Plan Available:")
 		fmt.Printf("   Created: %s\n", result.RollbackPlan.CreatedAt.Format("2006-01-02 15:04:05"))
 		fmt.Printf("   Rollback operations: %d\n", len(result.RollbackPlan.Rollbacks))
-		fmt.Println("   💡 Use 'ai-dep-manager rollback' to revert changes if needed")
+		fmt.Println("   💡 Use 'superint-dep-manager rollback' to revert changes if needed")
 	}
 	
 	// Final status
@@ -346,7 +346,7 @@ func getUserConfirmation(plan *services.UpdatePlan) bool {
 	return response == "y" || response == "yes"
 }
 
-func getRiskIcon(risk ai.RiskLevel) string {
+func getRiskIcon(risk superint.RiskLevel) string {
 	switch risk {
 	case aitypes.RiskLevelLow:
 		return "🟢 Low"

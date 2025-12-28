@@ -6,11 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
-	"github.com/8tcapital/ai-dep-manager/internal/scanner"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/scanner"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 )
 
 // Agent represents the background dependency management agent
@@ -86,7 +86,7 @@ func (a *Agent) Start() error {
 		return fmt.Errorf("agent is already running")
 	}
 	
-	logger.Info("Starting AI Dependency Manager Agent")
+	logger.Info("Starting Superintelligence Dependency Manager Agent")
 	
 	// Initialize agent configuration
 	agentConfig := a.getAgentConfig()
@@ -111,7 +111,7 @@ func (a *Agent) Start() error {
 	a.running = true
 	a.stats.StartTime = time.Now()
 	
-	logger.Info("AI Dependency Manager Agent started successfully")
+	logger.Info("Superintelligence Dependency Manager Agent started successfully")
 	return nil
 }
 
@@ -124,7 +124,7 @@ func (a *Agent) Stop() error {
 		return fmt.Errorf("agent is not running")
 	}
 	
-	logger.Info("Stopping AI Dependency Manager Agent")
+	logger.Info("Stopping Superintelligence Dependency Manager Agent")
 	
 	// Stop tickers
 	if a.scanTicker != nil {
@@ -145,13 +145,13 @@ func (a *Agent) Stop() error {
 	
 	a.running = false
 	
-	logger.Info("AI Dependency Manager Agent stopped")
+	logger.Info("Superintelligence Dependency Manager Agent stopped")
 	return nil
 }
 
 // Restart restarts the agent
 func (a *Agent) Restart() error {
-	logger.Info("Restarting AI Dependency Manager Agent")
+	logger.Info("Restarting Superintelligence Dependency Manager Agent")
 	
 	if err := a.Stop(); err != nil {
 		logger.Warn("Error stopping agent during restart: %v", err)

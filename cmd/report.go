@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/reporting"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/reporting"
 	"github.com/spf13/cobra"
 )
 
@@ -183,7 +183,7 @@ func runExportReport(cmd *cobra.Command, args []string) {
 }
 
 func runAnalytics(cmd *cobra.Command, args []string) {
-	fmt.Println("📊 AI Dependency Manager - Analytics Dashboard")
+	fmt.Println("📊 Superintelligence Dependency Manager - Analytics Dashboard")
 	fmt.Println(strings.Repeat("=", 50))
 	fmt.Println()
 	
@@ -216,10 +216,10 @@ func runAnalytics(cmd *cobra.Command, args []string) {
 	
 	// Show available commands
 	fmt.Println("🔍 Available Analytics Commands:")
-	fmt.Println("  ai-dep-manager report analytics dependencies  - View dependency analytics")
-	fmt.Println("  ai-dep-manager report generate summary        - Generate summary report")
-	fmt.Println("  ai-dep-manager report generate security       - Generate security report")
-	fmt.Println("  ai-dep-manager report generate updates        - Generate updates report")
+	fmt.Println("  superint-dep-manager report analytics dependencies  - View dependency analytics")
+	fmt.Println("  superint-dep-manager report generate summary        - Generate summary report")
+	fmt.Println("  superint-dep-manager report generate security       - Generate security report")
+	fmt.Println("  superint-dep-manager report generate updates        - Generate updates report")
 }
 
 func runDependencyAnalytics(cmd *cobra.Command, args []string) {

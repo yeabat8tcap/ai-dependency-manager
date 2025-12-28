@@ -283,7 +283,7 @@ describe('ApiService', () => {
     });
   });
 
-  describe('AI Insights', () => {
+  describe('Superintelligence Insights', () => {
     it('should generate AI insights', () => {
       const mockResponse: ApiResponse<any> = {
         success: true,

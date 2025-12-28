@@ -1,15 +1,15 @@
-# AI Dependency Manager Configuration
-# Copy this file to ~/.ai-dep-manager/config.yaml or specify with --config flag
+# Superintelligence Dependency Manager Configuration
+# Copy this file to ~/.superint-dep-manager/config.yaml or specify with --config flag
 
 # Application settings
 log_level: "info"      # debug, info, warn, error, fatal
 log_format: "text"     # text, json
-data_dir: ""           # Default: ~/.ai-dep-manager
+data_dir: ""           # Default: ~/.superint-dep-manager
 
 # Database configuration
 database:
   type: "sqlite"       # Currently only sqlite is supported
-  path: ""             # Default: ~/.ai-dep-manager/ai-dep-manager.db
+  path: ""             # Default: ~/.superint-dep-manager/superint-dep-manager.db
 
 # Background agent settings
 agent:

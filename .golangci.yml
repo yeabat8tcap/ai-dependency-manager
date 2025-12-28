@@ -34,7 +34,7 @@ linters-settings:
   lll:
     line-length: 120
   goimports:
-    local-prefixes: github.com/8tcapital/ai-dep-manager
+    local-prefixes: github.com/8tcapital/superint-dep-manager
   gocritic:
     enabled-tags:
       - performance

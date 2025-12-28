@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/8tcapital/ai-dep-manager/internal/web"
+	"github.com/8tcapital/superint-dep-manager/internal/web"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ func runServeSimple(cmd *cobra.Command, args []string) error {
 	port, _ := cmd.Flags().GetString("port")
 	host, _ := cmd.Flags().GetString("host")
 	
-	fmt.Printf("🚀 Starting AI Dependency Manager Web Server (Simplified)\n")
+	fmt.Printf("🚀 Starting Superintelligence Dependency Manager Web Server (Simplified)\n")
 	fmt.Printf("🌐 Server: http://%s:%s\n", host, port)
 	fmt.Printf("📊 Frontend: http://%s:%s\n", host, port)
 	fmt.Printf("🔗 API: http://%s:%s/api\n", host, port)

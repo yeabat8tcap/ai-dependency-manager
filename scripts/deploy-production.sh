@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# AI Dependency Manager - Production Deployment Script
-# This script automates the deployment of the AI Dependency Manager to production
+# Superintelligence Dependency Manager - Production Deployment Script
+# This script automates the deployment of the Superintelligence Dependency Manager to production
 
 set -e
 
 # Configuration
-APP_NAME="ai-dep-manager"
+APP_NAME="superint-dep-manager"
 VERSION=${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}
 BUILD_DIR="./build"
-DEPLOY_DIR="/opt/ai-dep-manager"
-SERVICE_NAME="ai-dep-manager"
-USER="ai-dep-manager"
-GROUP="ai-dep-manager"
+DEPLOY_DIR="/opt/superint-dep-manager"
+SERVICE_NAME="superint-dep-manager"
+USER="superint-dep-manager"
+GROUP="superint-dep-manager"
 
 # Detect OS
 OS="$(uname -s)"
@@ -73,7 +73,7 @@ create_user() {
     
     if ! getent passwd "$USER" > /dev/null 2>&1; then
         useradd --system --gid "$GROUP" --home-dir "$DEPLOY_DIR" \
-                --shell /bin/false --comment "AI Dependency Manager" "$USER"
+                --shell /bin/false --comment "Superintelligence Dependency Manager" "$USER"
         log_success "Created user: $USER"
     fi
 }
@@ -157,8 +157,8 @@ create_service() {
     
     cat > "/etc/systemd/system/$SERVICE_NAME.service" << EOF
 [Unit]
-Description=AI Dependency Manager
-Documentation=https://github.com/8tcapital/ai-dep-manager
+Description=Superintelligence Dependency Manager
+Documentation=https://github.com/8tcapital/superint-dep-manager
 After=network.target
 Wants=network.target
 
@@ -234,23 +234,23 @@ create_backup_script() {
     cat > "$DEPLOY_DIR/scripts/backup.sh" << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager Backup Script
+# Superintelligence Dependency Manager Backup Script
 
-BACKUP_DIR="/var/backups/ai-dep-manager"
-DATA_DIR="/opt/ai-dep-manager/data"
-CONFIG_DIR="/opt/ai-dep-manager/config"
+BACKUP_DIR="/var/backups/superint-dep-manager"
+DATA_DIR="/opt/superint-dep-manager/data"
+CONFIG_DIR="/opt/superint-dep-manager/config"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_NAME="ai-dep-manager_backup_$TIMESTAMP.tar.gz"
+BACKUP_NAME="superint-dep-manager_backup_$TIMESTAMP.tar.gz"
 
 mkdir -p "$BACKUP_DIR"
 
 # Create backup
 tar -czf "$BACKUP_DIR/$BACKUP_NAME" \
-    -C /opt/ai-dep-manager \
+    -C /opt/superint-dep-manager \
     data config
 
 # Keep only last 7 backups
-find "$BACKUP_DIR" -name "ai-dep-manager_backup_*.tar.gz" -mtime +7 -delete
+find "$BACKUP_DIR" -name "superint-dep-manager_backup_*.tar.gz" -mtime +7 -delete
 
 echo "Backup created: $BACKUP_DIR/$BACKUP_NAME"
 EOF
@@ -321,7 +321,7 @@ health_check() {
 
 # Main deployment function
 main() {
-    log_info "Starting AI Dependency Manager production deployment..."
+    log_info "Starting Superintelligence Dependency Manager production deployment..."
     log_info "Version: $VERSION"
     log_info "OS: $OS"
     
@@ -336,7 +336,7 @@ main() {
     start_service
     health_check
     
-    log_success "🎉 AI Dependency Manager deployed successfully!"
+    log_success "🎉 Superintelligence Dependency Manager deployed successfully!"
     if [[ "$OS" != "Darwin" ]]; then
         log_info "Service status: $(systemctl is-active $SERVICE_NAME)"
         log_info "Logs: journalctl -u $SERVICE_NAME -f"

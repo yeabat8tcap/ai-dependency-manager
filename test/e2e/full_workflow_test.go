@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	testingPkg "github.com/8tcapital/ai-dep-manager/internal/testing"
+	testingPkg "github.com/8tcapital/superint-dep-manager/internal/testing"
 )
 
 // TestFullWorkflow tests the complete end-to-end workflow
@@ -329,13 +329,13 @@ func TestErrorHandling(t *testing.T) {
 
 func buildCLIBinary(t *testing.T) string {
 	// Build the CLI binary for testing
-	tempDir, err := os.MkdirTemp("", "ai-dep-manager-e2e-*")
+	tempDir, err := os.MkdirTemp("", "superint-dep-manager-e2e-*")
 	testingPkg.AssertNoError(t, err, "Should create temp dir for binary")
 
-	binaryPath := filepath.Join(tempDir, "ai-dep-manager")
+	binaryPath := filepath.Join(tempDir, "superint-dep-manager")
 
 	// Build the binary
-	cmd := exec.Command("go", "build", "-o", binaryPath, "../../cmd/ai-dep-manager")
+	cmd := exec.Command("go", "build", "-o", binaryPath, "../../cmd/superint-dep-manager")
 	cmd.Dir = filepath.Join("..", "..")
 
 	output, err := cmd.CombinedOutput()

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# AI Dependency Manager Test Runner
-# This script runs comprehensive tests for the AI Dependency Manager
+# Superintelligence Dependency Manager Test Runner
+# This script runs comprehensive tests for the Superintelligence Dependency Manager
 
 set -e
 
@@ -260,7 +260,7 @@ main() {
     local test_type="${1:-all}"
     local exit_code=0
     
-    log_info "Starting AI Dependency Manager test suite"
+    log_info "Starting Superintelligence Dependency Manager test suite"
     log_info "Test type: $test_type"
     
     check_dependencies

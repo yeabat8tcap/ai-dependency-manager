@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	"github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	logger.Init("info", "text")
 
 	// Initialize AI system
-	if err := ai.Initialize(); err != nil {
+	if err := superint.Initialize(); err != nil {
 		fmt.Printf("❌ Failed to initialize AI system: %v\n", err)
 		os.Exit(1)
 	}
@@ -141,7 +141,7 @@ func isProviderAvailable(provider string) bool {
 		defer cancel()
 		
 		// Try to get a provider instance to test availability
-		if provider, exists := ai.GetProvider("ollama"); exists {
+		if provider, exists := superint.GetProvider("ollama"); exists {
 			return provider.IsAvailable(ctx)
 		}
 		return false
@@ -163,7 +163,7 @@ func testProviderPerformance(providerName string, testCase struct {
 	start := time.Now()
 	
 	// Get provider
-	provider, exists := ai.GetProvider(providerName)
+	provider, exists := superint.GetProvider(providerName)
 	if !exists {
 		return PerformanceResult{
 			TestCase: testCase.name,

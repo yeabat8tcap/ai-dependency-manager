@@ -3,10 +3,10 @@ package packagemanager
 import (
 	"context"
 
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/maven"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/npm"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/pip"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/maven"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/npm"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/pip"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 )
 
 // DefaultManager is the global package manager registry

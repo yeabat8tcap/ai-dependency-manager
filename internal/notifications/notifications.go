@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 )
 
 // NotificationService handles sending notifications
@@ -230,7 +230,7 @@ func (ns *NotificationService) SendAgentErrorNotification(ctx context.Context, e
 		Type:     NotificationTypeAgentError,
 		Priority: PriorityHigh,
 		Title:    "🚨 Agent Error",
-		Message:  fmt.Sprintf("AI Dependency Manager agent encountered an error: %s", errorMessage),
+		Message:  fmt.Sprintf("Superintelligence Dependency Manager agent encountered an error: %s", errorMessage),
 		Metadata: map[string]interface{}{
 			"error": errorMessage,
 		},
@@ -438,7 +438,7 @@ func (ns *NotificationService) getSlackConfig() *SlackConfig {
 	// In a real implementation, this would read from ns.config
 	return &SlackConfig{
 		Enabled:   false, // Default disabled
-		Username:  "AI Dependency Manager",
+		Username:  "Superintelligence Dependency Manager",
 		IconEmoji: ":robot_face:",
 	}
 }

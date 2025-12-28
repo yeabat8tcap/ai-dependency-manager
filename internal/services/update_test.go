@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	testingPkg "github.com/8tcapital/ai-dep-manager/internal/testing"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	testingPkg "github.com/8tcapital/superint-dep-manager/internal/testing"
 )
 
 func TestUpdateService_GenerateUpdatePlan(t *testing.T) {

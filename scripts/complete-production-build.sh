@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AI Dependency Manager - Complete Production Build
+# Superintelligence Dependency Manager - Complete Production Build
 # This script creates a working production build by resolving type conflicts
 
 set -e
@@ -12,7 +12,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 AI Dependency Manager - Production Build Completion${NC}"
+echo -e "${BLUE}🚀 Superintelligence Dependency Manager - Production Build Completion${NC}"
 echo -e "${BLUE}=====================================================${NC}"
 
 # Create build directory
@@ -21,7 +21,7 @@ mkdir -p build
 echo -e "${YELLOW}🔧 Resolving type conflicts and building core application...${NC}"
 
 # Build core application without GitHub integration conflicts
-echo -e "${YELLOW}Building core AI Dependency Manager...${NC}"
+echo -e "${YELLOW}Building core Superintelligence Dependency Manager...${NC}"
 
 # Create a temporary main file that excludes problematic GitHub integration
 cat > main_production.go << 'EOF'
@@ -33,10 +33,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/8tcapital/ai-dep-manager/cmd"
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/cmd"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 var (
@@ -78,19 +78,19 @@ EOF
 
 # Build the production binary
 echo -e "${YELLOW}Compiling production binary...${NC}"
-go build -ldflags "-X main.Version=production-v1.0.0 -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ) -X main.GitCommit=production -w -s" -o build/ai-dep-manager main_production.go
+go build -ldflags "-X main.Version=production-v1.0.0 -X main.BuildTime=$(date -u +%Y-%m-%dT%H:%M:%SZ) -X main.GitCommit=production -w -s" -o build/superint-dep-manager main_production.go
 
 # Check if build was successful
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ Core production build successful!${NC}"
     
     # Get binary size
-    BINARY_SIZE=$(du -sh build/ai-dep-manager | cut -f1)
+    BINARY_SIZE=$(du -sh build/superint-dep-manager | cut -f1)
     echo -e "Binary size: ${GREEN}$BINARY_SIZE${NC}"
     
     # Test the binary
     echo -e "${YELLOW}Testing production binary...${NC}"
-    ./build/ai-dep-manager version
+    ./build/superint-dep-manager version
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✅ Production binary working correctly!${NC}"
@@ -105,8 +105,8 @@ fi
 
 # Copy frontend assets
 echo -e "${YELLOW}📦 Packaging frontend assets...${NC}"
-if [ -d "web/dist/ai-dep-manager-frontend/browser" ]; then
-    cp -r web/dist/ai-dep-manager-frontend/browser/* build/web/ 2>/dev/null || mkdir -p build/web && cp -r web/dist/ai-dep-manager-frontend/browser/* build/web/
+if [ -d "web/dist/superint-dep-manager-frontend/browser" ]; then
+    cp -r web/dist/superint-dep-manager-frontend/browser/* build/web/ 2>/dev/null || mkdir -p build/web && cp -r web/dist/superint-dep-manager-frontend/browser/* build/web/
     echo -e "${GREEN}✅ Frontend assets packaged${NC}"
 else
     echo -e "${YELLOW}⚠️  Frontend assets not found, building...${NC}"
@@ -115,7 +115,7 @@ else
     npm run build:production
     cd ..
     mkdir -p build/web
-    cp -r web/dist/ai-dep-manager-frontend/browser/* build/web/
+    cp -r web/dist/superint-dep-manager-frontend/browser/* build/web/
     echo -e "${GREEN}✅ Frontend built and packaged${NC}"
 fi
 
@@ -136,7 +136,7 @@ cp config/config.example.yaml build/config/ 2>/dev/null || echo "Config example 
 cat > build/deploy.sh << 'DEPLOY_EOF'
 #!/bin/bash
 
-echo "🚀 Deploying AI Dependency Manager Production Build"
+echo "🚀 Deploying Superintelligence Dependency Manager Production Build"
 echo "================================================="
 
 # Check if running as root
@@ -146,40 +146,40 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 # Create application directories
-sudo mkdir -p /opt/ai-dep-manager/{bin,config,logs,data,web}
-sudo mkdir -p /var/log/ai-dep-manager
-sudo mkdir -p /etc/ai-dep-manager
+sudo mkdir -p /opt/superint-dep-manager/{bin,config,logs,data,web}
+sudo mkdir -p /var/log/superint-dep-manager
+sudo mkdir -p /etc/superint-dep-manager
 
 # Copy binary and assets
 echo "📦 Installing application files..."
-sudo cp ai-dep-manager /opt/ai-dep-manager/bin/
-sudo chmod +x /opt/ai-dep-manager/bin/ai-dep-manager
+sudo cp superint-dep-manager /opt/superint-dep-manager/bin/
+sudo chmod +x /opt/superint-dep-manager/bin/superint-dep-manager
 
 # Copy web assets if they exist
 if [ -d "web" ]; then
-    sudo cp -r web/* /opt/ai-dep-manager/web/
+    sudo cp -r web/* /opt/superint-dep-manager/web/
 fi
 
 # Copy configuration
 if [ -f "config/config.example.yaml" ]; then
-    sudo cp config/config.example.yaml /etc/ai-dep-manager/config.yaml
+    sudo cp config/config.example.yaml /etc/superint-dep-manager/config.yaml
 fi
 
 # Create application user
-sudo useradd -r -s /bin/false ai-dep-manager 2>/dev/null || true
+sudo useradd -r -s /bin/false superint-dep-manager 2>/dev/null || true
 
 # Set ownership
-sudo chown -R ai-dep-manager:ai-dep-manager /opt/ai-dep-manager
-sudo chown -R ai-dep-manager:ai-dep-manager /var/log/ai-dep-manager
-sudo chown -R ai-dep-manager:ai-dep-manager /etc/ai-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /opt/superint-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /var/log/superint-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /etc/superint-dep-manager
 
-echo "✅ AI Dependency Manager deployed successfully!"
-echo "🔧 Configuration: /etc/ai-dep-manager/config.yaml"
-echo "📝 Logs: /var/log/ai-dep-manager/"
-echo "🌐 Binary: /opt/ai-dep-manager/bin/ai-dep-manager"
+echo "✅ Superintelligence Dependency Manager deployed successfully!"
+echo "🔧 Configuration: /etc/superint-dep-manager/config.yaml"
+echo "📝 Logs: /var/log/superint-dep-manager/"
+echo "🌐 Binary: /opt/superint-dep-manager/bin/superint-dep-manager"
 echo ""
 echo "To start the application:"
-echo "  /opt/ai-dep-manager/bin/ai-dep-manager serve --config /etc/ai-dep-manager/config.yaml"
+echo "  /opt/superint-dep-manager/bin/superint-dep-manager serve --config /etc/superint-dep-manager/config.yaml"
 DEPLOY_EOF
 
 chmod +x build/deploy.sh
@@ -192,31 +192,31 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates tzdata
 
 # Create app user
-RUN adduser -D -s /bin/sh ai-dep-manager
+RUN adduser -D -s /bin/sh superint-dep-manager
 
 # Set working directory
 WORKDIR /app
 
 # Copy binary and assets
-COPY ai-dep-manager /app/
+COPY superint-dep-manager /app/
 COPY web/ /app/web/
 COPY config/ /app/config/
 
 # Set ownership
-RUN chown -R ai-dep-manager:ai-dep-manager /app
+RUN chown -R superint-dep-manager:superint-dep-manager /app
 
 # Switch to app user
-USER ai-dep-manager
+USER superint-dep-manager
 
 # Expose port
 EXPOSE 8080 8081
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD /app/ai-dep-manager version || exit 1
+  CMD /app/superint-dep-manager version || exit 1
 
 # Start application
-CMD ["/app/ai-dep-manager", "serve", "--config", "/app/config/config.yaml"]
+CMD ["/app/superint-dep-manager", "serve", "--config", "/app/config/config.yaml"]
 DOCKER_EOF
 
 # Create docker-compose file
@@ -224,7 +224,7 @@ cat > build/docker-compose.yml << 'COMPOSE_EOF'
 version: '3.8'
 
 services:
-  ai-dep-manager:
+  superint-dep-manager:
     build: .
     ports:
       - "8080:8080"
@@ -237,7 +237,7 @@ services:
       - LOG_LEVEL=info
     restart: unless-stopped
     healthcheck:
-      test: ["/app/ai-dep-manager", "version"]
+      test: ["/app/superint-dep-manager", "version"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -249,15 +249,15 @@ COMPOSE_EOF
 
 # Create production README
 cat > build/PRODUCTION-README.md << 'README_EOF'
-# AI Dependency Manager - Production Build
+# Superintelligence Dependency Manager - Production Build
 
-This is a production-ready build of the AI Dependency Manager with core functionality.
+This is a production-ready build of the Superintelligence Dependency Manager with core functionality.
 
 ## 🚀 Features Included
 
 ### Core Features
 - ✅ Multi-package manager support (npm, pip, Maven, Gradle)
-- ✅ AI-powered dependency analysis
+- ✅ Superintelligence-powered dependency analysis
 - ✅ Real-time dependency scanning and monitoring
 - ✅ Interactive update management with risk assessment
 - ✅ Background agent for continuous monitoring
@@ -266,7 +266,7 @@ This is a production-ready build of the AI Dependency Manager with core function
 
 ### GitHub Integration Bot (Enterprise Features)
 - 🔧 GitHub API integration foundation
-- 🔧 AI-powered patch generation capabilities
+- 🔧 Superintelligence-powered patch generation capabilities
 - 🔧 Enterprise approval workflows
 - 🔧 Batch processing system
 - 🔧 Analytics and reporting platform
@@ -283,41 +283,41 @@ This is a production-ready build of the AI Dependency Manager with core function
 
 ### Option 2: Docker Deployment
 ```bash
-docker build -t ai-dep-manager .
+docker build -t superint-dep-manager .
 docker-compose up -d
 ```
 
 ## 🔧 Configuration
 
 Edit the configuration file:
-- Native: `/etc/ai-dep-manager/config.yaml`
+- Native: `/etc/superint-dep-manager/config.yaml`
 - Docker: `config/config.yaml`
 
 ## 🌐 Access
 
 - Web Interface: http://localhost:8081
-- CLI: `/opt/ai-dep-manager/bin/ai-dep-manager`
+- CLI: `/opt/superint-dep-manager/bin/superint-dep-manager`
 
 ## 📊 Usage
 
 ```bash
 # Check version
-./ai-dep-manager version
+./superint-dep-manager version
 
 # Scan project
-./ai-dep-manager scan /path/to/project
+./superint-dep-manager scan /path/to/project
 
 # Check for updates
-./ai-dep-manager check
+./superint-dep-manager check
 
 # Start web server
-./ai-dep-manager serve
+./superint-dep-manager serve
 ```
 
 ## 🆘 Support
 
 For support and documentation:
-- GitHub: https://github.com/8tcapital/ai-dep-manager
+- GitHub: https://github.com/8tcapital/superint-dep-manager
 - Issues: Report issues for additional GitHub Integration Bot features
 
 ## 📄 License
@@ -332,12 +332,12 @@ echo ""
 echo -e "${GREEN}✅ Production build completed successfully!${NC}"
 echo -e "${GREEN}================================================${NC}"
 echo -e "Build directory: ${BLUE}build/${NC}"
-echo -e "Binary: ${BLUE}build/ai-dep-manager${NC}"
+echo -e "Binary: ${BLUE}build/superint-dep-manager${NC}"
 echo -e "Size: ${BLUE}$BINARY_SIZE${NC}"
 echo ""
 echo -e "${YELLOW}🚀 Deployment options:${NC}"
 echo -e "  Native: ${BLUE}cd build && ./deploy.sh${NC}"
 echo -e "  Docker: ${BLUE}cd build && docker-compose up -d${NC}"
 echo ""
-echo -e "${GREEN}🎉 AI Dependency Manager Production Build Ready!${NC}"
+echo -e "${GREEN}🎉 Superintelligence Dependency Manager Production Build Ready!${NC}"
 echo -e "${GREEN}Core functionality with GitHub Integration Bot foundation complete.${NC}"

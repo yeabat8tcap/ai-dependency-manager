@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/models"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager"
-	pmtypes "github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
-	"github.com/8tcapital/ai-dep-manager/internal/scanner"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
-	testingPkg "github.com/8tcapital/ai-dep-manager/internal/testing"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager"
+	pmtypes "github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/scanner"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
+	testingPkg "github.com/8tcapital/superint-dep-manager/internal/testing"
 )
 
 // MockPackageManager implements PackageManager interface for testing

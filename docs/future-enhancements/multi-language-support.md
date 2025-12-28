@@ -1,6 +1,6 @@
 # Multi-Language Project Support
 
-This document outlines the architecture for supporting multi-language projects and polyglot codebases in the AI Dependency Manager, enabling comprehensive dependency management across diverse technology stacks.
+This document outlines the architecture for supporting multi-language projects and polyglot codebases in the Superintelligence Dependency Manager, enabling comprehensive dependency management across diverse technology stacks.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document outlines the architecture for supporting multi-language projects a
 
 ## Overview
 
-Modern applications often use multiple programming languages and ecosystems. This architecture enables the AI Dependency Manager to handle polyglot projects with dependencies spanning multiple languages, package managers, and runtime environments.
+Modern applications often use multiple programming languages and ecosystems. This architecture enables the Superintelligence Dependency Manager to handle polyglot projects with dependencies spanning multiple languages, package managers, and runtime environments.
 
 ### Key Capabilities
 

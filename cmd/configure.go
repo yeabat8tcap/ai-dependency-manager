@@ -8,9 +8,9 @@ import (
 	"strings"
 
 
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager"
-	pmtypes "github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager"
+	pmtypes "github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 

@@ -1,6 +1,6 @@
 # API Server Architecture
 
-This document outlines the design and architecture for the AI Dependency Manager API Server, providing REST and GraphQL APIs for remote access, integrations, and web/mobile interfaces.
+This document outlines the design and architecture for the Superintelligence Dependency Manager API Server, providing REST and GraphQL APIs for remote access, integrations, and web/mobile interfaces.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This document outlines the design and architecture for the AI Dependency Manager
 
 ## Overview
 
-The API Server provides programmatic access to the AI Dependency Manager functionality, enabling integration with external tools, web dashboards, mobile applications, and third-party services.
+The API Server provides programmatic access to the Superintelligence Dependency Manager functionality, enabling integration with external tools, web dashboards, mobile applications, and third-party services.
 
 ### Key Features
 
@@ -870,4 +870,4 @@ func (c *Client) handleMessage(data []byte) {
 - [ ] Add security hardening
 - [ ] Build client SDKs and examples
 
-This API server architecture provides a robust, scalable foundation for remote access to the AI Dependency Manager functionality.
+This API server architecture provides a robust, scalable foundation for remote access to the Superintelligence Dependency Manager functionality.

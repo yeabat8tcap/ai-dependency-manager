@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/agent"
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/agent"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // Daemon manages the background service lifecycle
@@ -49,7 +49,7 @@ func (d *Daemon) Start() error {
 		return fmt.Errorf("daemon is already running (PID: %d)", d.GetPID())
 	}
 	
-	logger.Info("Starting AI Dependency Manager daemon")
+	logger.Info("Starting Superintelligence Dependency Manager daemon")
 	
 	// Create PID file directory if it doesn't exist
 	pidDir := filepath.Dir(d.pidFile)
@@ -221,12 +221,12 @@ func (d *Daemon) waitForShutdown() {
 func getDaemonConfig(cfg *config.Config) *DaemonConfig {
 	dataDir := cfg.DataDir
 	if dataDir == "" {
-		dataDir = filepath.Join(os.Getenv("HOME"), ".ai-dep-manager")
+		dataDir = filepath.Join(os.Getenv("HOME"), ".superint-dep-manager")
 	}
 	
 	return &DaemonConfig{
-		PidFile:    filepath.Join(dataDir, "ai-dep-manager.pid"),
-		LogFile:    filepath.Join(dataDir, "ai-dep-manager.log"),
+		PidFile:    filepath.Join(dataDir, "superint-dep-manager.pid"),
+		LogFile:    filepath.Join(dataDir, "superint-dep-manager.log"),
 		WorkingDir: dataDir,
 	}
 }
@@ -240,7 +240,7 @@ func (d *Daemon) InstallService() error {
 	// macOS: launchd plist
 	// Windows: Windows service
 	
-	logger.Info("Installing AI Dependency Manager as system service")
+	logger.Info("Installing Superintelligence Dependency Manager as system service")
 	
 	// For now, create a basic systemd service file on Linux
 	return d.createSystemdService()
@@ -248,7 +248,7 @@ func (d *Daemon) InstallService() error {
 
 // UninstallService removes the daemon from system services
 func (d *Daemon) UninstallService() error {
-	logger.Info("Uninstalling AI Dependency Manager system service")
+	logger.Info("Uninstalling Superintelligence Dependency Manager system service")
 	
 	// This would remove the service based on the platform
 	return d.removeSystemdService()
@@ -256,7 +256,7 @@ func (d *Daemon) UninstallService() error {
 
 func (d *Daemon) createSystemdService() error {
 	serviceContent := `[Unit]
-Description=AI Dependency Manager
+Description=Superintelligence Dependency Manager
 After=network.target
 
 [Service]
@@ -288,7 +288,7 @@ WantedBy=multi-user.target
 	serviceFile := fmt.Sprintf(serviceContent, user, workingDir, execPath, execPath)
 	
 	// Write service file (requires sudo)
-	servicePath := "/etc/systemd/system/ai-dep-manager.service"
+	servicePath := "/etc/systemd/system/superint-dep-manager.service"
 	logger.Info("Creating systemd service file: %s", servicePath)
 	logger.Warn("Note: This requires sudo privileges")
 	
@@ -297,7 +297,7 @@ WantedBy=multi-user.target
 }
 
 func (d *Daemon) removeSystemdService() error {
-	servicePath := "/etc/systemd/system/ai-dep-manager.service"
+	servicePath := "/etc/systemd/system/superint-dep-manager.service"
 	
 	if err := os.Remove(servicePath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove service file: %w", err)

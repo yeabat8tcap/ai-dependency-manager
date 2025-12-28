@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	aitypes "github.com/8tcapital/ai-dep-manager/internal/ai/types"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
-	"github.com/8tcapital/ai-dep-manager/internal/packagemanager"
-	pmtypes "github.com/8tcapital/ai-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	aitypes "github.com/8tcapital/superint-dep-manager/internal/superint/types"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/packagemanager"
+	pmtypes "github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 	"gorm.io/gorm"
 )
 
@@ -59,8 +59,8 @@ type UpdatePlan struct {
 type UpdateGroup struct {
 	Name         string                 `json:"name"`
 	Description  string                 `json:"description"`
-	Priority     ai.Priority            `json:"priority"`
-	RiskLevel    ai.RiskLevel           `json:"risk_level"`
+	Priority     superint.Priority            `json:"priority"`
+	RiskLevel    superint.RiskLevel           `json:"risk_level"`
 	Updates      []UpdateItem           `json:"updates"`
 	Dependencies []string               `json:"dependencies"` // Other groups this depends on
 	CanParallel  bool                   `json:"can_parallel"`
@@ -74,7 +74,7 @@ type UpdateItem struct {
 	FromVersion      string                 `json:"from_version"`
 	ToVersion        string                 `json:"to_version"`
 	UpdateType       string                 `json:"update_type"`
-	RiskLevel        ai.RiskLevel           `json:"risk_level"`
+	RiskLevel        superint.RiskLevel           `json:"risk_level"`
 	BreakingChange   bool                   `json:"breaking_change"`
 	SecurityFix      bool                   `json:"security_fix"`
 	Confidence       float64                `json:"confidence"`
@@ -91,7 +91,7 @@ type UpdateRiskSummary struct {
 	CriticalRisk     int `json:"critical_risk"`
 	BreakingChanges  int `json:"breaking_changes"`
 	SecurityUpdates  int `json:"security_updates"`
-	OverallRisk      ai.RiskLevel `json:"overall_risk"`
+	OverallRisk      superint.RiskLevel `json:"overall_risk"`
 }
 
 // UpdateResult represents the result of applying updates
@@ -274,7 +274,7 @@ func (us *UpdateService) ApplyUpdates(ctx context.Context, plan *UpdatePlan, opt
 	return result, nil
 }
 
-// GetUpdateRecommendations provides AI-powered update recommendations
+// GetUpdateRecommendations provides Superintelligence-powered update recommendations
 func (us *UpdateService) GetUpdateRecommendations(ctx context.Context, projectID uint) ([]string, error) {
 	// Get pending updates with AI predictions
 	updates, err := us.getPendingUpdatesWithPredictions(projectID)

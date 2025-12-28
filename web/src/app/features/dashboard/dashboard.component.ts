@@ -56,7 +56,7 @@ export interface ProjectSummary {
       <div class="dashboard-header">
         <h1 class="dashboard-title">
           <mat-icon class="title-icon">dashboard</mat-icon>
-          AI Dependency Manager Dashboard
+          Superintelligence Dependency Manager Dashboard
         </h1>
         <div class="system-status" [class]="'status-' + dashboardStats.systemHealth">
           <mat-icon>{{ getSystemStatusIcon() }}</mat-icon>

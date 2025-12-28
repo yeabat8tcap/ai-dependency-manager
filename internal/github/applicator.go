@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
 )
 
 // PatchApplicator handles intelligent patch application with conflict resolution
@@ -22,7 +22,7 @@ type PatchApplicator struct {
 }
 
 // NewPatchApplicator creates a new patch applicator
-func NewPatchApplicator(client *Client, aiManager *ai.AIManager) *PatchApplicator {
+func NewPatchApplicator(client *Client, aiManager *superint.AIManager) *PatchApplicator {
 	adapter := NewAIAdapter(aiManager)
 	validator := NewPatchValidator()
 	conflictResolver := NewConflictResolver(adapter)

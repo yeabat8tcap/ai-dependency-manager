@@ -339,20 +339,20 @@ func (li *LinearIntegration) UpdateIssue(ctx context.Context, issueID string, up
 }
 
 // CreateTask creates an Asana task
-func (ai *AsanaIntegration) CreateTask(ctx context.Context, req *IssueRequest) (*IssueResponse, error) {
+func (as *AsanaIntegration) CreateTask(ctx context.Context, req *IssueRequest) (*IssueResponse, error) {
 	// Simulate Asana API call
 	taskID := fmt.Sprintf("task_%d", time.Now().Unix())
 
 	response := &IssueResponse{
 		ID:        taskID,
 		Key:       taskID,
-		URL:       fmt.Sprintf("https://app.asana.com/0/%s/%s", ai.config.ProjectID, taskID),
+		URL:       fmt.Sprintf("https://app.asana.com/0/%s/%s", as.config.ProjectID, taskID),
 		Status:    "New",
 		Platform:  "asana",
 		CreatedAt: time.Now(),
 		Metadata: map[string]interface{}{
-			"workspace_id": ai.config.WorkspaceID,
-			"project_id":   ai.config.ProjectID,
+			"workspace_id": as.config.WorkspaceID,
+			"project_id":   as.config.ProjectID,
 		},
 	}
 
@@ -360,7 +360,7 @@ func (ai *AsanaIntegration) CreateTask(ctx context.Context, req *IssueRequest) (
 }
 
 // UpdateTask updates an Asana task
-func (ai *AsanaIntegration) UpdateTask(ctx context.Context, taskID string, updates map[string]interface{}) error {
+func (as *AsanaIntegration) UpdateTask(ctx context.Context, taskID string, updates map[string]interface{}) error {
 	// Simulate Asana API call to update task
 	return nil
 }

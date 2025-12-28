@@ -1,6 +1,6 @@
 # CI/CD Pipeline Integration Architecture
 
-This document outlines the architecture for integrating the AI Dependency Manager with popular CI/CD platforms to provide automated dependency management within development workflows.
+This document outlines the architecture for integrating the Superintelligence Dependency Manager with popular CI/CD platforms to provide automated dependency management within development workflows.
 
 ## Table of Contents
 
@@ -17,12 +17,12 @@ This document outlines the architecture for integrating the AI Dependency Manage
 
 ## Overview
 
-CI/CD integration enables the AI Dependency Manager to automatically scan dependencies, assess risks, and propose updates as part of the development workflow. This ensures that dependency management becomes an integral part of the software development lifecycle.
+CI/CD integration enables the Superintelligence Dependency Manager to automatically scan dependencies, assess risks, and propose updates as part of the development workflow. This ensures that dependency management becomes an integral part of the software development lifecycle.
 
 ### Key Benefits
 
 - **Automated Scanning**: Dependency scans on every commit/PR
-- **Risk Assessment**: AI-powered risk analysis in CI/CD context
+- **Risk Assessment**: Superintelligence-powered risk analysis in CI/CD context
 - **Automated Updates**: Safe, automated dependency updates
 - **Security Gates**: Block deployments with critical vulnerabilities
 - **Compliance Reporting**: Generate compliance reports for audits
@@ -145,7 +145,7 @@ type SecurityGates struct {
 
 ```yaml
 # .github/workflows/dependency-scan.yml
-name: AI Dependency Manager
+name: Superintelligence Dependency Manager
 
 on:
   push:
@@ -162,11 +162,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: AI Dependency Manager Scan
-      uses: 8tcapital/ai-dep-manager-action@v1
+    - name: Superintelligence Dependency Manager Scan
+      uses: 8tcapital/superint-dep-manager-action@v1
       with:
         # Configuration
-        config-file: '.ai-dep-manager.yml'
+        config-file: '.superint-dep-manager.yml'
         scan-on-push: true
         scan-on-pr: true
         auto-update: false
@@ -201,7 +201,7 @@ jobs:
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('dependency-report.json', 'utf8'));
           
-          const comment = `## 🤖 AI Dependency Manager Report
+          const comment = `## 🤖 Superintelligence Dependency Manager Report
           
           **Scan Summary:**
           - Total Dependencies: ${report.total_dependencies}
@@ -248,7 +248,7 @@ async function run(): Promise<void> {
     const inputs = getInputs();
     const context = github.context;
     
-    // Install AI Dependency Manager
+    // Install Superintelligence Dependency Manager
     await installAIDependencyManager();
     
     // Configure
@@ -269,7 +269,7 @@ async function run(): Promise<void> {
 }
 
 async function runScan(context: any, inputs: ActionInputs): Promise<ScanResults> {
-  const command = 'ai-dep-manager';
+  const command = 'superint-dep-manager';
   const args = [
     'scan',
     '--format', 'json',
@@ -338,10 +338,10 @@ public class AIDependencyManagerBuilder extends Builder implements SimpleBuildSt
                        Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         
         PrintStream logger = listener.getLogger();
-        logger.println("Starting AI Dependency Manager scan...");
+        logger.println("Starting Superintelligence Dependency Manager scan...");
         
         try {
-            // Install AI Dependency Manager if not present
+            // Install Superintelligence Dependency Manager if not present
             installAIDependencyManager(workspace, launcher, listener);
             
             // Configure
@@ -356,10 +356,10 @@ public class AIDependencyManagerBuilder extends Builder implements SimpleBuildSt
             // Apply security gates
             applySecurityGates(run, results);
             
-            logger.println("AI Dependency Manager scan completed successfully");
+            logger.println("Superintelligence Dependency Manager scan completed successfully");
             
         } catch (Exception e) {
-            logger.println("AI Dependency Manager scan failed: " + e.getMessage());
+            logger.println("Superintelligence Dependency Manager scan failed: " + e.getMessage());
             if (blockOnCritical) {
                 run.setResult(Result.FAILURE);
             }
@@ -371,7 +371,7 @@ public class AIDependencyManagerBuilder extends Builder implements SimpleBuildSt
             throws IOException, InterruptedException {
         
         ArgumentListBuilder args = new ArgumentListBuilder();
-        args.add("ai-dep-manager");
+        args.add("superint-dep-manager");
         args.add("scan");
         args.add("--format", "json");
         args.add("--output", "dependency-report.json");
@@ -385,7 +385,7 @@ public class AIDependencyManagerBuilder extends Builder implements SimpleBuildSt
         
         int exitCode = proc.join();
         if (exitCode != 0) {
-            throw new IOException("AI Dependency Manager scan failed with exit code: " + exitCode);
+            throw new IOException("Superintelligence Dependency Manager scan failed with exit code: " + exitCode);
         }
         
         // Read results
@@ -448,7 +448,7 @@ pipeline {
             steps {
                 script {
                     def scanResults = aiDependencyManager(
-                        configFile: '.ai-dep-manager.yml',
+                        configFile: '.superint-dep-manager.yml',
                         scanOnBuild: true,
                         autoUpdate: false,
                         blockOnCritical: true,
@@ -521,9 +521,9 @@ pipeline {
 ```yaml
 # .gitlab-ci.yml
 include:
-  - component: 8tcapital.com/ai-dep-manager/scan@v1
+  - component: 8tcapital.com/superint-dep-manager/scan@v1
     inputs:
-      config-file: '.ai-dep-manager.yml'
+      config-file: '.superint-dep-manager.yml'
       scan-on-push: true
       auto-update: false
       block-on-critical: true
@@ -534,7 +534,7 @@ stages:
   - deploy
 
 dependency-scan:
-  extends: .ai-dep-manager-scan
+  extends: .superint-dep-manager-scan
   stage: dependency-scan
   artifacts:
     reports:
@@ -550,10 +550,10 @@ dependency-scan:
 # Custom implementation
 ai-dependency-scan:
   stage: dependency-scan
-  image: 8tcapital/ai-dep-manager:latest
+  image: 8tcapital/superint-dep-manager:latest
   script:
-    - ai-dep-manager scan --format json --output dependency-report.json
-    - ai-dep-manager report generate html --output dependency-report.html
+    - superint-dep-manager scan --format json --output dependency-report.json
+    - superint-dep-manager report generate html --output dependency-report.html
   artifacts:
     reports:
       dependency_scanning: dependency-report.json
@@ -569,11 +569,11 @@ ai-dependency-scan:
 ### GitLab Component Definition
 
 ```yaml
-# ai-dep-manager-scan.yml - GitLab CI Component
+# superint-dep-manager-scan.yml - GitLab CI Component
 spec:
   inputs:
     config-file:
-      default: '.ai-dep-manager.yml'
+      default: '.superint-dep-manager.yml'
     scan-on-push:
       default: true
     auto-update:
@@ -584,10 +584,10 @@ spec:
       default: 'json'
 
 ---
-.ai-dep-manager-scan:
-  image: 8tcapital/ai-dep-manager:latest
+.superint-dep-manager-scan:
+  image: 8tcapital/superint-dep-manager:latest
   before_script:
-    - echo "Configuring AI Dependency Manager..."
+    - echo "Configuring Superintelligence Dependency Manager..."
     - |
       if [ -f "$[[ inputs.config-file ]]" ]; then
         echo "Using config file: $[[ inputs.config-file ]]"
@@ -596,7 +596,7 @@ spec:
       fi
   script:
     - echo "Starting dependency scan..."
-    - ai-dep-manager scan --format json --output dependency-report.json
+    - superint-dep-manager scan --format json --output dependency-report.json
     - |
       if [ "$[[ inputs.block-on-critical ]]" = "true" ]; then
         CRITICAL_COUNT=$(jq '.vulnerabilities | map(select(.severity == "CRITICAL")) | length' dependency-report.json)
@@ -607,7 +607,7 @@ spec:
       fi
     - echo "✅ Dependency scan completed successfully"
   after_script:
-    - ai-dep-manager report generate html --output dependency-report.html
+    - superint-dep-manager report generate html --output dependency-report.html
   artifacts:
     reports:
       dependency_scanning: dependency-report.json
@@ -634,13 +634,13 @@ async function run() {
         const blockOnCritical = tl.getBoolInput('blockOnCritical', true);
         const reportFormat = tl.getInput('reportFormat', false) || 'json';
 
-        console.log('Starting AI Dependency Manager scan...');
+        console.log('Starting Superintelligence Dependency Manager scan...');
 
-        // Install AI Dependency Manager
+        // Install Superintelligence Dependency Manager
         await installAIDependencyManager();
 
         // Run scan
-        const aiDepManager = tl.tool('ai-dep-manager');
+        const aiDepManager = tl.tool('superint-dep-manager');
         aiDepManager.arg('scan');
         aiDepManager.arg(['--format', 'json']);
         aiDepManager.arg(['--output', 'dependency-report.json']);
@@ -652,7 +652,7 @@ async function run() {
         const exitCode = await aiDepManager.exec();
         
         if (exitCode !== 0) {
-            tl.setResult(tl.TaskResult.Failed, 'AI Dependency Manager scan failed');
+            tl.setResult(tl.TaskResult.Failed, 'Superintelligence Dependency Manager scan failed');
             return;
         }
 
@@ -669,7 +669,7 @@ async function run() {
         // Upload results
         await uploadResults(reportFormat);
 
-        console.log('AI Dependency Manager scan completed successfully');
+        console.log('Superintelligence Dependency Manager scan completed successfully');
         tl.setResult(tl.TaskResult.Succeeded, 'Scan completed');
 
     } catch (err) {
@@ -703,12 +703,12 @@ stages:
   displayName: 'Dependency Scan'
   jobs:
   - job: Scan
-    displayName: 'AI Dependency Manager Scan'
+    displayName: 'Superintelligence Dependency Manager Scan'
     steps:
     - task: AIDependencyManager@1
       displayName: 'Scan Dependencies'
       inputs:
-        configFile: '.ai-dep-manager.yml'
+        configFile: '.superint-dep-manager.yml'
         scanOnBuild: true
         autoUpdate: false
         blockOnCritical: true
@@ -807,7 +807,7 @@ func (wh *WebhookHandler) parseEvent(r *http.Request) (*CICDEvent, error) {
 ### Configuration Examples
 
 ```yaml
-# .ai-dep-manager.yml - Universal configuration
+# .superint-dep-manager.yml - Universal configuration
 version: "1.0"
 
 # CI/CD Integration settings

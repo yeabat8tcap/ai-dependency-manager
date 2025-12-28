@@ -1,6 +1,6 @@
-# AI Dependency Manager - Security Guide
+# Superintelligence Dependency Manager - Security Guide
 
-This guide covers security features, best practices, and considerations for using the AI Dependency Manager in production environments.
+This guide covers security features, best practices, and considerations for using the Superintelligence Dependency Manager in production environments.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This guide covers security features, best practices, and considerations for usin
 
 ## Security Overview
 
-The AI Dependency Manager implements multiple layers of security to protect your software supply chain:
+The Superintelligence Dependency Manager implements multiple layers of security to protect your software supply chain:
 
 - **Package Integrity Verification**: SHA-256 checksum validation
 - **Vulnerability Scanning**: Integration with security databases
@@ -30,7 +30,7 @@ The AI Dependency Manager implements multiple layers of security to protect your
 
 ### Vulnerability Scanning
 
-The AI Dependency Manager integrates with multiple vulnerability databases:
+The Superintelligence Dependency Manager integrates with multiple vulnerability databases:
 
 - **npm audit**: npm's built-in security auditing
 - **PyPI Safety**: Python package vulnerability database
@@ -55,16 +55,16 @@ security:
 
 ```bash
 # Scan for vulnerabilities
-ai-dep-manager security scan --all
+superint-dep-manager security scan --all
 
 # Scan specific project
-ai-dep-manager security scan --project-id 1
+superint-dep-manager security scan --project-id 1
 
 # Filter by severity
-ai-dep-manager security scan --severity high
+superint-dep-manager security scan --severity high
 
 # Export vulnerability report
-ai-dep-manager security vulnerabilities --format json --output vulns.json
+superint-dep-manager security vulnerabilities --format json --output vulns.json
 ```
 
 ### Package Integrity Verification
@@ -84,10 +84,10 @@ security:
 
 ```bash
 # Verify specific package
-ai-dep-manager security verify-package express@4.18.0
+superint-dep-manager security verify-package express@4.18.0
 
 # Verify all packages in project
-ai-dep-manager security verify --project-id 1
+superint-dep-manager security verify --project-id 1
 ```
 
 ### Malicious Package Detection
@@ -129,24 +129,24 @@ security:
 
 ```bash
 # Add npm registry credentials
-ai-dep-manager security credentials add npm \
+superint-dep-manager security credentials add npm \
   --username myuser \
   --password mypass \
   --registry https://registry.npmjs.org/
 
 # Add private registry credentials
-ai-dep-manager security credentials add private-npm \
+superint-dep-manager security credentials add private-npm \
   --token "${NPM_TOKEN}" \
   --registry https://npm.company.com/
 
 # List stored credentials (passwords hidden)
-ai-dep-manager security credentials list
+superint-dep-manager security credentials list
 
 # Update credentials
-ai-dep-manager security credentials update npm --password newpass
+superint-dep-manager security credentials update npm --password newpass
 
 # Remove credentials
-ai-dep-manager security credentials remove npm
+superint-dep-manager security credentials remove npm
 ```
 
 ### Environment Variables
@@ -167,21 +167,21 @@ Control which packages can be installed:
 
 ```bash
 # Enable whitelist mode
-ai-dep-manager configure set security.whitelist_enabled true
+superint-dep-manager configure set security.whitelist_enabled true
 
 # Add packages to whitelist
-ai-dep-manager security rules add --type whitelist --pattern "express*"
-ai-dep-manager security rules add --type whitelist --pattern "@types/*"
+superint-dep-manager security rules add --type whitelist --pattern "express*"
+superint-dep-manager security rules add --type whitelist --pattern "@types/*"
 
 # Add packages to blacklist
-ai-dep-manager security rules add --type blacklist --pattern "malicious-package"
-ai-dep-manager security rules add --type blacklist --pattern "suspicious-*"
+superint-dep-manager security rules add --type blacklist --pattern "malicious-package"
+superint-dep-manager security rules add --type blacklist --pattern "suspicious-*"
 
 # List all rules
-ai-dep-manager security rules list
+superint-dep-manager security rules list
 
 # Test rule against package
-ai-dep-manager security rules test express@4.18.0
+superint-dep-manager security rules test express@4.18.0
 ```
 
 ### Approval Workflows
@@ -232,8 +232,8 @@ network:
   tls:
     enabled: true
     min_version: "1.2"
-    cert_file: "/etc/ssl/certs/ai-dep-manager.crt"
-    key_file: "/etc/ssl/private/ai-dep-manager.key"
+    cert_file: "/etc/ssl/certs/superint-dep-manager.crt"
+    key_file: "/etc/ssl/private/superint-dep-manager.key"
 ```
 
 ### Proxy Configuration
@@ -284,13 +284,13 @@ Secure file permissions:
 
 ```bash
 # Set secure permissions
-chmod 700 ~/.ai-dep-manager/
-chmod 600 ~/.ai-dep-manager/config.yaml
-chmod 600 ~/.ai-dep-manager/data.db
+chmod 700 ~/.superint-dep-manager/
+chmod 600 ~/.superint-dep-manager/config.yaml
+chmod 600 ~/.superint-dep-manager/data.db
 
 # Use dedicated user account
-sudo useradd --system --shell /bin/false ai-dep-manager
-sudo chown -R ai-dep-manager:ai-dep-manager /var/lib/ai-dep-manager/
+sudo useradd --system --shell /bin/false superint-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /var/lib/superint-dep-manager/
 ```
 
 ### Memory Protection
@@ -315,7 +315,7 @@ Enable comprehensive audit logging:
 logging:
   audit:
     enabled: true
-    file: "/var/log/ai-dep-manager/audit.log"
+    file: "/var/log/superint-dep-manager/audit.log"
     format: "json"
     events:
       - "authentication"
@@ -357,10 +357,10 @@ Track security-related metrics:
 
 ```bash
 # Generate security report
-ai-dep-manager report generate security --days 30
+superint-dep-manager report generate security --days 30
 
 # View security metrics
-ai-dep-manager report analytics security
+superint-dep-manager report analytics security
 ```
 
 ## Security Best Practices
@@ -369,10 +369,10 @@ ai-dep-manager report analytics security
 
 ```bash
 # Schedule regular vulnerability scans
-ai-dep-manager configure set agent.security_scan_schedule "0 6 * * *"
+superint-dep-manager configure set agent.security_scan_schedule "0 6 * * *"
 
 # Enable automatic security updates
-ai-dep-manager configure set agent.auto_security_updates true
+superint-dep-manager configure set agent.auto_security_updates true
 ```
 
 ### 2. Principle of Least Privilege
@@ -417,7 +417,7 @@ network:
 
 ### 5. Regular Updates
 
-- Keep the AI Dependency Manager updated
+- Keep the Superintelligence Dependency Manager updated
 - Update vulnerability databases regularly
 - Monitor security advisories
 - Apply security patches promptly
@@ -430,13 +430,13 @@ Monitor for security events:
 
 ```bash
 # Monitor audit logs
-tail -f /var/log/ai-dep-manager/audit.log | grep SECURITY
+tail -f /var/log/superint-dep-manager/audit.log | grep SECURITY
 
 # Check for failed authentication attempts
-ai-dep-manager logs --level error --grep "authentication failed"
+superint-dep-manager logs --level error --grep "authentication failed"
 
 # Review security scan results
-ai-dep-manager security scan --all --format json | jq '.vulnerabilities[]'
+superint-dep-manager security scan --all --format json | jq '.vulnerabilities[]'
 ```
 
 ### Incident Response Procedures
@@ -452,16 +452,16 @@ ai-dep-manager security scan --all --format json | jq '.vulnerabilities[]'
 
 ```bash
 # Emergency stop
-ai-dep-manager agent stop
+superint-dep-manager agent stop
 
 # Disable auto-updates
-ai-dep-manager configure set agent.auto_update false
+superint-dep-manager configure set agent.auto_update false
 
 # Enable strict security mode
-ai-dep-manager configure set security.strict_mode true
+superint-dep-manager configure set security.strict_mode true
 
 # Generate emergency security report
-ai-dep-manager report generate security --emergency
+superint-dep-manager report generate security --emergency
 ```
 
 ## Security Configuration
@@ -493,7 +493,7 @@ security:
 logging:
   audit:
     enabled: true
-    file: "/var/log/ai-dep-manager/audit.log"
+    file: "/var/log/superint-dep-manager/audit.log"
     format: "json"
     max_size: "500MB"
     max_backups: 10
@@ -514,13 +514,13 @@ database:
 
 ```bash
 # Monitor security events
-ai-dep-manager security monitor --real-time
+superint-dep-manager security monitor --real-time
 
 # Generate security dashboard
-ai-dep-manager report generate security-dashboard --output dashboard.html
+superint-dep-manager report generate security-dashboard --output dashboard.html
 
 # Check security status
-ai-dep-manager security status --detailed
+superint-dep-manager security status --detailed
 ```
 
 ### Security Testing
@@ -530,10 +530,10 @@ ai-dep-manager security status --detailed
 make test-security
 
 # Vulnerability assessment
-ai-dep-manager security assess --all
+superint-dep-manager security assess --all
 
 # Penetration testing support
-ai-dep-manager security pentest-mode --enable
+superint-dep-manager security pentest-mode --enable
 ```
 
 ## Security Checklist
@@ -567,4 +567,4 @@ ai-dep-manager security pentest-mode --enable
 For additional security support:
 - Security issues: security@8tcapital.com
 - Security documentation: [docs/security/](security/)
-- Security advisories: [GitHub Security Advisories](https://github.com/8tcapital/ai-dep-manager/security/advisories)
+- Security advisories: [GitHub Security Advisories](https://github.com/8tcapital/superint-dep-manager/security/advisories)

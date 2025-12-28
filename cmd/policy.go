@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
@@ -296,8 +296,8 @@ func runListPolicies(cmd *cobra.Command, args []string) {
 	if len(policies) == 0 {
 		fmt.Println("No policies configured.")
 		fmt.Println()
-		fmt.Println("💡 Use 'ai-dep-manager policy create [name]' to create a policy")
-		fmt.Println("💡 Use 'ai-dep-manager policy template [type]' to see policy templates")
+		fmt.Println("💡 Use 'superint-dep-manager policy create [name]' to create a policy")
+		fmt.Println("💡 Use 'superint-dep-manager policy template [type]' to see policy templates")
 		return
 	}
 	
@@ -329,7 +329,7 @@ func runListPolicies(cmd *cobra.Command, args []string) {
 	fmt.Println()
 	fmt.Printf("Total: %d policies\n", len(policies))
 	fmt.Println()
-	fmt.Println("💡 Use 'ai-dep-manager policy show [id]' to view policy details")
+	fmt.Println("💡 Use 'superint-dep-manager policy show [id]' to view policy details")
 }
 
 func runShowPolicy(cmd *cobra.Command, args []string) {
@@ -603,7 +603,7 @@ func showSecurityPolicyTemplate() {
 	fmt.Println("  - Run tests: true")
 	fmt.Println("  - Rollback on fail: true")
 	fmt.Println()
-	fmt.Println("💡 Use: ai-dep-manager policy create security-policy --description 'Auto-apply security updates'")
+	fmt.Println("💡 Use: superint-dep-manager policy create security-policy --description 'Auto-apply security updates'")
 }
 
 func showConservativePolicyTemplate() {
@@ -621,7 +621,7 @@ func showConservativePolicyTemplate() {
 	fmt.Println("  - Delay days: 7")
 	fmt.Println("  - Run tests: true")
 	fmt.Println()
-	fmt.Println("💡 Use: ai-dep-manager policy create conservative-policy --description 'Conservative update approach'")
+	fmt.Println("💡 Use: superint-dep-manager policy create conservative-policy --description 'Conservative update approach'")
 }
 
 func showAggressivePolicyTemplate() {
@@ -639,7 +639,7 @@ func showAggressivePolicyTemplate() {
 	fmt.Println("  - Run tests: true")
 	fmt.Println("  - Rollback on fail: true")
 	fmt.Println()
-	fmt.Println("💡 Use: ai-dep-manager policy create aggressive-policy --description 'Aggressive auto-updates'")
+	fmt.Println("💡 Use: superint-dep-manager policy create aggressive-policy --description 'Aggressive auto-updates'")
 }
 
 func showBusinessHoursPolicyTemplate() {
@@ -656,7 +656,7 @@ func showBusinessHoursPolicyTemplate() {
 	fmt.Println("  - Notify channels: slack")
 	fmt.Println("  - Run tests: true")
 	fmt.Println()
-	fmt.Println("💡 Use: ai-dep-manager policy create business-hours --description 'Updates during business hours only'")
+	fmt.Println("💡 Use: superint-dep-manager policy create business-hours --description 'Updates during business hours only'")
 }
 
 func showStagedPolicyTemplate() {
@@ -675,5 +675,5 @@ func showStagedPolicyTemplate() {
 	fmt.Println("  - Run tests: true")
 	fmt.Println("  - Rollback on fail: true")
 	fmt.Println()
-	fmt.Println("💡 Use: ai-dep-manager policy create staged-rollout --description 'Staged rollout of updates'")
+	fmt.Println("💡 Use: superint-dep-manager policy create staged-rollout --description 'Staged rollout of updates'")
 }

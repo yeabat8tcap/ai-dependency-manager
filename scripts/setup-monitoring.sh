@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# AI Dependency Manager - Production Monitoring Setup Script
+# Superintelligence Dependency Manager - Production Monitoring Setup Script
 # This script sets up comprehensive monitoring and logging for production
 
 set -e
 
 # Configuration
-APP_NAME="ai-dep-manager"
-DEPLOY_DIR="/opt/ai-dep-manager"
-MONITORING_DIR="/opt/ai-dep-manager/monitoring"
-USER="ai-dep-manager"
-GROUP="ai-dep-manager"
+APP_NAME="superint-dep-manager"
+DEPLOY_DIR="/opt/superint-dep-manager"
+MONITORING_DIR="/opt/superint-dep-manager/monitoring"
+USER="superint-dep-manager"
+GROUP="superint-dep-manager"
 
 # Colors for output
 RED='\033[0;31m'
@@ -54,12 +54,12 @@ create_health_check() {
     cat > "$MONITORING_DIR/scripts/health-check.sh" << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager Health Check Script
+# Superintelligence Dependency Manager Health Check Script
 
-APP_NAME="ai-dep-manager"
-DEPLOY_DIR="/opt/ai-dep-manager"
-SERVICE_NAME="ai-dep-manager"
-LOG_FILE="/opt/ai-dep-manager/logs/health-check.log"
+APP_NAME="superint-dep-manager"
+DEPLOY_DIR="/opt/superint-dep-manager"
+SERVICE_NAME="superint-dep-manager"
+LOG_FILE="/opt/superint-dep-manager/logs/health-check.log"
 
 # Health check function
 check_health() {
@@ -74,13 +74,13 @@ check_health() {
     fi
     
     # Check if binary responds
-    if ! sudo -u ai-dep-manager "$DEPLOY_DIR/bin/$APP_NAME" version > /dev/null 2>&1; then
+    if ! sudo -u superint-dep-manager "$DEPLOY_DIR/bin/$APP_NAME" version > /dev/null 2>&1; then
         status="UNHEALTHY"
         issues+=("Binary not responding")
     fi
     
     # Check database connectivity
-    if ! sudo -u ai-dep-manager "$DEPLOY_DIR/bin/$APP_NAME" status > /dev/null 2>&1; then
+    if ! sudo -u superint-dep-manager "$DEPLOY_DIR/bin/$APP_NAME" status > /dev/null 2>&1; then
         status="UNHEALTHY"
         issues+=("Database connectivity issues")
     fi
@@ -129,11 +129,11 @@ create_metrics_script() {
     cat > "$MONITORING_DIR/scripts/collect-metrics.sh" << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager Metrics Collection Script
+# Superintelligence Dependency Manager Metrics Collection Script
 
-APP_NAME="ai-dep-manager"
-DEPLOY_DIR="/opt/ai-dep-manager"
-METRICS_FILE="/opt/ai-dep-manager/logs/metrics.log"
+APP_NAME="superint-dep-manager"
+DEPLOY_DIR="/opt/superint-dep-manager"
+METRICS_FILE="/opt/superint-dep-manager/logs/metrics.log"
 
 collect_metrics() {
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
@@ -152,8 +152,8 @@ collect_metrics() {
     local db_size=$(du -sh "$DEPLOY_DIR/data" 2>/dev/null | awk '{print $1}' || echo "N/A")
     
     # Service status
-    local service_status=$(systemctl is-active ai-dep-manager)
-    local uptime=$(systemctl show ai-dep-manager --property=ActiveEnterTimestamp | cut -d= -f2)
+    local service_status=$(systemctl is-active superint-dep-manager)
+    local uptime=$(systemctl show superint-dep-manager --property=ActiveEnterTimestamp | cut -d= -f2)
     
     # Log metrics in JSON format
     cat >> "$METRICS_FILE" << EOL
@@ -194,7 +194,7 @@ create_alert_script() {
     cat > "$MONITORING_DIR/scripts/send-alert.sh" << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager Alert Script
+# Superintelligence Dependency Manager Alert Script
 
 ALERT_TYPE="$1"
 MESSAGE="$2"
@@ -203,7 +203,7 @@ SEVERITY="${3:-INFO}"
 # Configuration
 WEBHOOK_URL="${WEBHOOK_URL:-}"
 EMAIL_TO="${EMAIL_TO:-admin@example.com}"
-LOG_FILE="/opt/ai-dep-manager/logs/alerts.log"
+LOG_FILE="/opt/superint-dep-manager/logs/alerts.log"
 
 send_alert() {
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
@@ -216,7 +216,7 @@ send_alert() {
         curl -X POST "$WEBHOOK_URL" \
              -H "Content-Type: application/json" \
              -d "{
-                 \"text\": \"🚨 AI Dependency Manager Alert\",
+                 \"text\": \"🚨 Superintelligence Dependency Manager Alert\",
                  \"attachments\": [{
                      \"color\": \"danger\",
                      \"fields\": [{
@@ -243,7 +243,7 @@ send_alert() {
     # Send email if mail command is available
     if command -v mail > /dev/null 2>&1; then
         echo "Alert: $ALERT_TYPE - $MESSAGE (Severity: $SEVERITY) at $timestamp" | \
-            mail -s "AI Dependency Manager Alert" "$EMAIL_TO"
+            mail -s "Superintelligence Dependency Manager Alert" "$EMAIL_TO"
     fi
 }
 
@@ -260,9 +260,9 @@ EOF
 setup_cron_jobs() {
     log_info "Setting up monitoring cron jobs..."
     
-    # Create cron jobs for the ai-dep-manager user
-    cat > "/tmp/ai-dep-manager-cron" << EOF
-# AI Dependency Manager Monitoring Cron Jobs
+    # Create cron jobs for the superint-dep-manager user
+    cat > "/tmp/superint-dep-manager-cron" << EOF
+# Superintelligence Dependency Manager Monitoring Cron Jobs
 
 # Health check every 5 minutes
 */5 * * * * $MONITORING_DIR/scripts/health-check.sh || $MONITORING_DIR/scripts/send-alert.sh "HEALTH_CHECK" "Health check failed" "CRITICAL"
@@ -277,8 +277,8 @@ setup_cron_jobs() {
 0 3 * * 0 find $DEPLOY_DIR/logs -name "*.log" -mtime +30 -delete
 EOF
 
-    crontab -u "$USER" "/tmp/ai-dep-manager-cron"
-    rm "/tmp/ai-dep-manager-cron"
+    crontab -u "$USER" "/tmp/superint-dep-manager-cron"
+    rm "/tmp/superint-dep-manager-cron"
     
     log_success "Monitoring cron jobs configured"
 }
@@ -288,19 +288,19 @@ create_log_config() {
     log_info "Creating log aggregation configuration..."
     
     # Create rsyslog configuration for application logs
-    cat > "/etc/rsyslog.d/50-ai-dep-manager.conf" << EOF
-# AI Dependency Manager log configuration
+    cat > "/etc/rsyslog.d/50-superint-dep-manager.conf" << EOF
+# Superintelligence Dependency Manager log configuration
 
 # Application logs
-:programname,isequal,"ai-dep-manager" /opt/ai-dep-manager/logs/application.log
+:programname,isequal,"superint-dep-manager" /opt/superint-dep-manager/logs/application.log
 & stop
 
 # Health check logs
-:msg,contains,"ai-dep-manager health" /opt/ai-dep-manager/logs/health.log
+:msg,contains,"superint-dep-manager health" /opt/superint-dep-manager/logs/health.log
 & stop
 
 # Metrics logs
-:msg,contains,"ai-dep-manager metrics" /opt/ai-dep-manager/logs/metrics.log
+:msg,contains,"superint-dep-manager metrics" /opt/superint-dep-manager/logs/metrics.log
 & stop
 EOF
 
@@ -317,9 +317,9 @@ create_dashboard_template() {
 {
   "dashboard": {
     "id": null,
-    "title": "AI Dependency Manager",
-    "description": "Monitoring dashboard for AI Dependency Manager",
-    "tags": ["ai-dep-manager", "dependencies", "monitoring"],
+    "title": "Superintelligence Dependency Manager",
+    "description": "Monitoring dashboard for Superintelligence Dependency Manager",
+    "tags": ["superint-dep-manager", "dependencies", "monitoring"],
     "timezone": "browser",
     "panels": [
       {
@@ -328,7 +328,7 @@ create_dashboard_template() {
         "type": "stat",
         "targets": [
           {
-            "expr": "up{job=\"ai-dep-manager\"}",
+            "expr": "up{job=\"superint-dep-manager\"}",
             "legendFormat": "Service Status"
           }
         ]
@@ -339,7 +339,7 @@ create_dashboard_template() {
         "type": "graph",
         "targets": [
           {
-            "expr": "process_cpu_seconds_total{job=\"ai-dep-manager\"}",
+            "expr": "process_cpu_seconds_total{job=\"superint-dep-manager\"}",
             "legendFormat": "CPU Usage"
           }
         ]
@@ -350,7 +350,7 @@ create_dashboard_template() {
         "type": "graph",
         "targets": [
           {
-            "expr": "process_resident_memory_bytes{job=\"ai-dep-manager\"}",
+            "expr": "process_resident_memory_bytes{job=\"superint-dep-manager\"}",
             "legendFormat": "Memory Usage"
           }
         ]
@@ -392,7 +392,7 @@ EOF
 
 # Main monitoring setup function
 main() {
-    log_info "Setting up AI Dependency Manager production monitoring..."
+    log_info "Setting up Superintelligence Dependency Manager production monitoring..."
     
     create_monitoring_structure
     create_health_check

@@ -3,7 +3,7 @@ export const environment = {
   staging: false, // Use real API data in production
   apiUrl: 'http://localhost:8081/api', // Go backend API
   wsUrl: 'ws://localhost:8081/ws',
-  appName: 'AI Dependency Manager',
+  appName: 'Superintelligence Dependency Manager',
   version: '1.0.0',
   dataSource: 'api', // 'mock' for staging, 'api' for production
   features: {

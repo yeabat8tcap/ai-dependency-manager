@@ -45,7 +45,7 @@ COPY . .
 COPY --from=frontend-builder /app/web/dist ./web/dist
 
 # Build the application with embedded frontend (SQLite compatible flags for Alpine)
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -tags="sqlite_omit_load_extension" -o ai-dep-manager .
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -tags="sqlite_omit_load_extension" -o superint-dep-manager .
 
 # Production runtime stage
 FROM alpine:latest
@@ -74,7 +74,7 @@ RUN addgroup -g 1001 -S appgroup && \
 WORKDIR /app
 
 # Copy binary from backend-builder stage
-COPY --from=backend-builder /app/ai-dep-manager .
+COPY --from=backend-builder /app/superint-dep-manager .
 
 # Copy configuration files
 COPY --from=backend-builder /app/config.yaml.example ./config.yaml.example
@@ -92,7 +92,7 @@ EXPOSE 8080 8081
 # Set environment variables for production deployment
 ENV AI_DEP_MANAGER_DATA_DIR=/data
 ENV AI_DEP_MANAGER_CONFIG_FILE=/data/config.yaml
-ENV AI_DEP_MANAGER_DB_PATH=/data/ai-dep-manager.db
+ENV AI_DEP_MANAGER_DB_PATH=/data/superint-dep-manager.db
 ENV AI_DEP_MANAGER_LOG_LEVEL=info
 ENV AI_DEP_MANAGER_LOG_FORMAT=json
 ENV AI_DEP_MANAGER_WEB_PORT=8080
@@ -105,14 +105,14 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 
 # Create startup script for unified deployment
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'echo "🚀 Starting AI Dependency Manager - Production Deployment"' >> /app/start.sh && \
+    echo 'echo "🚀 Starting Superintelligence Dependency Manager - Production Deployment"' >> /app/start.sh && \
     echo 'echo "🌐 Web Server: http://localhost:8080"' >> /app/start.sh && \
     echo 'echo "📊 Frontend: http://localhost:8080"' >> /app/start.sh && \
     echo 'echo "🔗 API: http://localhost:8080/api"' >> /app/start.sh && \
     echo 'echo "📝 Logs: /app/logs/"' >> /app/start.sh && \
-    echo 'echo "💾 Database: /data/ai-dep-manager.db"' >> /app/start.sh && \
+    echo 'echo "💾 Database: /data/superint-dep-manager.db"' >> /app/start.sh && \
     echo 'echo "✨ Unified Full-Stack Application with Comprehensive Logging"' >> /app/start.sh && \
-    echo 'exec ./ai-dep-manager serve-simple --host 0.0.0.0' >> /app/start.sh && \
+    echo 'exec ./superint-dep-manager serve-simple --host 0.0.0.0' >> /app/start.sh && \
     chmod +x /app/start.sh
 
 # Default command - start unified web server

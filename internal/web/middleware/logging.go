@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logging"
+	"github.com/8tcapital/superint-dep-manager/internal/logging"
 )
 
 // LoggingMiddleware provides HTTP request/response logging

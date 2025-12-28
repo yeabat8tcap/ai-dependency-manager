@@ -11,10 +11,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/database"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/database"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 	"golang.org/x/crypto/pbkdf2"
 	"gorm.io/gorm"
 )
@@ -399,7 +399,7 @@ func (cs *CredentialService) generateMasterKey() ([]byte, error) {
 	}
 	
 	// Derive key using PBKDF2 for additional security
-	salt := []byte("ai-dep-manager-salt") // In production, use a random salt
+	salt := []byte("superint-dep-manager-salt") // In production, use a random salt
 	derivedKey := pbkdf2.Key(key, salt, 10000, 32, sha256.New)
 	
 	// Log warning about key storage

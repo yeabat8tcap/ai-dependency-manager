@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/scanner"
-	"github.com/8tcapital/ai-dep-manager/internal/services"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/scanner"
+	"github.com/8tcapital/superint-dep-manager/internal/services"
 	"github.com/spf13/cobra"
 )
 
@@ -22,9 +22,9 @@ var scanCmd = &cobra.Command{
 - Provides update recommendations
 
 Examples:
-  ai-dep-manager scan                    # Scan all projects
-  ai-dep-manager scan --project my-app   # Scan specific project
-  ai-dep-manager scan --type security    # Security-focused scan`,
+  superint-dep-manager scan                    # Scan all projects
+  superint-dep-manager scan --project my-app   # Scan specific project
+  superint-dep-manager scan --type security    # Security-focused scan`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runScan(cmd, args)
 	},
@@ -72,7 +72,7 @@ func runScanProject(cmd *cobra.Command, projectService *services.ProjectService,
 	}
 	
 	if !project.Enabled {
-		fmt.Printf("⚠️  Project '%s' is disabled. Enable it first with: ai-dep-manager configure\n", scanProject)
+		fmt.Printf("⚠️  Project '%s' is disabled. Enable it first with: superint-dep-manager configure\n", scanProject)
 		return nil
 	}
 	
@@ -118,7 +118,7 @@ func runScanAllProjects(cmd *cobra.Command, projectService *services.ProjectServ
 	}
 	
 	if len(projects) == 0 {
-		fmt.Println("❌ No enabled projects found. Configure projects first with: ai-dep-manager configure")
+		fmt.Println("❌ No enabled projects found. Configure projects first with: superint-dep-manager configure")
 		return nil
 	}
 	
@@ -163,8 +163,8 @@ func runScanAllProjects(cmd *cobra.Command, projectService *services.ProjectServ
 	fmt.Printf("   Total updates available: %d\n", totalUpdates)
 	
 	if totalUpdates > 0 {
-		fmt.Printf("\n💡 Run 'ai-dep-manager check' to see detailed update information\n")
-		fmt.Printf("💡 Run 'ai-dep-manager update --preview' to see what would be updated\n")
+		fmt.Printf("\n💡 Run 'superint-dep-manager check' to see detailed update information\n")
+		fmt.Printf("💡 Run 'superint-dep-manager update --preview' to see what would be updated\n")
 	}
 	
 	return nil
@@ -223,8 +223,8 @@ func displayScanResult(projectName string, result *scanner.ScanResult) {
 				status, depName, update.FromVersion, update.ToVersion, update.UpdateType)
 		}
 		
-		fmt.Printf("\n💡 Run 'ai-dep-manager check --project %s' for detailed information\n", projectName)
-		fmt.Printf("💡 Run 'ai-dep-manager update --project %s --preview' to preview updates\n", projectName)
+		fmt.Printf("\n💡 Run 'superint-dep-manager check --project %s' for detailed information\n", projectName)
+		fmt.Printf("💡 Run 'superint-dep-manager update --project %s --preview' to preview updates\n", projectName)
 	} else {
 		fmt.Println("\n✅ All dependencies are up to date!")
 	}
@@ -239,7 +239,7 @@ func init() {
 	scanCmd.Flags().BoolVar(&forceRefresh, "force-refresh", false, "Force refresh of dependency information")
 	scanCmd.Flags().IntVar(&maxConcurrency, "concurrency", 5, "Maximum concurrent operations")
 	scanCmd.Flags().DurationVar(&scanTimeout, "timeout", 5*time.Minute, "Scan timeout duration")
-	scanCmd.Flags().BoolVar(&aiAnalysis, "ai-analysis", false, "Enable AI-powered changelog analysis")
+	scanCmd.Flags().BoolVar(&aiAnalysis, "ai-analysis", false, "Enable Superintelligence-powered changelog analysis")
 	
 	// Add validation for scan type
 	scanCmd.PreRunE = func(cmd *cobra.Command, args []string) error {

@@ -364,7 +364,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private wsService = inject(WebSocketService);
   private router = inject(Router);
 
-  title = 'AI Dependency Manager';
+  title = 'Superintelligence Dependency Manager';
   isHandset = false;
   systemStatus: 'healthy' | 'warning' | 'error' = 'healthy';
   connectionStatus: 'connecting' | 'connected' | 'disconnected' | 'error' = 'connecting';
@@ -384,10 +384,10 @@ export class AppComponent implements OnInit, OnDestroy {
       tooltip: 'View and manage all dependencies'
     },
     {
-      label: 'AI Insights',
+      label: 'Superintelligence Insights',
       icon: 'psychology',
-      route: '/ai-insights',
-      tooltip: 'AI-powered analysis and recommendations'
+      route: '/superint-insights',
+      tooltip: 'Superintelligence-powered analysis and recommendations'
     },
     {
       label: 'Projects',

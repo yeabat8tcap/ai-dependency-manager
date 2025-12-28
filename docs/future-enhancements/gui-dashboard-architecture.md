@@ -1,6 +1,6 @@
 # GUI Dashboard Architecture
 
-This document outlines the architecture for a comprehensive web-based GUI dashboard for the AI Dependency Manager, providing visual interfaces for monitoring, management, and analytics.
+This document outlines the architecture for a comprehensive web-based GUI dashboard for the Superintelligence Dependency Manager, providing visual interfaces for monitoring, management, and analytics.
 
 ## Table of Contents
 
@@ -566,7 +566,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            AI Dependency Manager
+            Superintelligence Dependency Manager
           </Typography>
           <NotificationButton />
           <UserMenu />

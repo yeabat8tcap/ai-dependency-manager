@@ -1,6 +1,6 @@
 # Ollama Local AI Integration Guide
 
-This guide explains how to set up and use Ollama for local AI-powered dependency analysis in the AI Dependency Manager.
+This guide explains how to set up and use Ollama for local Superintelligence-powered dependency analysis in the Superintelligence Dependency Manager.
 
 ## Overview
 
@@ -75,7 +75,7 @@ export AI_DEFAULT_PROVIDER="ollama"
 
 ### Configuration File
 
-Add Ollama configuration to your AI Dependency Manager config file:
+Add Ollama configuration to your Superintelligence Dependency Manager config file:
 
 ```yaml
 ai:
@@ -137,17 +137,17 @@ go run cmd/validate-ollama/main.go
 
 ### 2. Basic Usage
 
-Once configured, the AI Dependency Manager will automatically use Ollama:
+Once configured, the Superintelligence Dependency Manager will automatically use Ollama:
 
 ```bash
 # Scan dependencies with Ollama analysis
-./ai-dep-manager scan
+./superint-dep-manager scan
 
 # Check for updates with AI insights
-./ai-dep-manager check --ai-analysis
+./superint-dep-manager check --ai-analysis
 
 # Get detailed analysis for specific package
-./ai-dep-manager analyze react 17.0.0 18.0.0
+./superint-dep-manager analyze react 17.0.0 18.0.0
 ```
 
 ### 3. Advanced Configuration
@@ -170,10 +170,10 @@ Switch between models for different analysis types:
 
 ```bash
 # Use CodeLlama for code analysis
-OLLAMA_MODEL="codellama" ./ai-dep-manager analyze
+OLLAMA_MODEL="codellama" ./superint-dep-manager analyze
 
 # Use Mistral for quick checks
-OLLAMA_MODEL="mistral" ./ai-dep-manager check --quick
+OLLAMA_MODEL="mistral" ./superint-dep-manager check --quick
 ```
 
 ## Performance Optimization
@@ -266,7 +266,7 @@ Enable debug logging for troubleshooting:
 
 ```bash
 export LOG_LEVEL="DEBUG"
-./ai-dep-manager scan
+./superint-dep-manager scan
 ```
 
 ### Health Check
@@ -311,7 +311,7 @@ jobs:
         run: |
           export OLLAMA_MODEL="llama2"
           export AI_DEFAULT_PROVIDER="ollama"
-          ./ai-dep-manager scan --format=json > analysis.json
+          ./superint-dep-manager scan --format=json > analysis.json
       
       - name: Upload Results
         uses: actions/upload-artifact@v2
@@ -325,8 +325,8 @@ jobs:
 ```dockerfile
 FROM ollama/ollama:latest
 
-# Install AI Dependency Manager
-COPY ai-dep-manager /usr/local/bin/
+# Install Superintelligence Dependency Manager
+COPY superint-dep-manager /usr/local/bin/
 
 # Download model
 RUN ollama serve & \
@@ -385,7 +385,7 @@ CMD ["ollama", "serve"]
 For issues and questions:
 
 1. **Ollama Issues**: [https://github.com/jmorganca/ollama/issues](https://github.com/jmorganca/ollama/issues)
-2. **AI Dependency Manager**: Check project documentation
+2. **Superintelligence Dependency Manager**: Check project documentation
 3. **Model Performance**: Try different models or adjust parameters
 
 ## Advanced Topics

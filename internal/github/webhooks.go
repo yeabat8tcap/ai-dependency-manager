@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // WebhooksService handles webhook-related GitHub API operations
@@ -428,7 +428,7 @@ func (ws *WebhookServer) Stop(ctx context.Context) error {
 	return ws.server.Shutdown(ctx)
 }
 
-// FindDependencyWebhook finds the AI Dependency Manager webhook in a repository
+// FindDependencyWebhook finds the Superintelligence Dependency Manager webhook in a repository
 func (w *WebhooksService) FindDependencyWebhook(ctx context.Context, owner, repo, webhookURL string) (*Webhook, error) {
 	webhooks, err := w.List(ctx, owner, repo)
 	if err != nil {

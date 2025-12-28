@@ -1,6 +1,6 @@
-# AI Dependency Manager - Developer Guide
+# Superintelligence Dependency Manager - Developer Guide
 
-This guide provides information for developers who want to contribute to or extend the AI Dependency Manager.
+This guide provides information for developers who want to contribute to or extend the Superintelligence Dependency Manager.
 
 ## Table of Contents
 
@@ -31,8 +31,8 @@ This guide provides information for developers who want to contribute to or exte
 
 ```bash
 # Clone the repository
-git clone https://github.com/8tcapital/ai-dep-manager.git
-cd ai-dep-manager
+git clone https://github.com/8tcapital/superint-dep-manager.git
+cd superint-dep-manager
 
 # Install dependencies
 make deps
@@ -44,7 +44,7 @@ make test-all
 make build
 
 # Run locally
-./bin/ai-dep-manager version
+./bin/superint-dep-manager version
 ```
 
 ### Development Tools
@@ -65,9 +65,9 @@ go install golang.org/x/vuln/cmd/govulncheck@latest
 ## Project Structure
 
 ```
-ai-dep-manager/
+superint-dep-manager/
 ├── cmd/                    # CLI commands and main entry point
-│   ├── ai-dep-manager/    # Main application
+│   ├── superint-dep-manager/    # Main application
 │   ├── agent.go           # Agent management commands
 │   ├── configure.go       # Configuration commands
 │   ├── lag.go            # Dependency lag commands
@@ -581,7 +581,7 @@ go run . status
 export AI_DEP_MANAGER_LOG_LEVEL=debug
 
 # Run with verbose output
-ai-dep-manager scan --verbose
+superint-dep-manager scan --verbose
 ```
 
 ### Using Debugger

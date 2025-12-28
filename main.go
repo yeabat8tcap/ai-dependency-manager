@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/8tcapital/ai-dep-manager/cmd"
-	"github.com/8tcapital/ai-dep-manager/internal/config"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/cmd"
+	"github.com/8tcapital/superint-dep-manager/internal/config"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# AI Dependency Manager - Production Build Script
+# Superintelligence Dependency Manager - Production Build Script
 # This script creates a comprehensive production build with all GitHub Integration Bot features
 
 set -e
@@ -18,7 +18,7 @@ VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
 BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
 
-echo -e "${BLUE}🚀 AI Dependency Manager - Production Build${NC}"
+echo -e "${BLUE}🚀 Superintelligence Dependency Manager - Production Build${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo -e "Version: ${GREEN}$VERSION${NC}"
 echo -e "Build Time: ${GREEN}$BUILD_TIME${NC}"
@@ -44,7 +44,7 @@ cd ..
 
 # Copy frontend build to production directory
 echo -e "${YELLOW}📦 Packaging frontend assets...${NC}"
-cp -r web/dist/ai-dep-manager-frontend/browser/* $BUILD_DIR/web/
+cp -r web/dist/superint-dep-manager-frontend/browser/* $BUILD_DIR/web/
 
 # Build Go backend with all GitHub Integration Bot features
 echo -e "${YELLOW}🔨 Building Go backend with GitHub Integration Bot...${NC}"
@@ -57,27 +57,27 @@ echo -e "${BLUE}Building for multiple platforms...${NC}"
 
 # Linux AMD64
 echo -e "  ${GREEN}→${NC} Linux AMD64"
-GOOS=linux GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/ai-dep-manager-linux-amd64 .
+GOOS=linux GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/superint-dep-manager-linux-amd64 .
 
 # Linux ARM64
 echo -e "  ${GREEN}→${NC} Linux ARM64"
-GOOS=linux GOARCH=arm64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/ai-dep-manager-linux-arm64 .
+GOOS=linux GOARCH=arm64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/superint-dep-manager-linux-arm64 .
 
 # macOS AMD64
 echo -e "  ${GREEN}→${NC} macOS AMD64"
-GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/ai-dep-manager-darwin-amd64 .
+GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/superint-dep-manager-darwin-amd64 .
 
 # macOS ARM64 (Apple Silicon)
 echo -e "  ${GREEN}→${NC} macOS ARM64"
-GOOS=darwin GOARCH=arm64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/ai-dep-manager-darwin-arm64 .
+GOOS=darwin GOARCH=arm64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/superint-dep-manager-darwin-arm64 .
 
 # Windows AMD64
 echo -e "  ${GREEN}→${NC} Windows AMD64"
-GOOS=windows GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/ai-dep-manager-windows-amd64.exe .
+GOOS=windows GOARCH=amd64 go build -ldflags "$LDFLAGS" -o $BUILD_DIR/bin/superint-dep-manager-windows-amd64.exe .
 
 # Create Docker production image
 echo -e "${YELLOW}🐳 Building Docker production image...${NC}"
-docker build -t ai-dep-manager:$VERSION -t ai-dep-manager:latest .
+docker build -t superint-dep-manager:$VERSION -t superint-dep-manager:latest .
 
 # Copy documentation
 echo -e "${YELLOW}📚 Packaging documentation...${NC}"
@@ -99,12 +99,12 @@ echo -e "${YELLOW}🚀 Creating deployment scripts...${NC}"
 cat > $BUILD_DIR/deploy-production.sh << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager - Production Deployment Script
-# Deploys the AI Dependency Manager with GitHub Integration Bot features
+# Superintelligence Dependency Manager - Production Deployment Script
+# Deploys the Superintelligence Dependency Manager with GitHub Integration Bot features
 
 set -e
 
-echo "🚀 Deploying AI Dependency Manager to Production"
+echo "🚀 Deploying Superintelligence Dependency Manager to Production"
 echo "=============================================="
 
 # Check if running as root
@@ -114,67 +114,67 @@ if [[ $EUID -eq 0 ]]; then
 fi
 
 # Create application user
-sudo useradd -r -s /bin/false ai-dep-manager 2>/dev/null || true
+sudo useradd -r -s /bin/false superint-dep-manager 2>/dev/null || true
 
 # Create directories
-sudo mkdir -p /opt/ai-dep-manager/{bin,config,logs,data}
-sudo mkdir -p /var/log/ai-dep-manager
-sudo mkdir -p /etc/ai-dep-manager
+sudo mkdir -p /opt/superint-dep-manager/{bin,config,logs,data}
+sudo mkdir -p /var/log/superint-dep-manager
+sudo mkdir -p /etc/superint-dep-manager
 
 # Copy binary
 ARCH=$(uname -m)
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 if [[ "$OS" == "linux" && "$ARCH" == "x86_64" ]]; then
-    BINARY="ai-dep-manager-linux-amd64"
+    BINARY="superint-dep-manager-linux-amd64"
 elif [[ "$OS" == "linux" && "$ARCH" == "aarch64" ]]; then
-    BINARY="ai-dep-manager-linux-arm64"
+    BINARY="superint-dep-manager-linux-arm64"
 elif [[ "$OS" == "darwin" && "$ARCH" == "x86_64" ]]; then
-    BINARY="ai-dep-manager-darwin-amd64"
+    BINARY="superint-dep-manager-darwin-amd64"
 elif [[ "$OS" == "darwin" && "$ARCH" == "arm64" ]]; then
-    BINARY="ai-dep-manager-darwin-arm64"
+    BINARY="superint-dep-manager-darwin-arm64"
 else
     echo "❌ Unsupported platform: $OS $ARCH"
     exit 1
 fi
 
 echo "📦 Installing binary: $BINARY"
-sudo cp bin/$BINARY /opt/ai-dep-manager/bin/ai-dep-manager
-sudo chmod +x /opt/ai-dep-manager/bin/ai-dep-manager
+sudo cp bin/$BINARY /opt/superint-dep-manager/bin/superint-dep-manager
+sudo chmod +x /opt/superint-dep-manager/bin/superint-dep-manager
 
 # Copy configuration
-sudo cp config/config.example.yaml /etc/ai-dep-manager/config.yaml
+sudo cp config/config.example.yaml /etc/superint-dep-manager/config.yaml
 
 # Set ownership
-sudo chown -R ai-dep-manager:ai-dep-manager /opt/ai-dep-manager
-sudo chown -R ai-dep-manager:ai-dep-manager /var/log/ai-dep-manager
-sudo chown -R ai-dep-manager:ai-dep-manager /etc/ai-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /opt/superint-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /var/log/superint-dep-manager
+sudo chown -R superint-dep-manager:superint-dep-manager /etc/superint-dep-manager
 
 # Create systemd service
-sudo tee /etc/systemd/system/ai-dep-manager.service > /dev/null << 'SYSTEMD_EOF'
+sudo tee /etc/systemd/system/superint-dep-manager.service > /dev/null << 'SYSTEMD_EOF'
 [Unit]
-Description=AI Dependency Manager with GitHub Integration Bot
-Documentation=https://github.com/8tcapital/ai-dep-manager
+Description=Superintelligence Dependency Manager with GitHub Integration Bot
+Documentation=https://github.com/8tcapital/superint-dep-manager
 After=network.target
 Wants=network.target
 
 [Service]
 Type=simple
-User=ai-dep-manager
-Group=ai-dep-manager
-ExecStart=/opt/ai-dep-manager/bin/ai-dep-manager serve --config /etc/ai-dep-manager/config.yaml
+User=superint-dep-manager
+Group=superint-dep-manager
+ExecStart=/opt/superint-dep-manager/bin/superint-dep-manager serve --config /etc/superint-dep-manager/config.yaml
 Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=ai-dep-manager
+SyslogIdentifier=superint-dep-manager
 
 # Security settings
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/ai-dep-manager /var/log/ai-dep-manager /etc/ai-dep-manager
+ReadWritePaths=/opt/superint-dep-manager /var/log/superint-dep-manager /etc/superint-dep-manager
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 
@@ -188,16 +188,16 @@ SYSTEMD_EOF
 
 # Enable and start service
 sudo systemctl daemon-reload
-sudo systemctl enable ai-dep-manager
-sudo systemctl start ai-dep-manager
+sudo systemctl enable superint-dep-manager
+sudo systemctl start superint-dep-manager
 
-echo "✅ AI Dependency Manager deployed successfully!"
+echo "✅ Superintelligence Dependency Manager deployed successfully!"
 echo "📊 Service status:"
-sudo systemctl status ai-dep-manager --no-pager -l
+sudo systemctl status superint-dep-manager --no-pager -l
 
 echo ""
-echo "🔧 Configuration file: /etc/ai-dep-manager/config.yaml"
-echo "📝 Logs: journalctl -u ai-dep-manager -f"
+echo "🔧 Configuration file: /etc/superint-dep-manager/config.yaml"
+echo "📝 Logs: journalctl -u superint-dep-manager -f"
 echo "🌐 Web interface: http://localhost:8081"
 echo ""
 echo "🚀 GitHub Integration Bot Features Available:"
@@ -215,11 +215,11 @@ chmod +x $BUILD_DIR/deploy-production.sh
 cat > $BUILD_DIR/deploy-docker.sh << 'EOF'
 #!/bin/bash
 
-# AI Dependency Manager - Docker Deployment Script
+# Superintelligence Dependency Manager - Docker Deployment Script
 
 set -e
 
-echo "🐳 Deploying AI Dependency Manager with Docker"
+echo "🐳 Deploying Superintelligence Dependency Manager with Docker"
 echo "============================================="
 
 # Check if Docker is running
@@ -235,10 +235,10 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # Deploy with docker-compose
-echo "🚀 Starting AI Dependency Manager with docker-compose..."
+echo "🚀 Starting Superintelligence Dependency Manager with docker-compose..."
 docker-compose up -d
 
-echo "✅ AI Dependency Manager deployed successfully with Docker!"
+echo "✅ Superintelligence Dependency Manager deployed successfully with Docker!"
 echo ""
 echo "📊 Container status:"
 docker-compose ps
@@ -261,15 +261,15 @@ chmod +x $BUILD_DIR/deploy-docker.sh
 
 # Create comprehensive README for production build
 cat > $BUILD_DIR/PRODUCTION-README.md << 'EOF'
-# AI Dependency Manager - Production Build
+# Superintelligence Dependency Manager - Production Build
 
-This is a production-ready build of the AI Dependency Manager with comprehensive GitHub Integration Bot features.
+This is a production-ready build of the Superintelligence Dependency Manager with comprehensive GitHub Integration Bot features.
 
 ## 🚀 Features Included
 
 ### Core Features
 - ✅ Multi-package manager support (npm, pip, Maven, Gradle)
-- ✅ AI-powered dependency analysis (OpenAI, Claude, Ollama)
+- ✅ Superintelligence-powered dependency analysis (OpenAI, Claude, Ollama)
 - ✅ Real-time dependency scanning and monitoring
 - ✅ Interactive update management with risk assessment
 - ✅ Background agent for continuous monitoring
@@ -277,7 +277,7 @@ This is a production-ready build of the AI Dependency Manager with comprehensive
 
 ### GitHub Integration Bot (Phases 1-5)
 - ✅ **Phase 1**: GitHub API integration with authentication and webhooks
-- ✅ **Phase 2**: AI-powered patch generation and code analysis
+- ✅ **Phase 2**: Superintelligence-powered patch generation and code analysis
 - ✅ **Phase 3**: Smart patch application with conflict resolution
 - ✅ **Phase 4**: Comprehensive PR management with automated testing
 - ✅ **Phase 5**: Enterprise features with governance and analytics
@@ -349,27 +349,27 @@ After deployment, access the web interface at:
 
 ```bash
 # Setup GitHub integration
-ai-dep-manager github setup --token YOUR_TOKEN --repositories owner/repo
+superint-dep-manager github setup --token YOUR_TOKEN --repositories owner/repo
 
 # Create batch update job
-ai-dep-manager github batch create
+superint-dep-manager github batch create
 
 # View analytics report
-ai-dep-manager github analytics report owner/repo
+superint-dep-manager github analytics report owner/repo
 
 # Manage organization policies
-ai-dep-manager github policy list
+superint-dep-manager github policy list
 
 # Check approval workflows
-ai-dep-manager github approval status workflow-id
+superint-dep-manager github approval status workflow-id
 ```
 
 ## 🆘 Support
 
 For support and documentation, visit:
-- GitHub: https://github.com/8tcapital/ai-dep-manager
+- GitHub: https://github.com/8tcapital/superint-dep-manager
 - Documentation: ./docs/
-- Issues: https://github.com/8tcapital/ai-dep-manager/issues
+- Issues: https://github.com/8tcapital/superint-dep-manager/issues
 
 ## 📄 License
 
@@ -385,7 +385,7 @@ cat > $BUILD_DIR/BUILD-MANIFEST.json << EOF
   "features": {
     "coreFeatures": [
       "Multi-package manager support",
-      "AI-powered dependency analysis",
+      "Superintelligence-powered dependency analysis",
       "Real-time scanning and monitoring",
       "Interactive update management",
       "Background agent",
@@ -393,7 +393,7 @@ cat > $BUILD_DIR/BUILD-MANIFEST.json << EOF
     ],
     "githubIntegrationBot": {
       "phase1": "GitHub API integration with authentication and webhooks",
-      "phase2": "AI-powered patch generation and code analysis",
+      "phase2": "Superintelligence-powered patch generation and code analysis",
       "phase3": "Smart patch application with conflict resolution",
       "phase4": "Comprehensive PR management with automated testing",
       "phase5": "Enterprise features with governance and analytics"
@@ -445,7 +445,7 @@ echo -e "${GREEN}✅ Production build completed successfully!${NC}"
 echo -e "${GREEN}================================================${NC}"
 echo -e "Build directory: ${BLUE}$BUILD_DIR${NC}"
 echo -e "Version: ${BLUE}$VERSION${NC}"
-echo -e "Docker image: ${BLUE}ai-dep-manager:$VERSION${NC}"
+echo -e "Docker image: ${BLUE}superint-dep-manager:$VERSION${NC}"
 echo ""
 echo -e "${YELLOW}🚀 Ready for deployment:${NC}"
 echo -e "  Native: ${BLUE}cd $BUILD_DIR && ./deploy-production.sh${NC}"

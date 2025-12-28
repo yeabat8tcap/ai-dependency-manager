@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
 )
 
 // Config represents GitHub integration configuration
@@ -68,7 +68,7 @@ func DefaultConfig() *Config {
 		Timeout:            30 * time.Second,
 		RateLimitRetries:   3,
 		WebhookPort:        8080,
-		PatchBranchPrefix:  "ai-dep-manager/patch",
+		PatchBranchPrefix:  "superint-dep-manager/patch",
 		DefaultLabels:      []string{"dependencies", "automated"},
 		AutoMergePatch:     false,
 		AutoMergeSecurity:  false,

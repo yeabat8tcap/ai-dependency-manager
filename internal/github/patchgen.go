@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8tcapital/ai-dep-manager/internal/ai"
-	"github.com/8tcapital/ai-dep-manager/internal/logger"
-	"github.com/8tcapital/ai-dep-manager/internal/models"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/logger"
+	"github.com/8tcapital/superint-dep-manager/internal/models"
 )
 
-// PatchGenerator handles AI-powered patch generation
+// PatchGenerator handles Superintelligence-powered patch generation
 type PatchGenerator struct {
 	aiManager       AIManager
 	templateService *TemplateService
@@ -22,7 +22,7 @@ type PatchGenerator struct {
 }
 
 // NewPatchGenerator creates a new patch generator
-func NewPatchGenerator(aiManager *ai.AIManager, client *Client) *PatchGenerator {
+func NewPatchGenerator(aiManager *superint.AIManager, client *Client) *PatchGenerator {
 	adapter := NewAIAdapter(aiManager)
 	return &PatchGenerator{
 		aiManager:       adapter,
@@ -635,7 +635,7 @@ func (pg *PatchGenerator) generatePRDescription(patch *GeneratedPatch, analyses 
 		}
 	}
 
-	description.WriteString("\n---\n*This PR was generated automatically by AI Dependency Manager*")
+	description.WriteString("\n---\n*This PR was generated automatically by Superintelligence Dependency Manager*")
 
 	return description.String()
 }

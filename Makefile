@@ -1,11 +1,11 @@
-# AI Dependency Manager Makefile
+# Superintelligence Dependency Manager Makefile
 
 # Build variables
-BINARY_NAME=ai-dep-manager
+BINARY_NAME=superint-dep-manager
 VERSION?=dev
 GIT_COMMIT?=$(shell git rev-parse --short HEAD)
 BUILD_DATE?=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-LDFLAGS=-ldflags "-X github.com/8tcapital/ai-dep-manager/cmd.Version=${VERSION} -X github.com/8tcapital/ai-dep-manager/cmd.GitCommit=${GIT_COMMIT} -X github.com/8tcapital/ai-dep-manager/cmd.BuildDate=${BUILD_DATE}"
+LDFLAGS=-ldflags "-X github.com/8tcapital/superint-dep-manager/cmd.Version=${VERSION} -X github.com/8tcapital/superint-dep-manager/cmd.GitCommit=${GIT_COMMIT} -X github.com/8tcapital/superint-dep-manager/cmd.BuildDate=${BUILD_DATE}"
 
 # Go parameters
 GOCMD=go
@@ -35,7 +35,7 @@ build-full-stack: build-frontend ## Build the complete full-stack application
 	@echo "🚀 Run with: ./bin/$(BINARY_NAME) serve"
 
 serve: build-full-stack ## Build and start the unified web server
-	@echo "🌐 Starting AI Dependency Manager Web Server..."
+	@echo "🌐 Starting Superintelligence Dependency Manager Web Server..."
 	./bin/$(BINARY_NAME) serve
 
 build-linux: ## Build for Linux
