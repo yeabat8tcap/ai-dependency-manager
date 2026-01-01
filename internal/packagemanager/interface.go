@@ -2,7 +2,6 @@ package packagemanager
 
 import (
 	"context"
-	"time"
 
 	"github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
 )
@@ -32,59 +31,20 @@ type ProjectInfo struct {
 
 // DependencyInfo contains parsed dependency information
 type DependencyInfo struct {
-	ProjectName    string                 `json:"project_name"`
-	ProjectVersion string                 `json:"project_version"`
-	Dependencies   []DependencyEntry      `json:"dependencies"`
-	DevDependencies []DependencyEntry     `json:"dev_dependencies,omitempty"`
-	PeerDependencies []DependencyEntry    `json:"peer_dependencies,omitempty"`
-	OptionalDependencies []DependencyEntry `json:"optional_dependencies,omitempty"`
-	Metadata       map[string]interface{} `json:"metadata,omitempty"`
+	ProjectName          string                 `json:"project_name"`
+	ProjectVersion       string                 `json:"project_version"`
+	Dependencies         []DependencyEntry      `json:"dependencies"`
+	DevDependencies      []DependencyEntry      `json:"dev_dependencies,omitempty"`
+	PeerDependencies     []DependencyEntry      `json:"peer_dependencies,omitempty"`
+	OptionalDependencies []DependencyEntry      `json:"optional_dependencies,omitempty"`
+	Metadata             map[string]interface{} `json:"metadata,omitempty"`
 }
 
-// DependencyEntry represents a single dependency
-type DependencyEntry struct {
-	Name            string            `json:"name"`
-	Version         string            `json:"version"`          // Version constraint (e.g., "^1.2.3", ">=2.0.0")
-	ResolvedVersion string            `json:"resolved_version"` // Actual installed version
-	Type            string            `json:"type"`             // direct, dev, peer, optional
-	Registry        string            `json:"registry,omitempty"`
-	Metadata        map[string]string `json:"metadata,omitempty"`
-	// Added a new field to DependencyEntry
-	License        string            `json:"license,omitempty"`
-}
-
-
-
-// RegistryConfig contains registry configuration
-type RegistryConfig struct {
-	URL         string            `json:"url"`
-	Name        string            `json:"name,omitempty"`
-	Username    string            `json:"username,omitempty"`
-	Password    string            `json:"password,omitempty"`
-	Token       string            `json:"token,omitempty"`
-	Headers     map[string]string `json:"headers,omitempty"`
-	Timeout     time.Duration     `json:"timeout,omitempty"`
-	Insecure    bool              `json:"insecure,omitempty"`
-}
-
-// UpdateOptions contains options for updating dependencies
-type UpdateOptions struct {
-	DryRun      bool              `json:"dry_run"`
-	Force       bool              `json:"force"`
-	SaveExact   bool              `json:"save_exact"`
-	Registry    *RegistryConfig   `json:"registry,omitempty"`
-	Environment map[string]string `json:"environment,omitempty"`
-	Timeout     time.Duration     `json:"timeout,omitempty"`
-}
-
-// InstallOptions contains options for installing dependencies
-type InstallOptions struct {
-	Clean       bool              `json:"clean"`        // Clean install (remove node_modules, etc.)
-	Production  bool              `json:"production"`   // Install only production dependencies
-	Registry    *RegistryConfig   `json:"registry,omitempty"`
-	Environment map[string]string `json:"environment,omitempty"`
-	Timeout     time.Duration     `json:"timeout,omitempty"`
-}
+// Type aliases for convenience
+type DependencyEntry = types.DependencyEntry
+type RegistryConfig = types.RegistryConfig
+type UpdateOptions = types.UpdateOptions
+type InstallOptions = types.InstallOptions
 
 // Manager is the main package manager registry
 type Manager struct {
@@ -141,20 +101,20 @@ func (m *Manager) GetAvailable(ctx context.Context) map[string]PackageManager {
 // DetectProjectTypes detects which package managers are used in a directory
 func (m *Manager) DetectProjectTypes(ctx context.Context, rootPath string) ([]types.Project, error) {
 	var allProjects []types.Project
-	
+
 	for _, pm := range m.managers {
 		if !pm.IsAvailable(ctx) {
 			continue
 		}
-		
+
 		projects, err := pm.DetectProjects(ctx, rootPath)
 		if err != nil {
 			// Log error but continue with other package managers
 			continue
 		}
-		
+
 		allProjects = append(allProjects, projects...)
 	}
-	
+
 	return allProjects, nil
 }

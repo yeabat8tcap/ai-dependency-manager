@@ -2,17 +2,18 @@ package scanner
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/8tcapital/superint-dep-manager/internal/superint"
-	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
 	"github.com/8tcapital/superint-dep-manager/internal/database"
 	"github.com/8tcapital/superint-dep-manager/internal/logger"
 	"github.com/8tcapital/superint-dep-manager/internal/models"
 	"github.com/8tcapital/superint-dep-manager/internal/packagemanager"
 	pmtypes "github.com/8tcapital/superint-dep-manager/internal/packagemanager/types"
+	"github.com/8tcapital/superint-dep-manager/internal/superint"
+	"github.com/8tcapital/superint-dep-manager/internal/superint/types"
 	"gorm.io/gorm"
 )
 
@@ -214,6 +215,13 @@ func (s *Scanner) processSingleDependency(ctx context.Context, project *models.P
 	isNew := err == gorm.ErrRecordNotFound
 
 	// Create or update dependency record
+	requirementsJSON := ""
+	if len(depEntry.Requirements) > 0 {
+		if b, err := json.Marshal(depEntry.Requirements); err == nil {
+			requirementsJSON = string(b)
+		}
+	}
+
 	dependency := &models.Dependency{
 		ProjectID:       project.ID,
 		Name:            depEntry.Name,
@@ -222,6 +230,7 @@ func (s *Scanner) processSingleDependency(ctx context.Context, project *models.P
 		Type:            depEntry.Type,
 		Registry:        depEntry.Source,
 		Status:          "unknown",
+		Requirements:    requirementsJSON,
 		LastChecked:     &[]time.Time{time.Now()}[0],
 	}
 

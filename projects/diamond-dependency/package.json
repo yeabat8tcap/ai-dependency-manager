@@ -1,0 +1,8 @@
+{
+  "name": "diamond-demo",
+  "version": "1.0.0",
+  "dependencies": {
+    "parent-a": "1.0.0",
+    "parent-b": "1.0.0"
+  }
+}
